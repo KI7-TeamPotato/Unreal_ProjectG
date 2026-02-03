@@ -2,4 +2,27 @@
 
 
 #include "AnimInstance/PGCharacterAnimInstance.h"
+#include "GameFramework/CharacterMovementComponent.h"
+// TODO : 캐릭터 타입을 우리의 캐릭터 타입으로 변경 변경
+#include "GameFramework/Character.h"
 
+void UPGCharacterAnimInstance::NativeInitializeAnimation()
+{
+    // TODO : 캐릭터 타입을 우리의 캐릭터 타입으로 변경 변경
+    OwningCharacter = Cast<ACharacter>(TryGetPawnOwner());
+
+    if (OwningCharacter.IsValid())
+    {
+        OwningCharacterMovement = OwningCharacter->GetCharacterMovement();
+    }
+}
+
+void UPGCharacterAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaSeconds)
+{
+    if (!OwningCharacter.IsValid() || !OwningCharacterMovement)
+    {
+        return;
+    }
+
+    GroundSpeed = OwningCharacter->GetVelocity().Size2D();
+}

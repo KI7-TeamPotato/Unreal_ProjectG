@@ -2,4 +2,14 @@
 
 
 #include "AnimInstance/PGBaseAnimInstance.h"
+#include "PGFunctionLibrary.h"
 
+bool UPGBaseAnimInstance::DoesOwnerHaveTag(FGameplayTag TagToCheck) const
+{
+    if (APawn* OwningPawn = TryGetPawnOwner())
+    {
+        return UPGFunctionLibrary::NativeDoesActorHaveTag(OwningPawn, TagToCheck);
+    }
+
+    return false;
+}
