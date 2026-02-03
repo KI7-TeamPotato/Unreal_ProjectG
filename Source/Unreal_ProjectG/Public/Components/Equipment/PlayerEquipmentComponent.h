@@ -6,6 +6,7 @@
 #include "Components/Equipment/EquipmentComponent.h"
 #include "PlayerEquipmentComponent.generated.h"
 
+class APGPlayerWeapon;
 /**
  * 
  */
@@ -14,4 +15,7 @@ class UNREAL_PROJECTG_API UPlayerEquipmentComponent : public UEquipmentComponent
 {
 	GENERATED_BODY()
 	
+public:
+    UFUNCTION(BlueprintCallable, Category = "PG|Equipment")
+    APGPlayerWeapon* GetPlayerCurrentEquippedWeapon() const;
 };

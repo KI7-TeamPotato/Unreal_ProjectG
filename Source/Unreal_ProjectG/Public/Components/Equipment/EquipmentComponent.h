@@ -16,9 +16,9 @@ class UNREAL_PROJECTG_API UEquipmentComponent : public UPawnExtensionComponentBa
 {
 	GENERATED_BODY()
 	
-    public:
-    virtual APGWeaponBase* GetEquippedWeapon() const { return EquippedWeapon.Get(); }
+public:
+    APGWeaponBase* GetCharacterCurrentEquippedWeapon() const { return CurrentEquippedWeapon.Get(); }
 
 protected:
-    TWeakObjectPtr<APGWeaponBase> EquippedWeapon;
+    TWeakObjectPtr<APGWeaponBase> CurrentEquippedWeapon;
 };

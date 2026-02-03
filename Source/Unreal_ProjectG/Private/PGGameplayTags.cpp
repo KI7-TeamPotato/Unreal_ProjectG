@@ -11,5 +11,8 @@ namespace PGGameplayTags
 
     // 이벤트 태그
     UE_DEFINE_GAMEPLAY_TAG(Shared_Event_MeleeHit, "Shared.Event.MeleeHit");
+
+    // SetByCaller 태그
+    UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_DamageMultiplier, "Shared.SetByCaller.DamageMultiplier");
 }
 

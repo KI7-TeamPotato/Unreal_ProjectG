@@ -2,4 +2,9 @@
 
 
 #include "Components/Equipment/PlayerEquipmentComponent.h"
+#include "Items/Weapons/PGPlayerWeapon.h"
 
+APGPlayerWeapon* UPlayerEquipmentComponent::GetPlayerCurrentEquippedWeapon() const
+{
+    return Cast<APGPlayerWeapon>(GetCharacterCurrentEquippedWeapon());
+}

@@ -9,3 +9,10 @@ enum class EPGValidType : uint8
     Valid,
     InValid
 };
+
+UENUM()
+enum class EPGSuccessType : uint8
+{
+    Successful,
+    Failed
+};
