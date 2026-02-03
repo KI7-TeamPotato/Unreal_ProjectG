@@ -1,0 +1,79 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "GameFramework/Character.h"
+#include "HeroCharacter.generated.h"
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPlayerDied);
+
+UCLASS()
+class UNREAL_PROJECTG_API AHeroCharacter : public ACharacter
+{
+	GENERATED_BODY()
+
+public:
+	// Sets default values for this character's properties
+	AHeroCharacter();
+
+    //캐릭터 스폰(시작 혹은 부활 시)
+    UFUNCTION(BlueprintCallable, Category = "HeroCharacter")
+    void SpawnCharacter();
+
+    //캐릭터 사망
+    UFUNCTION(BlueprintCallable, Category = "HeroCharacter")
+    void OnDie();
+
+protected:
+	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+private:
+    //이동
+    UFUNCTION()
+    void OnMovementInput(const FInputActionValue& InValue);
+    //공격
+    UFUNCTION()
+    void OnAttackInput();
+
+public:
+    UPROPERTY(BlueprintAssignable, Category = "Event")
+    FOnPlayerDied OnPlayerDied;
+
+protected:
+    //컴포넌트
+    //스프링 암
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
+    TObjectPtr<class USpringArmComponent> SpringArm = nullptr;
+    //카메라
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
+    TObjectPtr<class UCameraComponent> CameraComponent = nullptr;
+    //움직임 컴포넌트
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
+    TObjectPtr<class UCharacterMovementComponent> MovementComponent = nullptr;
+
+    //input action
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "InputAction")
+    TObjectPtr<class UInputAction> IA_Move = nullptr;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "InputAction")
+    TObjectPtr<UInputAction> IA_Attack = nullptr;
+
+    //애님 몽타주
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation")
+    TObjectPtr<class UAnimMontage> Attack_Melee = nullptr;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation")
+    TObjectPtr<UAnimMontage> Attack_Bow = nullptr;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation")
+    TObjectPtr<UAnimMontage> Attack_Magic = nullptr;
+
+private:
+    //ABP
+    UPROPERTY()
+    TObjectPtr<class UAnimInstance> AnimInstance = nullptr;
+
+    //리소스 컴포넌트
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+    TObjectPtr<class UHeroResourceComponent> ResourceManager = nullptr;
+};
