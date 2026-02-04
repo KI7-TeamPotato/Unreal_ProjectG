@@ -10,7 +10,7 @@ class APGHeroWeapon;
 /**
  * 
  */
-UCLASS()
+UCLASS(meta = (BlueprintSpawnableComponent))
 class UNREAL_PROJECTG_API UHeroEquipmentComponent : public UEquipmentComponent
 {
 	GENERATED_BODY()

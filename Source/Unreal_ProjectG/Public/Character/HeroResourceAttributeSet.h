@@ -22,7 +22,7 @@ public:
     virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
     virtual void PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data) override;
 
-protected:
+public:
     UPROPERTY(BlueprintReadOnly, Category = "Attribute")
     FGameplayAttributeData Health;
     ATTRIBUTE_ACCESSORS(UHeroResourceAttributeSet, Health)
@@ -46,6 +46,4 @@ protected:
     UPROPERTY(BlueprintReadOnly, Category = "Attribute")
     FGameplayAttributeData AttackSpeed;
     ATTRIBUTE_ACCESSORS(UHeroResourceAttributeSet, AttackSpeed)
-
-
 };

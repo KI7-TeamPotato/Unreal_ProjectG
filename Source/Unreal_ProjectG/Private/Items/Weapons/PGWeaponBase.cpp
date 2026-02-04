@@ -39,8 +39,12 @@ void APGWeaponBase::OnCollisionBoxBeginOverlap(UPrimitiveComponent* OverlappedCo
     if (APawn* HitPawn = Cast<APawn>(OtherActor))
     {
         // TODO: 아군인지 적군인지 확인하는 로직 추가 필요
-        WeaponHitTargetHandler(OtherActor);
+        if (OtherActor != WeaponOwningPawn)
+        {
+            WeaponHitTargetHandler(OtherActor);
 
+        }
+        // 상대방의 히트 리액션 재생 등은 여기서 처리
         //OnWeaponHitTarget.ExecuteIfBound(OtherActor);
     }
 }

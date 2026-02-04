@@ -2,14 +2,28 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "PGStructTypes.generated.h"
 
+class UPGHeroGameplayAbility;
 /**
  * 
  */
-class UNREAL_PROJECTG_API PGStructTypes
+
+// 무기 데이터 구조체
+USTRUCT(BlueprintType)
+struct FPGHeroWeaponData
 {
-public:
-	PGStructTypes();
-	~PGStructTypes();
+    GENERATED_BODY()
+
+    // 무기 기본 경격 어빌리티
+    UPROPERTY(EditAnywhere, BlueprintReadOnly)
+    TSubclassOf<UPGHeroGameplayAbility> DefaultAttackAbility;
+
+    // 무기 스킬 어빌리티들
+    UPROPERTY(EditAnywhere, BlueprintReadOnly)
+    TArray<TSubclassOf<UPGHeroGameplayAbility>> WeaponSkillAbilities;
+
+    // 무기 아이콘 텍스처
+    UPROPERTY(EditAnywhere, BlueprintReadOnly)
+    TSoftObjectPtr<UTexture2D> SoftWeaponIconTexture;
 };

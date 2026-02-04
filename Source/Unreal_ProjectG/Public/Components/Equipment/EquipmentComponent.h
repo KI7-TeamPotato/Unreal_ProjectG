@@ -11,14 +11,16 @@ class APGWeaponBase;
 /**
  * 
  */
-UCLASS()
+UCLASS(meta = (BlueprintSpawnableComponent))
 class UNREAL_PROJECTG_API UEquipmentComponent : public UPawnExtensionComponentBase
 {
 	GENERATED_BODY()
 	
 public:
+    UFUNCTION(BlueprintCallable, Category = "Equipment")
     void SetCurrentEquippedWeapon(APGWeaponBase* NewWeapon);
 
+    UFUNCTION(BlueprintCallable, Category = "Equipment")
     APGWeaponBase* GetCharacterCurrentEquippedWeapon() const { return CurrentEquippedWeapon.Get(); }
 
 protected:

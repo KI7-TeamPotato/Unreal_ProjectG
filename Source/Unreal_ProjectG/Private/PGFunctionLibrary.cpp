@@ -29,6 +29,12 @@ UEquipmentComponent* UPGFunctionLibrary::NativeGetEquipComponentFromActor(AActor
     {
         return EquipmentInterface->GetEquipmentComponent();
     }
+
+    if (UEquipmentComponent* EquipComp = InActor->FindComponentByClass<UEquipmentComponent>())
+    {
+        return EquipComp;
+    }
+
     return nullptr;
 }
 

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Items/Weapons/PGWeaponBase.h"
+#include "Types/PGStructTypes.h"
 #include "PGHeroWeapon.generated.h"
 
 /**
@@ -17,4 +18,8 @@ class UNREAL_PROJECTG_API APGHeroWeapon : public APGWeaponBase
 protected:
     virtual void WeaponHitTargetHandler(AActor* HitActor) override;
     virtual void WeaponPulledFromTargetHandler(AActor* HitActor) override;
+
+protected:
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Data")
+    FPGHeroWeaponData HeroWeaponData;
 };

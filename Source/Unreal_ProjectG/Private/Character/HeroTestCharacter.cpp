@@ -25,5 +25,7 @@ UEquipmentComponent* AHeroTestCharacter::GetEquipmentComponent() const
 
 void AHeroTestCharacter::BeginPlay()
 {
+    Super::BeginPlay();
 
+    HeroEquipmentComponent->SetCurrentEquippedWeapon(nullptr);
 }

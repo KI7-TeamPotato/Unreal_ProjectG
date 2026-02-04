@@ -24,7 +24,5 @@ class UNREAL_PROJECTG_API IEquipmentInterface
 	GENERATED_BODY()
 
 public:
-    virtual UEquipmentComponent* GetEquipmentComponent() const = 0;
-    
-    virtual UHeroEquipmentComponent* GetHeroEquipmentComponent() const;
+    virtual UEquipmentComponent* GetEquipmentComponent() const = 0;  
 };

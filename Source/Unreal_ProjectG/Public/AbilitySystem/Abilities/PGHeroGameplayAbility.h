@@ -17,6 +17,8 @@ class UNREAL_PROJECTG_API UPGHeroGameplayAbility : public UPGGameplayAbility
 	GENERATED_BODY()
 	
 public:
+    UPGHeroGameplayAbility();
+
     // TODO : 클래스를 우리의 플레이어 캐릭터 타입으로 변경
     UFUNCTION(BlueprintPure, Category = "PG|Ability")
     AHeroCharacter* GetHeroCharacterFromActorInfo();

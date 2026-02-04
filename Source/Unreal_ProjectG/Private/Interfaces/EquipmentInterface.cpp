@@ -2,8 +2,3 @@
 
 
 #include "Interfaces/EquipmentInterface.h"
-
-UHeroEquipmentComponent* IEquipmentInterface::GetHeroEquipmentComponent() const
-{
-    return nullptr;
-}

@@ -33,6 +33,10 @@ void UHeroResourceAttributeSet::PostGameplayEffectExecute(const FGameplayEffectM
 
     if (Data.EvaluatedData.Attribute == GetHealthAttribute())
     {
+        const float NewCurrentHealth = FMath::Clamp(GetHealth(), 0.f, GetMaxHealth());
+
+        SetHealth(NewCurrentHealth);
+
         if (FMath::IsNearlyZero(GetHealth()))
         {
             UE_LOG(LogTemp, Log, TEXT("Dead"));

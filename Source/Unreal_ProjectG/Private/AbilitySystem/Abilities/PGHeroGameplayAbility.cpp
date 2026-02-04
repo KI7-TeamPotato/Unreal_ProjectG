@@ -7,6 +7,11 @@
 #include "Character/HeroController.h"
 #include "PGGameplayTags.h"
 
+UPGHeroGameplayAbility::UPGHeroGameplayAbility()
+{
+    InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
+}
+
 AHeroCharacter* UPGHeroGameplayAbility::GetHeroCharacterFromActorInfo()
 {
     if (!CachedHeroCharacter.IsValid())
@@ -47,6 +52,7 @@ FGameplayEffectSpecHandle UPGHeroGameplayAbility::MakeHeroDamageEffectSpecHandle
         ContextHandle
     );
 
+    // SetByCaller 매개변수로 Map(태그, 값) 형태로 스킬 데미지 배율 전달
     EffectSpecHandle.Data->SetSetByCallerMagnitude(
         PGGameplayTags::Shared_SetByCaller_DamageMultiplier,
         SkillMultiflier
