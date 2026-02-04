@@ -3,19 +3,19 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AbilitySystem/Abilities/PGPlayerGameplayAbility.h"
-#include "GA_Player_BaseMeleeAttack.generated.h"
+#include "AbilitySystem/Abilities/PGHeroGameplayAbility.h"
+#include "GA_Hero_BaseMeleeAttack.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class UNREAL_PROJECTG_API UGA_Player_BaseMeleeAttack : public UPGPlayerGameplayAbility
+class UNREAL_PROJECTG_API UGA_Hero_BaseMeleeAttack : public UPGHeroGameplayAbility
 {
 	GENERATED_BODY()
 	
 public:
-    UGA_Player_BaseMeleeAttack();
+    UGA_Hero_BaseMeleeAttack();
 
     virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
     virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;

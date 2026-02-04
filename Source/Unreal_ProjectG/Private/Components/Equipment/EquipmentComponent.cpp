@@ -2,4 +2,9 @@
 
 
 #include "Components/Equipment/EquipmentComponent.h"
+#include "Items/Weapons/PGWeaponBase.h"
 
+void UEquipmentComponent::SetCurrentEquippedWeapon(APGWeaponBase* NewWeapon)
+{
+    CurrentEquippedWeapon = NewWeapon;
+}

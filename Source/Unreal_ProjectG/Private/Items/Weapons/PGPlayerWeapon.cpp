@@ -1,11 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Items/Weapons/PGPlayerWeapon.h"
+#include "Items/Weapons/PGHeroWeapon.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "PGGameplayTags.h"
 
-void APGPlayerWeapon::WeaponHitTargetHandler(AActor* HitActor)
+void APGHeroWeapon::WeaponHitTargetHandler(AActor* HitActor)
 {
     check(OwningPawn.IsValid());
 
@@ -29,7 +29,7 @@ void APGPlayerWeapon::WeaponHitTargetHandler(AActor* HitActor)
     );
 }
 
-void APGPlayerWeapon::WeaponPulledFromTargetHandler(AActor* HitActor)
+void APGHeroWeapon::WeaponPulledFromTargetHandler(AActor* HitActor)
 {
     // 나중에 히트 끝날때 처리할 게 있으면 여기에 작성
 }

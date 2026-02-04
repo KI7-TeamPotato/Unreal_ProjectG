@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "AnimInstance/PGCharacterAnimInstance.h"
-#include "PGPlayerAnimInstance.generated.h"
+#include "PGHeroAnimInstance.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class UNREAL_PROJECTG_API UPGPlayerAnimInstance : public UPGCharacterAnimInstance
+class UNREAL_PROJECTG_API UPGHeroAnimInstance : public UPGCharacterAnimInstance
 {
 	GENERATED_BODY()
 	

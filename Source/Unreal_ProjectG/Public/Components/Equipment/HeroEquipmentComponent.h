@@ -4,18 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "Components/Equipment/EquipmentComponent.h"
-#include "PlayerEquipmentComponent.generated.h"
+#include "HeroEquipmentComponent.generated.h"
 
-class APGPlayerWeapon;
+class APGHeroWeapon;
 /**
  * 
  */
 UCLASS()
-class UNREAL_PROJECTG_API UPlayerEquipmentComponent : public UEquipmentComponent
+class UNREAL_PROJECTG_API UHeroEquipmentComponent : public UEquipmentComponent
 {
 	GENERATED_BODY()
 	
 public:
     UFUNCTION(BlueprintCallable, Category = "PG|Equipment")
-    APGPlayerWeapon* GetPlayerCurrentEquippedWeapon() const;
+    APGHeroWeapon* GetHeroCurrentEquippedWeapon() const;
 };

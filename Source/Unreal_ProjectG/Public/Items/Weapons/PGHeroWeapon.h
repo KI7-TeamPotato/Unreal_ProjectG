@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Items/Weapons/PGWeaponBase.h"
-#include "PGPlayerWeapon.generated.h"
+#include "PGHeroWeapon.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class UNREAL_PROJECTG_API APGPlayerWeapon : public APGWeaponBase
+class UNREAL_PROJECTG_API APGHeroWeapon : public APGWeaponBase
 {
 	GENERATED_BODY()
 	

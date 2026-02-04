@@ -3,7 +3,7 @@
 
 #include "Interfaces/EquipmentInterface.h"
 
-UPlayerEquipmentComponent* IEquipmentInterface::GetPlayerEquipmentComponent() const
+UHeroEquipmentComponent* IEquipmentInterface::GetHeroEquipmentComponent() const
 {
     return nullptr;
 }

@@ -7,7 +7,7 @@
 #include "EquipmentInterface.generated.h"
 
 class UEquipmentComponent;
-class UPlayerEquipmentComponent;
+class UHeroEquipmentComponent;
 
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
@@ -26,5 +26,5 @@ class UNREAL_PROJECTG_API IEquipmentInterface
 public:
     virtual UEquipmentComponent* GetEquipmentComponent() const = 0;
     
-    virtual UPlayerEquipmentComponent* GetPlayerEquipmentComponent() const;
+    virtual UHeroEquipmentComponent* GetHeroEquipmentComponent() const;
 };
