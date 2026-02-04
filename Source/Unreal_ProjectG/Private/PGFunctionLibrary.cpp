@@ -4,8 +4,8 @@
 #include "PGFunctionLibrary.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystem/PGAbilitySystemComponent.h"
-#include "Interfaces/EquipmentInterface.h"
-#include "Components/Equipment/EquipmentComponent.h"
+#include "Interfaces/PawnCombatInterface.h"
+#include "Components/Combat/PawnCombatComponent.h"
 
 UPGAbilitySystemComponent* UPGFunctionLibrary::NativeGetWarriorASCFromActor(AActor* InActor)
 {
@@ -21,26 +21,26 @@ bool UPGFunctionLibrary::NativeDoesActorHaveTag(AActor* InActor, FGameplayTag Ta
     return ASC->HasMatchingGameplayTag(TagToCheck);
 }
 
-UEquipmentComponent* UPGFunctionLibrary::NativeGetEquipComponentFromActor(AActor* InActor)
+UPawnCombatComponent* UPGFunctionLibrary::NativeGetCombatComponentFromActor(AActor* InActor)
 {
     check(InActor);
 
-    if(IEquipmentInterface* EquipmentInterface = Cast<IEquipmentInterface>(InActor))
+    if(IPawnCombatInterface* PawnCombatInterface = Cast<IPawnCombatInterface>(InActor))
     {
-        return EquipmentInterface->GetEquipmentComponent();
+        return PawnCombatInterface->GetPawnCombatComponent();
     }
 
-    if (UEquipmentComponent* EquipComp = InActor->FindComponentByClass<UEquipmentComponent>())
+    if (UPawnCombatComponent* PawnCombatComp = InActor->FindComponentByClass<UPawnCombatComponent>())
     {
-        return EquipComp;
+        return PawnCombatComp;
     }
 
     return nullptr;
 }
 
-UEquipmentComponent* UPGFunctionLibrary::BP_GetEquipComponentFromActor(AActor* InActor, EPGValidType& OutValidType)
+UPawnCombatComponent* UPGFunctionLibrary::BP_GetCombatComponentFromActor(AActor* InActor, EPGValidType& OutValidType)
 {
-    UEquipmentComponent* EquipComp = NativeGetEquipComponentFromActor(InActor);
+    UPawnCombatComponent* EquipComp = NativeGetCombatComponentFromActor(InActor);
 
     OutValidType = EquipComp ? EPGValidType::Valid : EPGValidType::InValid;
     return EquipComp;

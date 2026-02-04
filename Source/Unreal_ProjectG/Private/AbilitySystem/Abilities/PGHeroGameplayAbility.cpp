@@ -7,6 +7,8 @@
 #include "Character/HeroController.h"
 #include "PGGameplayTags.h"
 
+#include "Character/HeroTestCharacter.h"
+
 UPGHeroGameplayAbility::UPGHeroGameplayAbility()
 {
     InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
@@ -30,10 +32,9 @@ AHeroController* UPGHeroGameplayAbility::GetHeroControllerFromActorInfo()
     return CachedHeroCharacter.IsValid() ? CachedHeroController.Get() : nullptr;
 }
 
-UHeroEquipmentComponent* UPGHeroGameplayAbility::GetHeroEquipmentComponentFromActorInfo() const
+UHeroCombatComponent* UPGHeroGameplayAbility::GetHeroCombatComponentFromActorInfo() const
 {
-    // TODO : 플레이어 안에서 Getter 함수 구현
-    //return GetHeroCharacterFromActorInfo()->GetPlayerEquipmentComponent();
+    //return GetHeroCharacterFromActorInfo()->GetHeroCombatComponent();
     return nullptr;
 }
 

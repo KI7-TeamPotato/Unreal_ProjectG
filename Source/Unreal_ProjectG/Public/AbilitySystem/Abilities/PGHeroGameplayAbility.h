@@ -5,9 +5,9 @@
 #include "AbilitySystem/Abilities/PGGameplayAbility.h"
 #include "PGHeroGameplayAbility.generated.h"
 
-class UHeroEquipmentComponent;
 class AHeroController;
 class AHeroCharacter;
+class UHeroCombatComponent;
 /**
  * 
  */
@@ -28,7 +28,7 @@ public:
     AHeroController* GetHeroControllerFromActorInfo();
 
     UFUNCTION(BlueprintPure, Category = "PG|Ability")
-    UHeroEquipmentComponent* GetHeroEquipmentComponentFromActorInfo() const;
+    UHeroCombatComponent* GetHeroCombatComponentFromActorInfo() const;
 
     // TODO : 공격의 속성이나 다른 효과가 추가된다면 매개변수를 확장
     UFUNCTION(BlueprintPure, Category = "PG|Ability")

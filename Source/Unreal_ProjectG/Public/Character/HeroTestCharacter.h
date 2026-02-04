@@ -5,19 +5,19 @@
 #include "CoreMinimal.h"
 #include "Character/HeroCharacter.h"
 #include "AbilitySystemInterface.h"
-#include "Interfaces/EquipmentInterface.h"
+#include "Interfaces/PawnCombatInterface.h"
 #include "HeroTestCharacter.generated.h"
 
 class UPGAbilitySystemComponent;
 class UHeroResourceAttributeSet;
-class UHeroEquipmentComponent;
+class UHeroCombatComponent;
 
 /**
  * 어빌리티 테스트용 캐릭터,
  * 후에 삭제 예정
  */
 UCLASS()
-class UNREAL_PROJECTG_API AHeroTestCharacter : public AHeroCharacter, public IAbilitySystemInterface, public IEquipmentInterface
+class UNREAL_PROJECTG_API AHeroTestCharacter : public AHeroCharacter, public IAbilitySystemInterface, public IPawnCombatInterface
 {
 	GENERATED_BODY()
 
@@ -27,8 +27,9 @@ public:
     virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	
     FORCEINLINE UPGAbilitySystemComponent* GetPGAbilitySystemComponent() const { return PGAbilitySystemComponent; }
+    FORCEINLINE UHeroCombatComponent* GetHeroCombatComponent() const { return HeroCombatComponent; }
 
-    virtual UEquipmentComponent* GetEquipmentComponent() const override;
+    virtual UPawnCombatComponent* GetPawnCombatComponent() const override;
 
 protected:
     virtual void BeginPlay() override;
@@ -41,5 +42,5 @@ protected:
     TObjectPtr<UHeroResourceAttributeSet> HeroResourceAttributeSet;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "EquipmentSystem")
-    TObjectPtr<UHeroEquipmentComponent> HeroEquipmentComponent;
+    TObjectPtr<UHeroCombatComponent> HeroCombatComponent;
 };

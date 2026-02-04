@@ -12,17 +12,26 @@ class UNREAL_PROJECTG_API UPawnExtensionComponentBase : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
-	// Sets default values for this component's properties
-	UPawnExtensionComponentBase();
-
 protected:
-	// Called when the game starts
-	virtual void BeginPlay() override;
+    // 특정 Pawn을 반환해야 하는 경우
+    template<class T>
+    T* GetOwningPawn() const
+    {
+        // 오너가 Pawn 계열인지 체크
+        static_assert(TPointerIsConvertibleFromTo<T, APawn>::Value, "'T' Template Parameter get GetPawn must be derived from APawn");
+        return CastChecked<T>(GetOwner());
+    }
 
-public:	
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+    // 기본적으로 APawn 반환
+    APawn* GetOwningPawn() const
+    {
+        return GetOwningPawn<APawn>();
+    }
 
-		
+    template<class T>
+    T* GetOwningController() const
+    {
+        static_assert(TPointerIsConvertibleFromTo<T, AController>::Value, "'T' Template Parameter to GetController must be derived from AController");
+        return GetOwningPawn<APawn>()->GetController<T>();
+    }
 };
