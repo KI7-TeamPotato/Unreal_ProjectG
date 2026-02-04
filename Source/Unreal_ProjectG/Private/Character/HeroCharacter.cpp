@@ -35,29 +35,33 @@ AHeroCharacter::AHeroCharacter()
 void AHeroCharacter::SpawnCharacter()
 {
     USkeletalMeshComponent* MeshComp = GetMesh();
+    MeshComp->bPauseAnims = false;
+    MeshComp->SetSimulatePhysics(false);
     MeshComp->SetCollisionProfileName(TEXT("CharacterMesh"));
 
+    MeshComp->AttachToComponent(GetCapsuleComponent(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+    MeshComp->SetRelativeLocation(FVector(0.f, 0.f, -90.f));
+    MeshComp->SetRelativeRotation(FRotator(0.f, -90.f, 0.f));
+
     GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+    GetCharacterMovement()->SetComponentTickEnabled(true);
     GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+    GetCharacterMovement()->Activate();
 }
 
 void AHeroCharacter::OnDie()
 {
-    //캐릭터 이동 중지
     GetCharacterMovement()->DisableMovement();
     GetCharacterMovement()->StopMovementImmediately();
+    GetCharacterMovement()->SetComponentTickEnabled(false);
 
-    //캡슐 충돌 끄기 
     GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-    //메시를 Ragdoll 프로파일로
     USkeletalMeshComponent* MeshComp = GetMesh();
     MeshComp->SetCollisionProfileName(TEXT("Ragdoll"));
-
-    //물리 활성화
+    MeshComp->bPauseAnims = true;
     MeshComp->SetSimulatePhysics(true);
 
-    ////캡슐에서 분리 
     //MeshComp->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
 
     if (OnPlayerDied.IsBound())
