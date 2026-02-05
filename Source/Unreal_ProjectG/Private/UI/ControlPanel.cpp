@@ -5,6 +5,23 @@
 #include "Components/Image.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Character/HeroCharacter.h"
+#include "UI/BarWidget.h"
+
+void UControlPanel::InitBar(float MaxHP, float MaxCost)
+{
+    HPBar->InitProgressBar(FLinearColor::Red, FText(), MaxHP);
+    CostBar->InitProgressBar(FLinearColor::Blue, FText(), MaxCost);
+}
+
+void UControlPanel::UpdateHP(float InValue)
+{
+    HPBar->UpdateCurrent(InValue);
+}
+
+void UControlPanel::UpdateCost(float InValue)
+{
+    CostBar->UpdateCurrent(InValue);
+}
 
 void UControlPanel::NativeConstruct()
 {

@@ -7,6 +7,7 @@
 #include "ControlPanel.generated.h"
 
 class UImage;
+class UBarWidget;
 
 /**
  * 
@@ -20,20 +21,35 @@ public:
     // 외부(캐릭터)에서 조이스틱 값을 가져갈 함수
     FVector2D GetJoystickVector() const { return JoystickVector; }
 
+    void InitBar(float MaxHP, float MaxCost);
+
+    void UpdateHP(float InValue);
+    void UpdateCost(float InValue);
+
 protected:
     // 블루프린트 이벤트를 C++에서 오버라이드
     virtual void NativeConstruct() override;
+    // 마우스 버튼 클릭 시
     virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+    // 마우스 버튼 드래그 시
     virtual FReply NativeOnMouseMove(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+    // 마우스 버튼 클릭 해제 시
     virtual FReply NativeOnMouseButtonUp(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 
 
 protected:
+    // 조이스틱 레버
     UPROPERTY(meta = (BindWidget))
     TObjectPtr<UImage> JoyStick;
 
     UPROPERTY(meta = (BindWidget))
     TObjectPtr<UImage> JoyStickBackground;
+
+    UPROPERTY(meta = (BindWidget))
+    TObjectPtr<UBarWidget> HPBar;
+
+    UPROPERTY(meta = (BindWidget))
+    TObjectPtr<UBarWidget> CostBar;
 
     // 내부 변수
     bool bIsAreaPressed = false;

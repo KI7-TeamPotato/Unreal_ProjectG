@@ -99,8 +99,7 @@ void AHeroCharacter::Tick(float DeltaTime)
             AddMovementInput(ForwardDirection, -JoyInput.Y);
             AddMovementInput(RightDirection, JoyInput.X);
 
-            // 로그로 입력값 확인 (디버깅용)
-            UE_LOG(LogTemp, Log, TEXT("JoyInput: X=%.2f, Y=%.2f"), JoyInput.X, JoyInput.Y);
+            //UE_LOG(LogTemp, Log, TEXT("JoyInput: X=%.2f, Y=%.2f"), JoyInput.X, JoyInput.Y);
         }
     }
 }
