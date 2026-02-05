@@ -11,7 +11,7 @@ class APGWeaponBase;
 /**
  * 
  */
-UCLASS()
+UCLASS(Blueprintable, ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class UNREAL_PROJECTG_API UPawnCombatComponent : public UPawnExtensionComponentBase
 {
 	GENERATED_BODY()
@@ -28,4 +28,7 @@ public:
 protected:
     UPROPERTY(VisibleAnywhere, Category = "Equipment|Data")
     TWeakObjectPtr<APGWeaponBase> CurrentEquippedWeapon;
+
+    UPROPERTY(EditDefaultsOnly, Category = "Equipment|Data")
+    FName AttachmentSocketName = NAME_None;
 };

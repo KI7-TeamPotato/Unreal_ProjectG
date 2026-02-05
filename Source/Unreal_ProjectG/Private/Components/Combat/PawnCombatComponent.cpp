@@ -14,5 +14,20 @@ UPawnCombatComponent::UPawnCombatComponent()
 
 void UPawnCombatComponent::EquipWeapon(TSubclassOf<APGWeaponBase> NewWeapon)
 {
+    APGWeaponBase* SpawnedWeapon = nullptr;
+    ACharacter* OwningCharacter = Cast<ACharacter>(GetOwner());
+    if (OwningCharacter && AttachmentSocketName != NAME_None)
+    {
+        SpawnedWeapon = GetWorld()->SpawnActor<APGWeaponBase>(NewWeapon);
+        // 무기의 소유자 설정(특히, Instigator와 Owner 설정 필수)
+        SpawnedWeapon->SetOwningPawn(OwningCharacter);
+        SpawnedWeapon->SetInstigator(OwningCharacter);
+        SpawnedWeapon->SetOwner(OwningCharacter);
 
+        if (SpawnedWeapon)
+        {
+            SpawnedWeapon->AttachToComponent(OwningCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, AttachmentSocketName);
+            CurrentEquippedWeapon = SpawnedWeapon;
+        }
+    }
 }

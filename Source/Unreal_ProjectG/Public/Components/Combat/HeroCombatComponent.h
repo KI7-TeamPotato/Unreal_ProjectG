@@ -6,12 +6,17 @@
 #include "Components/Combat/PawnCombatComponent.h"
 #include "HeroCombatComponent.generated.h"
 
+
+class APGHeroWeapon;
 /**
  * 
  */
-UCLASS()
+UCLASS(Blueprintable, ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class UNREAL_PROJECTG_API UHeroCombatComponent : public UPawnCombatComponent
 {
 	GENERATED_BODY()
 	
+public:
+    UFUNCTION(BlueprintCallable, Category = "Combat")
+    APGHeroWeapon* GetHeroCurrentEquippedWeapon() const;
 };
