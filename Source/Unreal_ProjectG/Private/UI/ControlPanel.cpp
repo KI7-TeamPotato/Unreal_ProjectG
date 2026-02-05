@@ -4,6 +4,18 @@
 #include "UI/ControlPanel.h"
 #include "Components/Image.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
+#include "Character/HeroCharacter.h"
+
+void UControlPanel::NativeConstruct()
+{
+    Super::NativeConstruct();
+
+    AHeroCharacter* Hero = Cast<AHeroCharacter>(GetOwningPlayerPawn());
+    if (Hero)
+    {
+        Hero->SetJoystickWidget(this);
+    }
+}
 
 FReply UControlPanel::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {

@@ -25,6 +25,8 @@ public:
     UFUNCTION(BlueprintCallable, Category = "HeroCharacter")
     void OnDie();
 
+    void SetJoystickWidget(class UControlPanel* InWidget) { JoystickWidget = InWidget; }
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
@@ -67,6 +69,10 @@ protected:
     TObjectPtr<UAnimMontage> Attack_Bow = nullptr;
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation")
     TObjectPtr<UAnimMontage> Attack_Magic = nullptr;
+
+    // 조이스틱
+    UPROPERTY()
+    TObjectPtr<class UControlPanel> JoystickWidget = nullptr;
 
 private:
     //ABP

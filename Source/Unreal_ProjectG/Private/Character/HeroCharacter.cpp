@@ -8,6 +8,7 @@
 #include "EnhancedInputComponent.h"
 #include "Character/HeroResourceComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "UI/ControlPanel.h"
 
 
 // Sets default values
@@ -84,6 +85,24 @@ void AHeroCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+    // 조이스틱 위젯이 있고, 입력값이 있다면 이동 처리
+    if (JoystickWidget)
+    {
+        FVector2D JoyInput = JoystickWidget->GetJoystickVector();
+
+        if (!JoyInput.IsNearlyZero())
+        {
+            const FVector ForwardDirection = FVector::ForwardVector;
+            const FVector RightDirection = FVector::RightVector;
+
+            // 위젯 좌표계와 월드 좌표계 매칭 (상황에 따라 Y축 반전 필요할 수 있음)
+            AddMovementInput(ForwardDirection, -JoyInput.Y);
+            AddMovementInput(RightDirection, JoyInput.X);
+
+            // 로그로 입력값 확인 (디버깅용)
+            UE_LOG(LogTemp, Log, TEXT("JoyInput: X=%.2f, Y=%.2f"), JoyInput.X, JoyInput.Y);
+        }
+    }
 }
 
 // Called to bind functionality to input
