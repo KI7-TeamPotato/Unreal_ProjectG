@@ -3,8 +3,8 @@
 
 #include "AbilitySystem/Abilities/PGGameplayAbility.h"
 #include "AbilitySystem/PGAbilitySystemComponent.h"
-#include "Components/Equipment/EquipmentComponent.h"
 #include "AbilitySystemBlueprintLibrary.h"
+#include "Components/Combat/PawnCombatComponent.h"
 
 void UPGGameplayAbility::OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec)
 {
@@ -34,9 +34,9 @@ void UPGGameplayAbility::EndAbility(const FGameplayAbilitySpecHandle Handle, con
     }
 }
 
-UEquipmentComponent* UPGGameplayAbility::GetEquipmentComponent() const
+UPawnCombatComponent* UPGGameplayAbility::GetPawnCombatComponent() const
 {
-    return GetAvatarActorFromActorInfo()->FindComponentByClass<UEquipmentComponent>();
+    return GetAvatarActorFromActorInfo()->FindComponentByClass<UPawnCombatComponent>();
 }
 
 UPGAbilitySystemComponent* UPGGameplayAbility::GetPGAbilitySystemComponentFromActorInfo() const

@@ -6,19 +6,15 @@
 #include "Components/PawnExtensionComponentBase.h"
 #include "EquipmentComponent.generated.h"
 
-class APGWeaponBase;
 
 /**
  * 
  */
-UCLASS()
+UCLASS(meta = (BlueprintSpawnableComponent))
 class UNREAL_PROJECTG_API UEquipmentComponent : public UPawnExtensionComponentBase
 {
 	GENERATED_BODY()
 	
-public:
-    APGWeaponBase* GetCharacterCurrentEquippedWeapon() const { return CurrentEquippedWeapon.Get(); }
 
-protected:
-    TWeakObjectPtr<APGWeaponBase> CurrentEquippedWeapon;
+
 };

@@ -1,0 +1,69 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+
+#include "AbilitySystem/Abilities/Player/HeroAbility_BaseMeleeAttack.h"
+#include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
+#include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
+#include "PGGameplayTags.h"
+#include "GameplayCueFunctionLibrary.h"
+
+UHeroAbility_BaseMeleeAttack::UHeroAbility_BaseMeleeAttack()
+{
+    // 기본 설정
+    InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
+}
+
+void UHeroAbility_BaseMeleeAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
+{
+    checkf(!MeleeAttackMontages.IsEmpty(), TEXT("MeleeAttackMontages 배열이 비어있습니다!"));
+
+    // 애니메이션 몽타주 재생
+    UAnimMontage* SelectedMontage = MeleeAttackMontages[FMath::RandRange(0, MeleeAttackMontages.Num() - 1)];
+    UAbilityTask_PlayMontageAndWait* MeleeMontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, NAME_None, SelectedMontage);
+    
+    // 몽타주 완료 이벤트 바인딩
+    if (MeleeMontageTask)
+    {
+        MeleeMontageTask->OnCompleted.AddUniqueDynamic(this, &UHeroAbility_BaseMeleeAttack::OnMontageFinished);
+        MeleeMontageTask->OnInterrupted.AddUniqueDynamic(this, &UHeroAbility_BaseMeleeAttack::OnMontageFinished);
+        MeleeMontageTask->OnBlendOut.AddUniqueDynamic(this, &UHeroAbility_BaseMeleeAttack::OnMontageFinished);
+        MeleeMontageTask->OnCancelled.AddUniqueDynamic(this, &UHeroAbility_BaseMeleeAttack::OnMontageFinished);
+
+        MeleeMontageTask->ReadyForActivation();
+    }
+
+
+    // 게임플레이 이벤트 대기 태스크 생성
+    UAbilityTask_WaitGameplayEvent* MeleeHitEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, AttackEventTag);
+
+    // 이벤트 수신 핸들러 바인딩
+    MeleeHitEventTask->EventReceived.AddUniqueDynamic(this, &UHeroAbility_BaseMeleeAttack::HandleApplyDamage);
+    MeleeHitEventTask->ReadyForActivation();
+}
+
+void UHeroAbility_BaseMeleeAttack::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
+{
+    Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
+}
+
+// 상대방에게 콜리전이 오버랩될때, 이벤트 트리거에 의해 실행되는 데미지 적용 함수
+void UHeroAbility_BaseMeleeAttack::HandleApplyDamage(FGameplayEventData InEventData)
+{
+    //// 게임플레이 큐 실행
+    //UGameplayCueFunctionLibrary::ExecuteGameplayCueOnActor(GetAvatarActorFromActorInfo(), MeleeAttackCueTag, FGameplayCueParameters());
+
+    AActor* TargetActor = const_cast<AActor*>(InEventData.Target.Get());
+    UE_LOG(LogTemp, Warning, TEXT("Target Actor : %s"), *InEventData.Target->GetName());
+
+    //
+    //// TODO : 스킬의 데미지 Multiflier를 변수화
+    float SkillMultiplierValue = MeleeAttackSkillMultiplier.GetValueAtLevel(GetAbilityLevel());
+    FGameplayEffectSpecHandle EffectSpecHandle = MakeHeroDamageEffectSpecHandle(MeleeAttackDamageEffectClass, SkillMultiplierValue);
+    
+    NativeApplyEffectSpecHandleToTarget(TargetActor, EffectSpecHandle);
+}
+
+void UHeroAbility_BaseMeleeAttack::OnMontageFinished()
+{
+    EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, false, false);
+}

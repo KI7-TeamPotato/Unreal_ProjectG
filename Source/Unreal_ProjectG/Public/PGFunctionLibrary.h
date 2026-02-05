@@ -9,7 +9,7 @@
 #include "PGFunctionLibrary.generated.h"
 
 class UPGAbilitySystemComponent;
-class UEquipmentComponent;
+class UPawnCombatComponent;
 
 /**
  * 
@@ -28,9 +28,9 @@ public:
     //UFUNCTION(BlueprintCallable, Category = "ProjectG|FunctionLibrary")
     //static void BP_DoesActorHaveTag(AActor* InActor, FGameplayTag TagToCheck, )
 
-    static UEquipmentComponent* NativeGetEquipComponentFromActor(AActor* InActor);
+    static UPawnCombatComponent* NativeGetCombatComponentFromActor(AActor* InActor);
 
     UFUNCTION(BlueprintCallable, Category = "ProjectG|FunctionLibrary", meta = (DisplayName = "Get Current Weapon From Actor", ExpandEnumAsExecs = "OutValidType"))
-    static UEquipmentComponent* BP_GetEquipComponentFromActor(AActor* InActor, EPGValidType& OutValidType);
+    static UPawnCombatComponent* BP_GetCombatComponentFromActor(AActor* InActor, EPGValidType& OutValidType);
 
 };
