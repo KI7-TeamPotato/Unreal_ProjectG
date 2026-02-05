@@ -19,8 +19,8 @@ class UNREAL_PROJECTG_API UPGHeroGameplayAbility : public UPGGameplayAbility
 public:
     UPGHeroGameplayAbility();
 
-    //UFUNCTION(BlueprintPure, Category = "PG|Ability")
-    //AHeroCharacter* GetHeroCharacterFromActorInfo();
+    UFUNCTION(BlueprintPure, Category = "PG|Ability")
+    AHeroCharacter* GetHeroCharacterFromActorInfo();
 
     UFUNCTION(BlueprintPure, Category = "PG|Ability")
     AHeroController* GetHeroControllerFromActorInfo();
@@ -32,11 +32,9 @@ public:
     UFUNCTION(BlueprintPure, Category = "PG|Ability")
     FGameplayEffectSpecHandle MakeHeroDamageEffectSpecHandle(TSubclassOf<UGameplayEffect> EffectClass, float SkillMultiflier);
 
-    UFUNCTION(BlueprintPure, Category = "PG|Ability")
-    AHeroTestCharacter* GetHeroCharacterFromActorInfo();
 
 private:
     // TODO : 나중에 바꾸기
-    TWeakObjectPtr<AHeroTestCharacter> CachedHeroCharacter;
+    TWeakObjectPtr<AHeroCharacter> CachedHeroCharacter;
     TWeakObjectPtr<AHeroController> CachedHeroController;
 };

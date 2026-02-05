@@ -2,7 +2,7 @@
 
 
 #include "AbilitySystem/GEEC/GEExecCalc_DefaultDamageTaken.h"
-#include "Character/HeroResourceAttributeSet.h"
+#include "AbilitySystem/PGCharacterAttributeSet.h"
 #include "PGGameplayTags.h"
 
 struct FPGDamageCapture
@@ -14,8 +14,8 @@ struct FPGDamageCapture
     FPGDamageCapture()
     {
         // 어트리뷰트 캡처 설정
-        DEFINE_ATTRIBUTE_CAPTUREDEF(UHeroResourceAttributeSet, Health, Target, false);
-        DEFINE_ATTRIBUTE_CAPTUREDEF(UHeroResourceAttributeSet, AttackPower, Source, false);
+        DEFINE_ATTRIBUTE_CAPTUREDEF(UPGCharacterAttributeSet, Health, Target, false);
+        DEFINE_ATTRIBUTE_CAPTUREDEF(UPGCharacterAttributeSet, AttackPower, Source, false);
     }
 };
 

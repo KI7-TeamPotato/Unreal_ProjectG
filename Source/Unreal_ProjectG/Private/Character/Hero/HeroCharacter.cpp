@@ -1,14 +1,15 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Character/HeroCharacter.h"
+#include "Character/Hero/HeroCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "EnhancedInputComponent.h"
-#include "Character/HeroResourceComponent.h"
+#include "Components/Resource/HeroResourceComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "UI/ControlPanel.h"
+#include "Components/Combat/HeroCombatComponent.h"
 
 
 // Sets default values
@@ -31,6 +32,13 @@ AHeroCharacter::AHeroCharacter()
     CameraComponent->SetupAttachment(SpringArm);
 
     ResourceManager = CreateDefaultSubobject<UHeroResourceComponent>(TEXT("ResourceManager"));
+
+    HeroCombatComponent = CreateDefaultSubobject<UHeroCombatComponent>(TEXT("HeroCombatComponent"));
+}
+
+UPawnCombatComponent* AHeroCharacter::GetPawnCombatComponent() const
+{
+    return HeroCombatComponent;
 }
 
 void AHeroCharacter::SpawnCharacter()

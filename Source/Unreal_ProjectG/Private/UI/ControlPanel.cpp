@@ -4,7 +4,7 @@
 #include "UI/ControlPanel.h"
 #include "Components/Image.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
-#include "Character/HeroCharacter.h"
+#include "Character/Hero/HeroCharacter.h"
 #include "UI/BarWidget.h"
 
 void UControlPanel::InitBar(float MaxHP, float MaxCost)

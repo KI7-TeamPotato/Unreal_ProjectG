@@ -1,9 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Character/HeroResourceAttributeSet.h"
+#include "AbilitySystem/PGCharacterAttributeSet.h"
 #include "GameplayEffectExtension.h"
 
-UHeroResourceAttributeSet::UHeroResourceAttributeSet()
+UPGCharacterAttributeSet::UPGCharacterAttributeSet()
 {
     InitMaxHealth(100.0f);
     InitHealth(100.0f);
@@ -13,7 +13,7 @@ UHeroResourceAttributeSet::UHeroResourceAttributeSet()
     InitAttackSpeed(1.0f);
 }
 
-void UHeroResourceAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
+void UPGCharacterAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
 {
     Super::PreAttributeChange(Attribute, NewValue);
 
@@ -27,7 +27,7 @@ void UHeroResourceAttributeSet::PreAttributeChange(const FGameplayAttribute& Att
     }
 }
 
-void UHeroResourceAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
+void UPGCharacterAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
 {
     Super::PostGameplayEffectExecute(Data);
 

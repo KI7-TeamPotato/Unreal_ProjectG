@@ -3,38 +3,26 @@
 
 #include "AbilitySystem/Abilities/PGHeroGameplayAbility.h"
 #include "AbilitySystem/PGAbilitySystemComponent.h"
-#include "Character/HeroCharacter.h"
+#include "Character/Hero/HeroCharacter.h"
 #include "Character/HeroController.h"
 #include "PGGameplayTags.h"
 #include "Components/Combat/HeroCombatComponent.h"
-
-#include "Character/HeroTestCharacter.h"
 
 UPGHeroGameplayAbility::UPGHeroGameplayAbility()
 {
     InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
 }
 
-//AHeroCharacter* UPGHeroGameplayAbility::GetHeroCharacterFromActorInfo()
-//{
-//    if (!CachedHeroCharacter.IsValid())
-//    {
-//        CachedHeroCharacter = Cast<AHeroCharacter>(CurrentActorInfo->AvatarActor);
-//    }
-//
-//    return CachedHeroCharacter.IsValid() ? CachedHeroCharacter.Get() : nullptr;
-//}
-
-// TODO : 나중에 삭제
-AHeroTestCharacter* UPGHeroGameplayAbility::GetHeroCharacterFromActorInfo()
+AHeroCharacter* UPGHeroGameplayAbility::GetHeroCharacterFromActorInfo()
 {
     if (!CachedHeroCharacter.IsValid())
     {
-        CachedHeroCharacter = Cast<AHeroTestCharacter>(CurrentActorInfo->AvatarActor);
+        CachedHeroCharacter = Cast<AHeroCharacter>(CurrentActorInfo->AvatarActor);
     }
 
     return CachedHeroCharacter.IsValid() ? CachedHeroCharacter.Get() : nullptr;
 }
+
 
 AHeroController* UPGHeroGameplayAbility::GetHeroControllerFromActorInfo()
 {

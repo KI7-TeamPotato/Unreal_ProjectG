@@ -3,19 +3,23 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
+#include "Character/PGCharacterBase.h"
 #include "HeroCharacter.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPlayerDied);
 
+class UHeroCombatComponent;
+
 UCLASS()
-class UNREAL_PROJECTG_API AHeroCharacter : public ACharacter
+class UNREAL_PROJECTG_API AHeroCharacter : public APGCharacterBase
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this character's properties
 	AHeroCharacter();
+
+    virtual UPawnCombatComponent* GetPawnCombatComponent() const override;
 
     //캐릭터 스폰(시작 혹은 부활 시)
     UFUNCTION(BlueprintCallable, Category = "HeroCharacter")
@@ -26,6 +30,8 @@ public:
     void OnDie();
 
     void SetJoystickWidget(class UControlPanel* InWidget) { JoystickWidget = InWidget; }
+
+    FORCEINLINE UHeroCombatComponent* GetHeroCombatComponent() const { return HeroCombatComponent; }
 
 protected:
 	virtual void BeginPlay() override;
@@ -55,6 +61,9 @@ protected:
     //움직임 컴포넌트
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
     TObjectPtr<class UCharacterMovementComponent> MovementComponent = nullptr;
+    // 컴뱃 컴포넌트
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component", meta = (AllowPrivateAccess = "true"))
+    TObjectPtr<UHeroCombatComponent> HeroCombatComponent;
 
     //input action
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "InputAction")

@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Character/HeroResourceComponent.h"
+#include "Components/Resource/HeroResourceComponent.h"
 
 // Sets default values for this component's properties
 UHeroResourceComponent::UHeroResourceComponent()

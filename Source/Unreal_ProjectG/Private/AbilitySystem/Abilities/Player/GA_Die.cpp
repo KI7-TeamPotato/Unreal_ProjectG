@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "GameplayAbility/GA_Die.h"
+#include "AbilitySystem/Abilities/Player/GA_Die.h"
 #include "AbilitySystemComponent.h"
 
 

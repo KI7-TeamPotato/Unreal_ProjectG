@@ -2,7 +2,7 @@
 
 
 #include "AnimInstance/Hero/PGHeroAnimInstance.h"
-#include "Character/HeroTestCharacter.h"
+#include "Character/Hero/HeroCharacter.h"
 
 void UPGHeroAnimInstance::NativeInitializeAnimation()
 {
@@ -10,6 +10,6 @@ void UPGHeroAnimInstance::NativeInitializeAnimation()
 
     if (OwningCharacter.IsValid())
     {
-        OwningHeroCharacter = Cast<AHeroTestCharacter>(OwningCharacter.Get());
+        OwningHeroCharacter = Cast<AHeroCharacter>(OwningCharacter.Get());
     }
 }
