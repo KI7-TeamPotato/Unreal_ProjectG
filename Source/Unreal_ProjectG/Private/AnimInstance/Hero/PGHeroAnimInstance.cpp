@@ -2,4 +2,14 @@
 
 
 #include "AnimInstance/Hero/PGHeroAnimInstance.h"
+#include "Character/HeroTestCharacter.h"
 
+void UPGHeroAnimInstance::NativeInitializeAnimation()
+{
+    Super::NativeInitializeAnimation();
+
+    if (OwningCharacter.IsValid())
+    {
+        OwningHeroCharacter = Cast<AHeroTestCharacter>(OwningCharacter.Get());
+    }
+}

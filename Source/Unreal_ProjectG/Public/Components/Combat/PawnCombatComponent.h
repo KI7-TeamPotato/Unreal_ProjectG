@@ -19,16 +19,24 @@ class UNREAL_PROJECTG_API UPawnCombatComponent : public UPawnExtensionComponentB
 public:
     UPawnCombatComponent();
 
-    UFUNCTION(BlueprintCallable, Category = "Equipment")
+    UFUNCTION(BlueprintCallable, Category = "Combat")
     void EquipWeapon(TSubclassOf<APGWeaponBase> NewWeapon);
 
-    UFUNCTION(BlueprintCallable, Category = "Equipment")
+    UFUNCTION(BlueprintCallable, Category = "Combat")
     APGWeaponBase* GetCharacterCurrentEquippedWeapon() const { return CurrentEquippedWeapon.Get(); }
 
+    UFUNCTION(BlueprintCallable, Category = "Combat")
+    void SetWeaponEquipped(APGWeaponBase* InEquippedWeapon, bool bIsEquipped);
+
+public:
+    // 나중에 태그나 다른 타입도 고려
+    UPROPERTY(BlueprintReadWrite, Category = "Combat|Property")
+    bool bWeaponEquipped = false;
+
 protected:
-    UPROPERTY(VisibleAnywhere, Category = "Equipment|Data")
+    UPROPERTY(VisibleAnywhere, Category = "Combat|Data")
     TWeakObjectPtr<APGWeaponBase> CurrentEquippedWeapon;
 
-    UPROPERTY(EditDefaultsOnly, Category = "Equipment|Data")
+    UPROPERTY(EditDefaultsOnly, Category = "Combat|Data")
     FName AttachmentSocketName = NAME_None;
 };

@@ -2,12 +2,33 @@
 
 #pragma once
 
+#include "GameplayTagContainer.h"
 #include "PGStructTypes.generated.h"
 
 class UPGHeroGameplayAbility;
+class UPGHeroLinkedAnimLayer;
 /**
  * 
  */
+
+// 어빌리티 세트 구조체
+USTRUCT(BlueprintType)
+struct FWarriorHeroAbilitySet
+{
+    GENERATED_BODY()
+
+public:
+    //// 어빌리티에 매핑될 입력 태그 <= 이 태그로 어빌리티를 찾아서 매칭
+    //UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (Categories = "InputTag"))
+    //FGameplayTag InputTag;
+
+    // 영웅에서 부여될 어빌리티
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    TSubclassOf<UPGHeroGameplayAbility> AbilityToGrant;
+
+    // 유효성 검사 함수
+    bool IsValid() const;
+};
 
 // 무기 데이터 구조체
 USTRUCT(BlueprintType)
@@ -15,9 +36,13 @@ struct FPGHeroWeaponData
 {
     GENERATED_BODY()
 
+    // 무기 애니메이션 레이어
+    UPROPERTY(EditAnywhere, BlueprintReadOnly)
+    TSubclassOf<UPGHeroLinkedAnimLayer> WeaponAnimLayer;    
+    
     // 무기 기본 경격 어빌리티
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
-    TSubclassOf<UPGHeroGameplayAbility> DefaultAttackAbility;
+    TSubclassOf<UPGHeroGameplayAbility> BaseAttackAbility;
 
     // 무기 스킬 어빌리티들
     UPROPERTY(EditAnywhere, BlueprintReadOnly)

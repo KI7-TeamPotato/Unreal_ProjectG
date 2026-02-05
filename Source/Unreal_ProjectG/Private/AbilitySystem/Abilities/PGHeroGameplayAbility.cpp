@@ -6,6 +6,7 @@
 #include "Character/HeroCharacter.h"
 #include "Character/HeroController.h"
 #include "PGGameplayTags.h"
+#include "Components/Combat/HeroCombatComponent.h"
 
 #include "Character/HeroTestCharacter.h"
 
@@ -14,12 +15,23 @@ UPGHeroGameplayAbility::UPGHeroGameplayAbility()
     InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
 }
 
-AHeroCharacter* UPGHeroGameplayAbility::GetHeroCharacterFromActorInfo()
+//AHeroCharacter* UPGHeroGameplayAbility::GetHeroCharacterFromActorInfo()
+//{
+//    if (!CachedHeroCharacter.IsValid())
+//    {
+//        CachedHeroCharacter = Cast<AHeroCharacter>(CurrentActorInfo->AvatarActor);
+//    }
+//
+//    return CachedHeroCharacter.IsValid() ? CachedHeroCharacter.Get() : nullptr;
+//}
+
+AHeroTestCharacter* UPGHeroGameplayAbility::GetHeroCharacterFromActorInfo()
 {
     if (!CachedHeroCharacter.IsValid())
     {
-        CachedHeroCharacter = Cast<AHeroCharacter>(CurrentActorInfo->AvatarActor);
+        CachedHeroCharacter = Cast<AHeroTestCharacter>(CurrentActorInfo->AvatarActor);
     }
+
     return CachedHeroCharacter.IsValid() ? CachedHeroCharacter.Get() : nullptr;
 }
 
@@ -29,13 +41,12 @@ AHeroController* UPGHeroGameplayAbility::GetHeroControllerFromActorInfo()
     {
         CachedHeroController = Cast<AHeroController>(CurrentActorInfo->PlayerController);
     }
-    return CachedHeroCharacter.IsValid() ? CachedHeroController.Get() : nullptr;
+    return CachedHeroController.IsValid() ? CachedHeroController.Get() : nullptr;
 }
 
-UHeroCombatComponent* UPGHeroGameplayAbility::GetHeroCombatComponentFromActorInfo() const
+UHeroCombatComponent* UPGHeroGameplayAbility::GetHeroCombatComponentFromActorInfo()
 {
-    //return GetHeroCharacterFromActorInfo()->GetHeroCombatComponent();
-    return nullptr;
+    return GetHeroCharacterFromActorInfo()->GetHeroCombatComponent();
 }
 
 FGameplayEffectSpecHandle UPGHeroGameplayAbility::MakeHeroDamageEffectSpecHandle(TSubclassOf<UGameplayEffect> EffectClass, float SkillMultiflier)

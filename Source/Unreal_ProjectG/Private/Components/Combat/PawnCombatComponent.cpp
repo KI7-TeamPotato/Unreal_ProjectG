@@ -14,6 +14,9 @@ UPawnCombatComponent::UPawnCombatComponent()
 
 void UPawnCombatComponent::EquipWeapon(TSubclassOf<APGWeaponBase> NewWeapon)
 {
+    // ============================================
+    // 무기를 스폰하고 소켓에 부착하는 부분
+    // ============================================
     APGWeaponBase* SpawnedWeapon = nullptr;
     ACharacter* OwningCharacter = Cast<ACharacter>(GetOwner());
     if (OwningCharacter && AttachmentSocketName != NAME_None)
@@ -28,6 +31,18 @@ void UPawnCombatComponent::EquipWeapon(TSubclassOf<APGWeaponBase> NewWeapon)
         {
             SpawnedWeapon->AttachToComponent(OwningCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, AttachmentSocketName);
             CurrentEquippedWeapon = SpawnedWeapon;
+            bWeaponEquipped = true;
         }
     }
+
+    // ============================================
+    // 무기를 스폰하고 소켓에 부착하는 부분
+    // ============================================
+
+}
+
+void UPawnCombatComponent::SetWeaponEquipped(APGWeaponBase* InEquippedWeapon, bool bIsEquipped)
+{
+    CurrentEquippedWeapon = InEquippedWeapon;
+    bWeaponEquipped = bIsEquipped;
 }
