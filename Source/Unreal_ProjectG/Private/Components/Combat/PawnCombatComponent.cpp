@@ -3,42 +3,25 @@
 
 #include "Components/Combat/PawnCombatComponent.h"
 #include "Items/Weapons/PGWeaponBase.h"
-#include "Kismet/GameplayStatics.h"
-#include "GameFramework/Character.h"
 #include "Abilities/GameplayAbilityTypes.h"
+#include "Objects/EquipWeaponEventDataObject.h"
+#include "AbilitySystemBlueprintLibrary.h"
+#include "PGGameplayTags.h"
 
 UPawnCombatComponent::UPawnCombatComponent()
 {
     PrimaryComponentTick.bCanEverTick = false;
 }
 
-void UPawnCombatComponent::EquipWeapon(TSubclassOf<APGWeaponBase> NewWeapon)
+void UPawnCombatComponent::TryEquippedWeaponFromEvent(TSubclassOf<APGWeaponBase> NewWeapon)
 {
-    // ============================================
-    // 무기를 스폰하고 소켓에 부착하는 부분
-    // ============================================
-    APGWeaponBase* SpawnedWeapon = nullptr;
-    ACharacter* OwningCharacter = Cast<ACharacter>(GetOwner());
-    if (OwningCharacter && AttachmentSocketName != NAME_None)
-    {
-        SpawnedWeapon = GetWorld()->SpawnActor<APGWeaponBase>(NewWeapon);
-        // 무기의 소유자 설정(특히, Instigator와 Owner 설정 필수)
-        SpawnedWeapon->SetOwningPawn(OwningCharacter);
-        SpawnedWeapon->SetInstigator(OwningCharacter);
-        SpawnedWeapon->SetOwner(OwningCharacter);
+    // 클래스를 오브젝트에 담아서 SendGameplayEventToActor로 보내는 방식
+    UEquipWeaponEventDataObject* EquipWeaponDataObject = NewObject<UEquipWeaponEventDataObject>();
+    EquipWeaponDataObject->InitializeEquipWeaponEventData(NewWeapon);
 
-        if (SpawnedWeapon)
-        {
-            SpawnedWeapon->AttachToComponent(OwningCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, AttachmentSocketName);
-            CurrentEquippedWeapon = SpawnedWeapon;
-            bWeaponEquipped = true;
-        }
-    }
-
-    // ============================================
-    // 무기를 스폰하고 소켓에 부착하는 부분
-    // ============================================
-
+    FGameplayEventData EventData;
+    EventData.OptionalObject = EquipWeaponDataObject;
+    UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetOwner(), PGGameplayTags::Player_Event_WeaponEquipped, EventData);
 }
 
 void UPawnCombatComponent::SetWeaponEquipped(APGWeaponBase* InEquippedWeapon, bool bIsEquipped)

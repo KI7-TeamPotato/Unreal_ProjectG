@@ -25,6 +25,7 @@ UPGHeroGameplayAbility::UPGHeroGameplayAbility()
 //    return CachedHeroCharacter.IsValid() ? CachedHeroCharacter.Get() : nullptr;
 //}
 
+// TODO : 나중에 삭제
 AHeroTestCharacter* UPGHeroGameplayAbility::GetHeroCharacterFromActorInfo()
 {
     if (!CachedHeroCharacter.IsValid())

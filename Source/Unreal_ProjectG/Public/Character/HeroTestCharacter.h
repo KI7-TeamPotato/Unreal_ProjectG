@@ -34,6 +34,8 @@ public:
 protected:
     virtual void BeginPlay() override;
 
+    virtual void PossessedBy(AController* NewController) override;
+
 protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AbilitySystem")
     TObjectPtr<UPGAbilitySystemComponent> PGAbilitySystemComponent;

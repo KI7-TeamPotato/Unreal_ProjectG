@@ -20,7 +20,7 @@ public:
     UPawnCombatComponent();
 
     UFUNCTION(BlueprintCallable, Category = "Combat")
-    void EquipWeapon(TSubclassOf<APGWeaponBase> NewWeapon);
+    void TryEquippedWeaponFromEvent(TSubclassOf<APGWeaponBase> NewWeapon);
 
     UFUNCTION(BlueprintCallable, Category = "Combat")
     APGWeaponBase* GetCharacterCurrentEquippedWeapon() const { return CurrentEquippedWeapon.Get(); }

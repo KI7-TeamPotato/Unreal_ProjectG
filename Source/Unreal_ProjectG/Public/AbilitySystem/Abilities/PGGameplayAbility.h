@@ -8,7 +8,7 @@
 #include "PGGameplayAbility.generated.h"
 
 class UPGAbilitySystemComponent;
-class UEquipmentComponent;
+class UPawnCombatComponent;
 
 UENUM(BlueprintType)
 enum class EPGAbilityActivationPolicy : uint8
@@ -30,7 +30,7 @@ protected:
     virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 
     UFUNCTION(BlueprintPure, Category = "PGGameplayAbility")
-    UEquipmentComponent* GetEquipmentComponent() const;
+    UPawnCombatComponent* GetPawnCombatComponent() const;
 
     UFUNCTION(BlueprintPure, Category = "PGGameplayAbility")
     UPGAbilitySystemComponent* GetPGAbilitySystemComponentFromActorInfo() const;

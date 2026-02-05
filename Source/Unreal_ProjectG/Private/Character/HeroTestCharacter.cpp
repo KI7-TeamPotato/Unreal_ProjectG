@@ -27,3 +27,11 @@ void AHeroTestCharacter::BeginPlay()
 {
     Super::BeginPlay();
 }
+
+void AHeroTestCharacter::PossessedBy(AController* NewController)
+{
+    if(PGAbilitySystemComponent)
+    {
+        PGAbilitySystemComponent->InitAbilityActorInfo(this, this);
+    }
+}

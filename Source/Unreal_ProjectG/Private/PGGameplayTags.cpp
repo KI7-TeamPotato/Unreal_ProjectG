@@ -12,6 +12,9 @@ namespace PGGameplayTags
     // 플레이어 무기 게임 플레이 태그
     UE_DEFINE_GAMEPLAY_TAG(Player_Weapon_Sword, "Player.Weapon.Sword");
 
+    // 플레이어 이벤트 태그
+    UE_DEFINE_GAMEPLAY_TAG(Player_Event_WeaponEquipped, "Player.Event.WeaponEquipped");
+
     // 유닛 어빌리티 태그
     UE_DEFINE_GAMEPLAY_TAG(Unit_Ability_Type_BasicAttack_Melee, "Unit.Ability.Type.BasicAttack_Melee");
 

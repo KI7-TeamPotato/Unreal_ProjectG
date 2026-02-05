@@ -15,6 +15,9 @@ class UNREAL_PROJECTG_API APGHeroWeapon : public APGWeaponBase
 {
 	GENERATED_BODY()
 	
+public:
+    FORCEINLINE const FPGHeroWeaponData& GetHeroWeaponData() const { return HeroWeaponData; }
+
 protected:
     virtual void WeaponHitTargetHandler(AActor* HitActor) override;
     virtual void WeaponPulledFromTargetHandler(AActor* HitActor) override;

@@ -101,7 +101,7 @@ void AHeroCharacter::OnMovementInput(const FInputActionValue& InValue)
     {
         FVector2D InputDirection = InValue.Get<FVector2D>();
         FVector MoveDirection = FVector(InputDirection.X, InputDirection.Y, 0.0f);
-        UE_LOG(LogTemp, Log, TEXT("%.1f, %.1f, %.1f"), MoveDirection.X, MoveDirection.Y, MoveDirection.Z);
+        //UE_LOG(LogTemp, Log, TEXT("%.1f, %.1f, %.1f"), MoveDirection.X, MoveDirection.Y, MoveDirection.Z);
         AddMovementInput(MoveDirection);
     }
     else
