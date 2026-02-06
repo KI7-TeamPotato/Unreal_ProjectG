@@ -21,11 +21,21 @@ void UPawnCombatComponent::TryEquippedWeaponFromEvent(TSubclassOf<APGWeaponBase>
 
     FGameplayEventData EventData;
     EventData.OptionalObject = EquipWeaponDataObject;
-    UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetOwner(), PGGameplayTags::Player_Event_WeaponEquipped, EventData);
+    UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetOwner(), PGGameplayTags::Shared_Event_WeaponSpawn, EventData);
 }
 
-void UPawnCombatComponent::SetWeaponEquipped(APGWeaponBase* InEquippedWeapon, bool bIsEquipped)
+void UPawnCombatComponent::InitializePawnEquippedState(APGWeaponBase* InEquippedWeapon, bool bIsEquipped)
 {
     CurrentEquippedWeapon = InEquippedWeapon;
     bWeaponEquipped = bIsEquipped;
+}
+
+void UPawnCombatComponent::AssignSillAbilitySpecHandle(const TArray<FGameplayAbilitySpecHandle>& InHandle)
+{
+        GrantedSkillAbilitySpecHandles = InHandle;
+}
+
+void UPawnCombatComponent::AssignBaseAttackAbilitySpecHandle(const FGameplayAbilitySpecHandle& InHandle)
+{
+        GrantedBaseAttackAbilitySpecHandle = InHandle;
 }

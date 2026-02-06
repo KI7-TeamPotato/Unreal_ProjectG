@@ -6,7 +6,7 @@
 #include "AbilitySystem/Abilities/PGHeroGameplayAbility.h"
 #include "HeroAbility_EquipWeapon.generated.h"
 
-class APGWeaponBase;
+class APGHeroWeapon;
 /**
  *  이벤트 데이터를 통해 무기 클래스가 담긴 오브젝트를 받아 장비하는 능력
  */
@@ -21,11 +21,10 @@ public:
     virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
 private:
-    void SpawnAndEquipWeapon( TSubclassOf<APGWeaponBase> InEquipTryHeroWeaponClass, APGWeaponBase*& OutEquippedHeroWeapon);
+    void LinkedAnimLayerSetup();
 
-    void LinkedAnimLayerSetup(APGWeaponBase* InEquippedHeroWeapon);
+    void GrantWeaponAbilitiesToHero();
 
 protected:
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability|EquipWeapon")
-    FName EquipWeaponAttachmentSocketName = FName("WeaponSocket");
+    TObjectPtr<APGHeroWeapon> CachedEquippedWeapon;
 };

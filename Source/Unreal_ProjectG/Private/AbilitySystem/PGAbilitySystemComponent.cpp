@@ -6,7 +6,7 @@
 
 void UPGAbilitySystemComponent::GrantHeroWeaponBasicAttackAbility(TSubclassOf<UPGHeroGameplayAbility> InBasicAttackAbility, int32 ApplyLevel, FGameplayAbilitySpecHandle& OutBasicAttackAbilitySpecHandle)
 {
-    if (InBasicAttackAbility) return;
+    if (!InBasicAttackAbility) return;
 
     FGameplayAbilitySpec AbilitySpec(InBasicAttackAbility);
     

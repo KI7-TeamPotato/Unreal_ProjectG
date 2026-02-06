@@ -2,10 +2,10 @@
 
 
 #include "AbilitySystem/Abilities/Player/HeroAbility_EquipWeapon.h"
-#include "Objects/EquipWeaponEventDataObject.h"
+#include "AbilitySystem/PGAbilitySystemComponent.h"
 #include "Items/Weapons/PGHeroWeapon.h"
-#include "Components/Combat/PawnCombatComponent.h"
 #include "AnimInstance/Hero/PGHeroLinkedAnimLayer.h"
+#include "Components/Combat/HeroCombatComponent.h"
 
 UHeroAbility_EquipWeapon::UHeroAbility_EquipWeapon()
 {
@@ -17,49 +17,53 @@ void UHeroAbility_EquipWeapon::ActivateAbility(const FGameplayAbilitySpecHandle 
 {
     Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-    // 트리거를 통해 전달된 이벤트 데이터에서 무기 클래스가 담긴 오브젝트를 추출
-    if (TriggerEventData && TriggerEventData->OptionalObject)
-    {
-        const UEquipWeaponEventDataObject* EquipWeaponDataObject = Cast<UEquipWeaponEventDataObject>(TriggerEventData->OptionalObject);
-      
-        // 1. 무기를 스폰하고 장비
-        APGWeaponBase* SpawnedHeroWeapon;
-        SpawnAndEquipWeapon(EquipWeaponDataObject->GetEquippedWeaponClass(), SpawnedHeroWeapon);
+    CachedEquippedWeapon = GetHeroCombatComponentFromActorInfo()->GetHeroCurrentEquippedWeapon();
 
+    if (CachedEquippedWeapon)
+    {
         // 2. 애니메이션 레이어 설정
-        if (SpawnedHeroWeapon)
-        {
-            LinkedAnimLayerSetup(SpawnedHeroWeapon);
-        }
+        LinkedAnimLayerSetup();
+
+        // 3. 무기 어빌리티 부여
+        GrantWeaponAbilitiesToHero();
     }
 }
 
-void UHeroAbility_EquipWeapon::SpawnAndEquipWeapon(TSubclassOf<APGWeaponBase> InEquipTryHeroWeaponClass, APGWeaponBase*& OutEquippedHeroWeapon)
-{
-    // 스폰 인스티게이터 및 오너 설정 필수
-    FActorSpawnParameters SpawnParams;
-    SpawnParams.Instigator = Cast<APawn>(GetAvatarActorFromActorInfo());
-    SpawnParams.Owner = GetAvatarActorFromActorInfo();
-    OutEquippedHeroWeapon = GetWorld()->SpawnActor<APGWeaponBase>(InEquipTryHeroWeaponClass, SpawnParams);
-
-    OutEquippedHeroWeapon->AttachToComponent(
-        CurrentActorInfo->SkeletalMeshComponent.Get(),
-        FAttachmentTransformRules::SnapToTargetNotIncludingScale,
-        EquipWeaponAttachmentSocketName
-        );
-
-    // 폰 Combat 컴포넌트의 무기 장비 상태 업데이트
-    GetPawnCombatComponent()->SetWeaponEquipped(OutEquippedHeroWeapon, true);
-}
-
-void UHeroAbility_EquipWeapon::LinkedAnimLayerSetup(APGWeaponBase* InEquippedHeroWeapon)
+void UHeroAbility_EquipWeapon::LinkedAnimLayerSetup()
 {
     // 이 어빌리티를 실행한 액터에 무기의 애니메이션 레이어를 연결
-    APGHeroWeapon* HeroWeapon = Cast<APGHeroWeapon>(InEquippedHeroWeapon);
+    APGHeroWeapon* HeroWeapon = Cast<APGHeroWeapon>(CachedEquippedWeapon);
 
     if (HeroWeapon)
     {
         USkeletalMeshComponent* SkeletalMeshComp = CurrentActorInfo->SkeletalMeshComponent.Get();
         SkeletalMeshComp->LinkAnimClassLayers(HeroWeapon->GetHeroWeaponData().WeaponAnimLayer);
     }
+}
+
+void UHeroAbility_EquipWeapon::GrantWeaponAbilitiesToHero()
+{
+    UPGAbilitySystemComponent* ASC = GetPGAbilitySystemComponentFromActorInfo();
+
+    FGameplayAbilitySpecHandle BasicAttackAbilitySpecHandle;
+    TArray<FGameplayAbilitySpecHandle> SkillAbilitySpecHandles;
+
+    // 기본 공격 어빌리티를 영웅에게 부여하고 핸들 저장
+    ASC->GrantHeroWeaponBasicAttackAbility(
+        CachedEquippedWeapon->GetHeroWeaponData().BaseAttackAbility,
+        GetAbilityLevel(),
+        BasicAttackAbilitySpecHandle
+    );
+
+    // 무기의 어빌리티들을 영웅에게 부여
+    ASC->GrantHeroWeaponSkillAbilities(
+        CachedEquippedWeapon->GetHeroWeaponData().WeaponSkillAbilities,
+        GetAbilityLevel(),
+        SkillAbilitySpecHandles
+    );
+
+    // 부여한 어빌리티 핸들을 컴뱃 컴포넌트에 할당
+    UHeroCombatComponent* HeroCombatComp = GetHeroCombatComponentFromActorInfo();
+    HeroCombatComp->AssignBaseAttackAbilitySpecHandle(BasicAttackAbilitySpecHandle);
+    HeroCombatComp->AssignSillAbilitySpecHandle(SkillAbilitySpecHandles);
 }

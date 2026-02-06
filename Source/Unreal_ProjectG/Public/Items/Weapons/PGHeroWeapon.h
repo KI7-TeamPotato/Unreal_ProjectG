@@ -21,7 +21,7 @@ public:
 protected:
     virtual void WeaponHitTargetHandler(AActor* HitActor) override;
     virtual void WeaponPulledFromTargetHandler(AActor* HitActor) override;
-
+    
 protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Data")
     FPGHeroWeaponData HeroWeaponData;
