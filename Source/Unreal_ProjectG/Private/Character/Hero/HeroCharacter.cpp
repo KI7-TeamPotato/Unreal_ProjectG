@@ -10,7 +10,8 @@
 #include "Components/CapsuleComponent.h"
 #include "UI/ControlPanel.h"
 #include "Components/Combat/HeroCombatComponent.h"
-
+#include "AbilitySystemComponent.h"
+#include "AbilitySystem/PGCharacterAttributeSet.h"
 
 // Sets default values
 AHeroCharacter::AHeroCharacter()
@@ -31,7 +32,9 @@ AHeroCharacter::AHeroCharacter()
     CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
     CameraComponent->SetupAttachment(SpringArm);
 
-    ResourceManager = CreateDefaultSubobject<UHeroResourceComponent>(TEXT("ResourceManager"));
+    AbilitySystemComponent = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
+
+    ResourceAttribute = CreateDefaultSubobject<UPGCharacterAttributeSet>(TEXT("ResourceAttribute"));
 
     HeroCombatComponent = CreateDefaultSubobject<UHeroCombatComponent>(TEXT("HeroCombatComponent"));
 }
@@ -86,6 +89,11 @@ void AHeroCharacter::BeginPlay()
 
     //ABP 가져오기
     AnimInstance = GetMesh()->GetAnimInstance();
+
+    if (AbilitySystemComponent)
+    {
+        AbilitySystemComponent->InitAbilityActorInfo(this, this);
+    }
 }
 
 // Called every frame

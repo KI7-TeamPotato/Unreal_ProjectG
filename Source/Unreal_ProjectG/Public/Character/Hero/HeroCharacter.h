@@ -64,6 +64,9 @@ protected:
     // 컴뱃 컴포넌트
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component", meta = (AllowPrivateAccess = "true"))
     TObjectPtr<UHeroCombatComponent> HeroCombatComponent;
+    //어빌리티
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Ability")
+    TObjectPtr<class UAbilitySystemComponent> AbilitySystemComponent = nullptr;
 
     //input action
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "InputAction")
@@ -83,12 +86,12 @@ protected:
     UPROPERTY()
     TObjectPtr<class UControlPanel> JoystickWidget = nullptr;
 
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+    TObjectPtr<class UPGCharacterAttributeSet> ResourceAttribute = nullptr;
 private:
     //ABP
     UPROPERTY()
     TObjectPtr<class UAnimInstance> AnimInstance = nullptr;
 
     //리소스 컴포넌트
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
-    TObjectPtr<class UHeroResourceComponent> ResourceManager = nullptr;
 };
