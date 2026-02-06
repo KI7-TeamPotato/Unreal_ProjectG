@@ -41,6 +41,7 @@ void APGWeaponBase::OnCollisionBoxBeginOverlap(UPrimitiveComponent* OverlappedCo
         // TODO: 아군인지 적군인지 확인하는 로직 추가 필요
         if (OtherActor != WeaponOwningPawn)
         {
+            // 다향성 위해 가상 함수로 분리
             WeaponHitTargetHandler(OtherActor);
 
         }

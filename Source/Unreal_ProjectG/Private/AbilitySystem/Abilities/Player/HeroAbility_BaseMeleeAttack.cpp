@@ -46,6 +46,8 @@ void UHeroAbility_BaseMeleeAttack::EndAbility(const FGameplayAbilitySpecHandle H
     Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
 
+
+
 // 상대방에게 콜리전이 오버랩될때, 이벤트 트리거에 의해 실행되는 데미지 적용 함수
 void UHeroAbility_BaseMeleeAttack::HandleApplyDamage(FGameplayEventData InEventData)
 {
@@ -55,7 +57,6 @@ void UHeroAbility_BaseMeleeAttack::HandleApplyDamage(FGameplayEventData InEventD
     AActor* TargetActor = const_cast<AActor*>(InEventData.Target.Get());
     UE_LOG(LogTemp, Warning, TEXT("Target Actor : %s"), *InEventData.Target->GetName());
 
-    //
     //// TODO : 스킬의 데미지 Multiflier를 변수화
     float SkillMultiplierValue = MeleeAttackSkillMultiplier.GetValueAtLevel(GetAbilityLevel());
     FGameplayEffectSpecHandle EffectSpecHandle = MakeHeroDamageEffectSpecHandle(MeleeAttackDamageEffectClass, SkillMultiplierValue);
