@@ -53,16 +53,16 @@ void AHeroCharacter::SpawnCharacter()
     MeshComp->SetRelativeRotation(FRotator(0.f, -90.f, 0.f));
 
     GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-    GetCharacterMovement()->SetComponentTickEnabled(true);
-    GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
-    GetCharacterMovement()->Activate();
+    MovementComponent->SetComponentTickEnabled(true);
+    MovementComponent->SetMovementMode(EMovementMode::MOVE_Walking);
+    MovementComponent->Activate();
 }
 
 void AHeroCharacter::OnDie()
 {
-    GetCharacterMovement()->DisableMovement();
-    GetCharacterMovement()->StopMovementImmediately();
-    GetCharacterMovement()->SetComponentTickEnabled(false);
+    MovementComponent->DisableMovement();
+    MovementComponent->StopMovementImmediately();
+    MovementComponent->SetComponentTickEnabled(false);
 
     GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
