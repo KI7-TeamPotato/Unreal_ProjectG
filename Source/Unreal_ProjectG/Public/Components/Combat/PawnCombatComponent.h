@@ -21,7 +21,7 @@ public:
     UPawnCombatComponent();
 
     UFUNCTION(BlueprintCallable, Category = "Combat")
-    void TryEquippedWeaponFromEvent(TSubclassOf<APGWeaponBase> NewWeapon);
+    void TrySpawnWeaponFromEvent(TSubclassOf<APGWeaponBase> NewWeapon);
 
     UFUNCTION(BlueprintCallable, Category = "Combat")
     APGWeaponBase* GetCharacterCurrentEquippedWeapon() const { return CurrentEquippedWeapon.Get(); }

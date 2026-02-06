@@ -7,6 +7,8 @@
 #include "DataAsset_StartupDataBase.generated.h"
 
 class UGameplayEffect;
+class UPGGameplayAbility;
+class UPGAbilitySystemComponent;
 /**
  * 
  */
@@ -15,7 +17,21 @@ class UNREAL_PROJECTG_API UDataAsset_StartupDataBase : public UPrimaryDataAsset
 {
 	GENERATED_BODY()
 	
+public:
+    UFUNCTION(BlueprintCallable, Category = "StartupData")
+    virtual void GiveToAbilitySystemComponent(UPGAbilitySystemComponent* InASCToGive, int32 InLevel = 1 );
+
 protected:
+    void GrantAbilities(const TArray<TSubclassOf<UPGGameplayAbility>>& InAbilitiesToGive, UPGAbilitySystemComponent* InASCToGive, int32 ApplyLevel = 1);
+
+protected:
+    // 게임 시작시 캐릭터에서 자동으로 실행할 어빌리티들
+    UPROPERTY(EditDefaultsOnly, Category = "StartupData")
+    TArray<TSubclassOf<UPGGameplayAbility>> ActivateOnGivenAbilities;
+
+    UPROPERTY(EditDefaultsOnly, Category = "StartupData")
+    TArray<TSubclassOf<UPGGameplayAbility>> ReactedAbilities;
+
     // 게임 시작 시 캐릭터에 적용할 게임 플레이 이펙트들(스탯 초기화 등)
     UPROPERTY(EditDefaultsOnly, Category = "StartupData")
     TArray<TSubclassOf<UGameplayEffect>> StartUpGameplayEffects;

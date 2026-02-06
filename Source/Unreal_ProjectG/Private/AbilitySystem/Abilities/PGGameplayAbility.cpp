@@ -11,7 +11,7 @@ void UPGGameplayAbility::OnGiveAbility(const FGameplayAbilityActorInfo* ActorInf
     Super::OnGiveAbility(ActorInfo, Spec);
 
     // 발동 정책에 따라 Passive 능력 자동 활성화
-    if(AbilityActivationPolicy == EPGAbilityActivationPolicy::Passive)
+    if(AbilityActivationPolicy == EPGAbilityActivationPolicy::OnGiven)
     {
         if (ActorInfo && !Spec.IsActive())
         {
@@ -25,7 +25,7 @@ void UPGGameplayAbility::EndAbility(const FGameplayAbilitySpecHandle Handle, con
     Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 
     // 발동 정책에 따라 Passive 능력 자동 정리
-    if (AbilityActivationPolicy == EPGAbilityActivationPolicy::Passive)
+    if (AbilityActivationPolicy == EPGAbilityActivationPolicy::OnGiven)
     {
         if (ActorInfo)
         {

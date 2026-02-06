@@ -13,7 +13,7 @@ UPawnCombatComponent::UPawnCombatComponent()
     PrimaryComponentTick.bCanEverTick = false;
 }
 
-void UPawnCombatComponent::TryEquippedWeaponFromEvent(TSubclassOf<APGWeaponBase> NewWeapon)
+void UPawnCombatComponent::TrySpawnWeaponFromEvent(TSubclassOf<APGWeaponBase> NewWeapon)
 {
     // 클래스를 오브젝트에 담아서 SendGameplayEventToActor로 보내는 방식
     UEquipWeaponEventDataObject* EquipWeaponDataObject = NewObject<UEquipWeaponEventDataObject>();

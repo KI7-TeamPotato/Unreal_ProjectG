@@ -10,7 +10,7 @@
 #include "Components/CapsuleComponent.h"
 #include "UI/ControlPanel.h"
 #include "Components/Combat/HeroCombatComponent.h"
-
+#include "DataAssets/StartUp/DataAsset_HeroStartupData.h"
 
 // Sets default values
 AHeroCharacter::AHeroCharacter()
@@ -86,6 +86,14 @@ void AHeroCharacter::BeginPlay()
 
     //ABP 가져오기
     AnimInstance = GetMesh()->GetAnimInstance();
+
+    if (!CharacterStartupData.IsNull())
+    {
+        if(UDataAsset_StartupDataBase* LoadData = CharacterStartupData.LoadSynchronous())
+        {
+            LoadData->GiveToAbilitySystemComponent(PGAbilitySystemComponent);
+        }
+    }
 }
 
 // Called every frame

@@ -13,8 +13,8 @@ class UPawnCombatComponent;
 UENUM(BlueprintType)
 enum class EPGAbilityActivationPolicy : uint8
 {
-    Passive    UMETA(DisplayName = "Passive"),     // Give 즉시 활성화 
-    OnTriggerd UMETA(DisplayName = "OnTriggered"), // 특정 트리거에 의해 활성화
+    OnGiven    UMETA(DisplayName = "OnGiven"),       // Give 즉시 활성화 
+    OnTriggered UMETA(DisplayName = "OnTriggered"),  // 특정 트리거에 의해 활성화
 };
 
 /**
@@ -43,5 +43,5 @@ protected:
 
 protected:
     UPROPERTY(EditDefaultsOnly, Category = "PGGameplayAbility")
-    EPGAbilityActivationPolicy AbilityActivationPolicy = EPGAbilityActivationPolicy::OnTriggerd;
+    EPGAbilityActivationPolicy AbilityActivationPolicy = EPGAbilityActivationPolicy::OnTriggered;
 };
