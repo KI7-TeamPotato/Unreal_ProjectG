@@ -39,9 +39,6 @@ protected:
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ability|Melee Attack")
     FGameplayTag MeleeAttackCueTag;
-    
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ability|Melee Attack")
-    FGameplayTag AttackEventTag;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability|Melee Attack")
     FScalableFloat MeleeAttackSkillMultiplier;

@@ -19,22 +19,22 @@ void UUnitAbility_BaseMeleeAttack::ActivateAbility(const FGameplayAbilitySpecHan
     // 전방에 박스 트레이스를 발사하여 가장 가까운 타겟 액터를 찾음
     FVector StartLocation = GetAvatarActorFromActorInfo()->GetActorLocation();
     FVector EndLocation = StartLocation + GetAvatarActorFromActorInfo()->GetActorForwardVector() * 200.0f;
-    
     FHitResult HitResult;
     
-
     // 가장 가까운 폰 액터 찾기
-    UKismetSystemLibrary::SphereTraceSingle(
-        this,
-        StartLocation,
-        EndLocation,
-        100.0f,
-        UEngineTypes::ConvertToTraceType(ECC_Pawn),
-        false,
-        TArray<AActor*>(),
-
-        
-
+    UKismetSystemLibrary::SphereTraceSingle(this, StartLocation, EndLocation, 100.0f, UEngineTypes::ConvertToTraceType(ECC_Pawn), false, TArray<AActor*>(), EDrawDebugTrace::None, HitResult, true);
+    
+    if (HitResult.GetActor())
+    {
+        // 타겟 액터 캐싱
+        CachedTargetActor = HitResult.GetActor();
+    }
+    else
+    {
+        // 타겟이 없으면 능력 종료
+        EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
+        return;
+    }
 
     // 애니메이션 몽타주 재생
     UAnimMontage* SelectedMontage = MeleeAttackMontages[FMath::RandRange(0, MeleeAttackMontages.Num() - 1)];
@@ -52,7 +52,7 @@ void UUnitAbility_BaseMeleeAttack::ActivateAbility(const FGameplayAbilitySpecHan
     }
 
     // 게임플레이 이벤트 대기 태스크 생성
-    UAbilityTask_WaitGameplayEvent* MeleeHitEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, AttackEventTag);
+    UAbilityTask_WaitGameplayEvent* MeleeHitEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, PGGameplayTags::Shared_Event_MeleeHit);
 
     // 이벤트 수신 핸들러 바인딩
     MeleeHitEventTask->EventReceived.AddUniqueDynamic(this, &UUnitAbility_BaseMeleeAttack::HandleApplyDamage);
@@ -66,7 +66,16 @@ void UUnitAbility_BaseMeleeAttack::EndAbility(const FGameplayAbilitySpecHandle H
 
 void UUnitAbility_BaseMeleeAttack::HandleApplyDamage(FGameplayEventData InEventData)
 {
+    //// 게임플레이 큐 실행
+//UGameplayCueFunctionLibrary::ExecuteGameplayCueOnActor(GetAvatarActorFromActorInfo(), MeleeAttackCueTag, FGameplayCueParameters());
+    AActor* TargetActor = CachedTargetActor.Get();
+    UE_LOG(LogTemp, Warning, TEXT("Target Actor : %s"), *InEventData.Target->GetName());
 
+    //// TODO : 스킬의 데미지 Multiflier를 변수화
+    float SkillMultiplierValue = MeleeAttackSkillMultiplier.GetValueAtLevel(GetAbilityLevel());
+    FGameplayEffectSpecHandle EffectSpecHandle = MakeOutgoingEffectSpecToTarget(MeleeAttackDamageEffectClass, SkillMultiplierValue);
+
+    NativeApplyEffectSpecHandleToTarget(TargetActor, EffectSpecHandle);
 }
 
 void UUnitAbility_BaseMeleeAttack::OnMontageFinished()
