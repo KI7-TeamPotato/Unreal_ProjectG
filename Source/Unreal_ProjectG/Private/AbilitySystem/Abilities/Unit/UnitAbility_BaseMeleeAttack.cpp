@@ -17,7 +17,24 @@ void UUnitAbility_BaseMeleeAttack::ActivateAbility(const FGameplayAbilitySpecHan
     checkf(!MeleeAttackMontages.IsEmpty(), TEXT("MeleeAttackMontages 배열이 비어있습니다!"));
 
     // 전방에 박스 트레이스를 발사하여 가장 가까운 타겟 액터를 찾음
-    //UKismetSystemLibrary::SphereTraceSingle();
+    FVector StartLocation = GetAvatarActorFromActorInfo()->GetActorLocation();
+    FVector EndLocation = StartLocation + GetAvatarActorFromActorInfo()->GetActorForwardVector() * 200.0f;
+    
+    FHitResult HitResult;
+    
+
+    // 가장 가까운 폰 액터 찾기
+    UKismetSystemLibrary::SphereTraceSingle(
+        this,
+        StartLocation,
+        EndLocation,
+        100.0f,
+        UEngineTypes::ConvertToTraceType(ECC_Pawn),
+        false,
+        TArray<AActor*>(),
+
+        
+
 
     // 애니메이션 몽타주 재생
     UAnimMontage* SelectedMontage = MeleeAttackMontages[FMath::RandRange(0, MeleeAttackMontages.Num() - 1)];

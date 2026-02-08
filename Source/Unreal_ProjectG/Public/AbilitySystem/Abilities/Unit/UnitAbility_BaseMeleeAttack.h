@@ -43,6 +43,9 @@ protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability|Melee Attack")
     FScalableFloat MeleeAttackSkillMultiplier;
 
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability|Melee Attack")
+    float MeleeAttackRange = 200.f;
+
 private:
     TWeakObjectPtr<AActor> CachedTargetActor;
 };
