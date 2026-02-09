@@ -3,6 +3,7 @@
 
 #include "Character/Hero/HeroTestCharacter.h"
 #include "DataAssets/Items/DataAsset_WeaponData.h"
+#include "DataAssets/Items/DataAsset_ArmorData.h"
 #include "AnimInstance/Hero/PGHeroLinkedAnimLayer.h"
 #include "AbilitySystem/PGAbilitySystemComponent.h"
 #include "Components/Combat/HeroCombatComponent.h"
@@ -30,6 +31,19 @@ void AHeroTestCharacter::SetupEquipmentToPawn()
                 if (UDataAsset_WeaponData* LoadedData = WeaponDataAsset.Get())
                 {
                     SetupWeaponToPawn();
+                }
+            }
+        )
+    );
+
+    UAssetManager::GetStreamableManager().RequestAsyncLoad(
+        ArmorDataAsset.ToSoftObjectPath(),
+        FStreamableDelegate::CreateLambda(
+            [this]()
+            {
+                if (UDataAsset_ArmorData* LoadedData = ArmorDataAsset.Get())
+                {
+                    SetupArmorToPawn();
                 }
             }
         )
@@ -78,4 +92,9 @@ void AHeroTestCharacter::SetupWeaponToPawn()
             }
         )
     );
+}
+
+void AHeroTestCharacter::SetupArmorToPawn()
+{
+    ArmorDataAsset.Get()->MakeOutgoingArmorEffectSpecHandle(PGAbilitySystemComponent, TestAbilityLevel);
 }

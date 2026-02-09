@@ -56,3 +56,12 @@ struct FPGHeroWeaponData
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     TSoftObjectPtr<UTexture2D> SoftWeaponIconTexture;
 };
+
+//// 방어구 데이터 구조체
+//USTRUCT(BlueprintType)
+//struct FPGHeroArmorData
+//{
+//    GENERATED_BODY()
+//
+//    FScalableFloat
+//};
