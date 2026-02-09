@@ -34,6 +34,8 @@ void UPGCharacterAttributeSet::PostGameplayEffectExecute(const FGameplayEffectMo
 
     if (Data.EvaluatedData.Attribute == GetHealthAttribute())
     {
+        SetHealth(FMath::Clamp(GetHealth(), 0.0f, GetMaxHealth()));
+
         UE_LOG(LogTemp, Log, TEXT("Health : %f"), GetHealth());
 
         if (FMath::IsNearlyZero(GetHealth()))
@@ -49,6 +51,8 @@ void UPGCharacterAttributeSet::PostGameplayEffectExecute(const FGameplayEffectMo
 
     if (Data.EvaluatedData.Attribute == GetCostAttribute())
     {
+        SetCost(FMath::Clamp(GetCost(), 0.0f, GetMaxCost()));
+
         UE_LOG(LogTemp, Log, TEXT("Cost : %f"), GetCost());
     }
 }
