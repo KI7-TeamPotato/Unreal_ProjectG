@@ -23,7 +23,7 @@ public:
 
     //캐릭터 스폰(시작 혹은 부활 시)
     UFUNCTION(BlueprintCallable, Category = "HeroCharacter")
-    void SpawnCharacter();
+    void SpawnHero();
 
     //캐릭터 사망
     UFUNCTION(BlueprintCallable, Category = "HeroCharacter")
