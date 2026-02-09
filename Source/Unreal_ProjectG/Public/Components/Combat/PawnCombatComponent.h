@@ -39,6 +39,9 @@ public:
 
     UFUNCTION(BlueprintCallable, Category = "Combat")
     const FGameplayAbilitySpecHandle& GetBaseAttackAbilitySpecHandle() const { return GrantedBaseAttackAbilitySpecHandle; }
+    
+    UFUNCTION(BlueprintCallable, Category = "Combat")
+    TArray<FGameplayAbilitySpecHandle> GetSkillAbilitySpecHandles() const { return GrantedSkillAbilitySpecHandles; }
 
 public:
     // 나중에 태그나 다른 타입도 고려
