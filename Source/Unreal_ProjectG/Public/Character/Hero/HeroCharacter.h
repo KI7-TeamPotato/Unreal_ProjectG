@@ -23,7 +23,7 @@ public:
 
     //캐릭터 스폰(시작 혹은 부활 시)
     UFUNCTION(BlueprintCallable, Category = "HeroCharacter")
-    void SpawnCharacter();
+    void SpawnHero();
 
     //캐릭터 사망
     UFUNCTION(BlueprintCallable, Category = "HeroCharacter")
@@ -64,6 +64,9 @@ protected:
     // 컴뱃 컴포넌트
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component", meta = (AllowPrivateAccess = "true"))
     TObjectPtr<UHeroCombatComponent> HeroCombatComponent;
+    //어빌리티
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Ability")
+    TObjectPtr<class UAbilitySystemComponent> AbilitySystemComponent = nullptr;
 
     //input action
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "InputAction")
@@ -83,12 +86,12 @@ protected:
     UPROPERTY()
     TObjectPtr<class UControlPanel> JoystickWidget = nullptr;
 
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+    TObjectPtr<class UPGCharacterAttributeSet> ResourceAttribute = nullptr;
 private:
     //ABP
     UPROPERTY()
     TObjectPtr<class UAnimInstance> AnimInstance = nullptr;
 
     //리소스 컴포넌트
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
-    TObjectPtr<class UHeroResourceComponent> ResourceManager = nullptr;
 };
