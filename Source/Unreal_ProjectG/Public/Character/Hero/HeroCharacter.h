@@ -32,6 +32,7 @@ public:
     void SetJoystickWidget(class UControlPanel* InWidget) { JoystickWidget = InWidget; }
 
     FORCEINLINE UHeroCombatComponent* GetHeroCombatComponent() const { return HeroCombatComponent; }
+    FORCEINLINE UStaticMeshComponent* GetWeaponStaticMesh() const { return WeaponStaticMesh; }
 
 protected:
 	virtual void BeginPlay() override;
@@ -58,12 +59,17 @@ protected:
     //카메라
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
     TObjectPtr<class UCameraComponent> CameraComponent = nullptr;
+    //무기 스태틱 메시 컴포넌트
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Component")
+    TObjectPtr<class UStaticMeshComponent> WeaponStaticMesh = nullptr;
     //움직임 컴포넌트
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
     TObjectPtr<class UCharacterMovementComponent> MovementComponent = nullptr;
     // 컴뱃 컴포넌트
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component", meta = (AllowPrivateAccess = "true"))
-    TObjectPtr<UHeroCombatComponent> HeroCombatComponent;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
+    TObjectPtr<UHeroCombatComponent> HeroCombatComponent = nullptr;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
+    TObjectPtr<class UEquipmentComponent> EquipmentComponent = nullptr;
 
     //input action
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "InputAction")

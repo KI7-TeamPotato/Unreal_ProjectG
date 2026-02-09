@@ -36,19 +36,23 @@ struct FPGHeroWeaponData
 {
     GENERATED_BODY()
 
+    // 무기 스태틱 메시
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    TSoftObjectPtr<UStaticMesh> SoftWeaponMesh;
+
     // 무기 애니메이션 레이어
-    UPROPERTY(EditAnywhere, BlueprintReadOnly)
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     TSubclassOf<UPGHeroLinkedAnimLayer> WeaponAnimLayer;    
     
     // 무기 기본 경격 어빌리티
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (TitleProperty = "InputTag"))
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (TitleProperty = "InputTag"))
     FPGHeroAbilitySet BaseAttackAbility;
 
     // 무기 스킬 어빌리티들
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (TitleProperty = "InputTag"))
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (TitleProperty = "InputTag"))
     TArray<FPGHeroAbilitySet> WeaponSkillAbilities;
 
     // 무기 아이콘 텍스처
-    UPROPERTY(EditAnywhere, BlueprintReadOnly)
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     TSoftObjectPtr<UTexture2D> SoftWeaponIconTexture;
 };
