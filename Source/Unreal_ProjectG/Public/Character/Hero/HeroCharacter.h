@@ -27,6 +27,9 @@ public:
 
     //캐릭터 사망
     UFUNCTION(BlueprintCallable, Category = "HeroCharacter")
+    void MakeHeroDead();
+
+    UFUNCTION()
     void OnDie();
 
     void SetJoystickWidget(class UControlPanel* InWidget) { JoystickWidget = InWidget; }
@@ -64,9 +67,6 @@ protected:
     // 컴뱃 컴포넌트
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component", meta = (AllowPrivateAccess = "true"))
     TObjectPtr<UHeroCombatComponent> HeroCombatComponent;
-    //어빌리티
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Ability")
-    TObjectPtr<class UAbilitySystemComponent> AbilitySystemComponent = nullptr;
 
     //input action
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "InputAction")
@@ -88,6 +88,10 @@ protected:
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
     TObjectPtr<class UPGCharacterAttributeSet> ResourceAttribute = nullptr;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ability")
+    TSubclassOf<class UGameplayAbility> GA_Die = nullptr;
+
 private:
     //ABP
     UPROPERTY()

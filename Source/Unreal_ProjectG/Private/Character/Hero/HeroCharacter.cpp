@@ -11,8 +11,8 @@
 #include "UI/ControlPanel.h"
 #include "Components/Combat/HeroCombatComponent.h"
 #include "DataAssets/StartUp/DataAsset_HeroStartupData.h"
-#include "AbilitySystemComponent.h"
 #include "AbilitySystem/PGCharacterAttributeSet.h"
+#include "AbilitySystem/PGAbilitySystemComponent.h"
 
 // Sets default values
 AHeroCharacter::AHeroCharacter()
@@ -32,8 +32,6 @@ AHeroCharacter::AHeroCharacter()
 
     CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
     CameraComponent->SetupAttachment(SpringArm);
-
-    AbilitySystemComponent = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
 
     ResourceAttribute = CreateDefaultSubobject<UPGCharacterAttributeSet>(TEXT("ResourceAttribute"));
 
@@ -62,7 +60,7 @@ void AHeroCharacter::SpawnHero()
     MovementComponent->Activate();
 }
 
-void AHeroCharacter::OnDie()
+void AHeroCharacter::MakeHeroDead()
 {
     MovementComponent->DisableMovement();
     MovementComponent->StopMovementImmediately();
@@ -83,6 +81,16 @@ void AHeroCharacter::OnDie()
     }
 }
 
+void AHeroCharacter::OnDie()
+{
+    if (PGAbilitySystemComponent && GA_Die)
+    {
+        PGAbilitySystemComponent->TryActivateAbilityByClass(GA_Die);
+    }
+    else
+        UE_LOG(LogTemp, Warning, TEXT("AbilitySystem Unavailable"));
+}
+
 // Called when the game starts or when spawned
 void AHeroCharacter::BeginPlay()
 {
@@ -98,9 +106,13 @@ void AHeroCharacter::BeginPlay()
             LoadData->GiveToAbilitySystemComponent(PGAbilitySystemComponent);
         }
     }
-    if (AbilitySystemComponent)
+
+    if (PGAbilitySystemComponent)
     {
-        AbilitySystemComponent->InitAbilityActorInfo(this, this);
+        if (GA_Die)
+        {
+            PGAbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(GA_Die, 1, 0, this));
+        }
     }
 }
 
