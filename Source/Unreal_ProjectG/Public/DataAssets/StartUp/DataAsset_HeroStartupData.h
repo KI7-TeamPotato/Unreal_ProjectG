@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "DataAssets/StartUp/DataAsset_StartupDataBase.h"
+#include "Types/PGStructTypes.h"
 #include "DataAsset_HeroStartupData.generated.h"
 
 /**
@@ -16,9 +17,9 @@ class UNREAL_PROJECTG_API UDataAsset_HeroStartupData : public UDataAsset_Startup
 	
 // 태그와 어빌리티 매핑이 필요해지면 사용
 //public:
-//    virtual void GiveToAbilitySystemComponent(UPGAbilitySystemComponent* InASCToGive, int32 InLevel) override;
-//
-//private:
-//UPROPERTY(EditDefaultsOnly, Category = "HeroStartupData")
-//TArray<FWarriorHeroAbilitySet> HeroAbilitySets;
+virtual void GiveToAbilitySystemComponent(UPGAbilitySystemComponent* InASCToGive, int32 InLevel) override;
+
+private:
+UPROPERTY(EditDefaultsOnly, Category = "HeroStartupData", meta = (TitleProperty = "InputTag"))
+TArray<FPGHeroAbilitySet> HeroAbilitySets;
 };

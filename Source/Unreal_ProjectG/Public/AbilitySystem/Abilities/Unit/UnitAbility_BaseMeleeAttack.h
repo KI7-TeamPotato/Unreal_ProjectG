@@ -3,27 +3,24 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AbilitySystem/Abilities/PGHeroGameplayAbility.h"
-#include "HeroAbility_BaseMeleeAttack.generated.h"
+#include "AbilitySystem/Abilities/PGUnitGameplayAbility.h"
+#include "UnitAbility_BaseMeleeAttack.generated.h"
 
-
-class UGameplayEffect;
 /**
  * 
  */
 UCLASS()
-class UNREAL_PROJECTG_API UHeroAbility_BaseMeleeAttack : public UPGHeroGameplayAbility
+class UNREAL_PROJECTG_API UUnitAbility_BaseMeleeAttack : public UPGUnitGameplayAbility
 {
 	GENERATED_BODY()
 	
 public:
-    UHeroAbility_BaseMeleeAttack();
+    UUnitAbility_BaseMeleeAttack();
 
     virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
     virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 
 protected:
-    // 데미지 적용 핸들러
     UFUNCTION(BlueprintCallable, Category = "Ability|Melee Attack")
     void HandleApplyDamage(FGameplayEventData InEventData);
 
@@ -42,4 +39,10 @@ protected:
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability|Melee Attack")
     FScalableFloat MeleeAttackSkillMultiplier;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability|Melee Attack")
+    float MeleeAttackRange = 200.f;
+
+private:
+    TWeakObjectPtr<AActor> CachedTargetActor;
 };

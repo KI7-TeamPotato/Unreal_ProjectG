@@ -6,8 +6,16 @@
 
 namespace PGGameplayTags
 {
+    // 인풋 태그
+    UE_DEFINE_GAMEPLAY_TAG(InputTag_BaseAttack, "Input.BaseAttack");
+    UE_DEFINE_GAMEPLAY_TAG(InputTag_Skill_1, "Input.Skill.1");
+    UE_DEFINE_GAMEPLAY_TAG(InputTag_Skill_2, "Input.Skill.2");
+
     // 플레이어 어빌리티 태그
-    UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Type_BasicAttack_Melee, "Player.Ability.BasicAttack.Melee");
+    UE_DEFINE_GAMEPLAY_TAG(Player_Ability_BasicAttack_Melee, "Player.Ability.BasicAttack.Melee");
+    UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Skill_1, "Player.Ability.Skill.1");
+    UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Skill_2, "Player.Ability.Skill.2");
+
     UE_DEFINE_GAMEPLAY_TAG(Player_Ability_EquipWeapon, "Player.Ability.EquipWeapon");
 
     // 플레이어 무기 게임 플레이 태그

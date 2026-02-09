@@ -13,14 +13,14 @@ class UPGHeroLinkedAnimLayer;
 
 // 어빌리티 세트 구조체
 USTRUCT(BlueprintType)
-struct FWarriorHeroAbilitySet
+struct FPGHeroAbilitySet
 {
     GENERATED_BODY()
 
 public:
-    //// 어빌리티에 매핑될 입력 태그 <= 이 태그로 어빌리티를 찾아서 매칭
-    //UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (Categories = "InputTag"))
-    //FGameplayTag InputTag;
+    // 공통으로 들어갈 어빌리티 ID (기본 공격, 스킬 1, 스킬 2 등)
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (Categories = "InputTag"))
+    FGameplayTag InputTag;
 
     // 영웅에서 부여될 어빌리티
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -41,12 +41,12 @@ struct FPGHeroWeaponData
     TSubclassOf<UPGHeroLinkedAnimLayer> WeaponAnimLayer;    
     
     // 무기 기본 경격 어빌리티
-    UPROPERTY(EditAnywhere, BlueprintReadOnly)
-    TSubclassOf<UPGHeroGameplayAbility> BaseAttackAbility;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (TitleProperty = "InputTag"))
+    FPGHeroAbilitySet BaseAttackAbility;
 
     // 무기 스킬 어빌리티들
-    UPROPERTY(EditAnywhere, BlueprintReadOnly)
-    TArray<TSubclassOf<UPGHeroGameplayAbility>> WeaponSkillAbilities;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (TitleProperty = "InputTag"))
+    TArray<FPGHeroAbilitySet> WeaponSkillAbilities;
 
     // 무기 아이콘 텍스처
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
