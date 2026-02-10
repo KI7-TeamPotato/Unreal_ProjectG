@@ -10,6 +10,7 @@
 
 class UPGAbilitySystemComponent;
 class UPawnCombatComponent;
+struct FGameplayEffectSpecHandle;
 
 /**
  * 
@@ -33,4 +34,7 @@ public:
     UFUNCTION(BlueprintCallable, Category = "ProjectG|FunctionLibrary", meta = (DisplayName = "Get Current Weapon From Actor", ExpandEnumAsExecs = "OutValidType"))
     static UPawnCombatComponent* BP_GetCombatComponentFromActor(AActor* InActor, EPGValidType& OutValidType);
 
+    // 게임플레이 이펙트 스펙 핸들을 타겟 액터에 적용하는 함수
+    UFUNCTION(BlueprintCallable, Category = "ProjectG|FunctionLibrary")
+    static bool ApplyGameplayEffectSpecHandleToTargetActor(AActor* InInstigator, AActor* InTargetActor, const FGameplayEffectSpecHandle& InSpecHandle);
 };

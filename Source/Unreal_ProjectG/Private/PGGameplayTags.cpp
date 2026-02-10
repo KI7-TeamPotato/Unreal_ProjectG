@@ -13,6 +13,7 @@ namespace PGGameplayTags
 
     // 플레이어 어빌리티 태그
     UE_DEFINE_GAMEPLAY_TAG(Player_Ability_BasicAttack_Melee, "Player.Ability.BasicAttack.Melee");
+    UE_DEFINE_GAMEPLAY_TAG(Player_Ability_BasicAttack_Projectile, "Player.Ability.BasicAttack.Projectile");
     UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Skill_1, "Player.Ability.Skill.1");
     UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Skill_2, "Player.Ability.Skill.2");
 
@@ -30,6 +31,7 @@ namespace PGGameplayTags
 
     // 이벤트 태그
     UE_DEFINE_GAMEPLAY_TAG(Shared_Event_AttackTraceToggle, "Shared.Event.AttackTraceToggle");
+    UE_DEFINE_GAMEPLAY_TAG(Shared_Event_ProjectileSpawn, "Shared.Event.ProjectileSpawn");
     UE_DEFINE_GAMEPLAY_TAG(Shared_Event_WeaponSpawn, "Shared.Event.WeaponSpawn");
 
     // SetByCaller 태그
