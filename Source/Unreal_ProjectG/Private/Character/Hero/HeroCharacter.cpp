@@ -49,7 +49,7 @@ UPawnCombatComponent* AHeroCharacter::GetPawnCombatComponent() const
     return HeroCombatComponent;
 }
 
-void AHeroCharacter::SpawnCharacter()
+void AHeroCharacter::SpawnHero()
 {
     USkeletalMeshComponent* MeshComp = GetMesh();
     MeshComp->bPauseAnims = false;
