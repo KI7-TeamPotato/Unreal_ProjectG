@@ -17,25 +17,21 @@ class UNREAL_PROJECTG_API UHeroCombatComponent : public UPawnCombatComponent
 	GENERATED_BODY()
 	
 public:
-    virtual void ToggleWeaponCollision(bool bEnableCollision) override;
+    //virtual void ToggleWeaponCollision(bool bEnableCollision) override;
+
+    virtual void ActivateWeaponTrace(bool bEnableTraceDebug, float InTraceDebugDuration) override;
 
 protected:
     virtual void BeginPlay() override;
 
     virtual void OnHitTargetActor(AActor* HitActor) override;
 
-    UFUNCTION()
-    void OnWeaponBeginOverlap(
-        UPrimitiveComponent* OverlappedComponent,
-        AActor* OtherActor,
-        UPrimitiveComponent* OtherComp,
-        int32 OtherBodyIndex,
-        bool bFromSweep,
-        const FHitResult& SweepResult
-    );
-
 protected:
     // 무기 스태틱 메시 캐싱
     UPROPERTY()
     TObjectPtr<UStaticMeshComponent> CachedWeaponStaticMesh;
+
+    UPROPERTY(EditDefaultsOnly, Category = "Combat|Weapon")
+    FVector WeaponTraceBoxExtent = FVector(5.f, 5.f, 50.f);
+
 };

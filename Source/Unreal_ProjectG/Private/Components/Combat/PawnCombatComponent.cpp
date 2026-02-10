@@ -26,7 +26,7 @@ void UPawnCombatComponent::AssignBaseAttackAbilitySpecHandle(const FGameplayAbil
     GrantedBaseAttackAbilitySpecHandle = InHandle;
 }
 
-void UPawnCombatComponent::ToggleWeaponCollision(bool bEnableCollision)
+void UPawnCombatComponent::ActivateWeaponTrace(bool bEnableTraceDebug, float InTraceDebugDuration)
 {
     return;
 }

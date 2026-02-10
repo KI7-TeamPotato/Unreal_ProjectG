@@ -4,6 +4,7 @@
 #include "Components/Combat/HeroCombatComponent.h"
 #include "Character/Hero/HeroCharacter.h"
 #include "AbilitySystemBlueprintLibrary.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "PGGameplayTags.h"
 
 void UHeroCombatComponent::BeginPlay()
@@ -15,32 +16,51 @@ void UHeroCombatComponent::BeginPlay()
     if (Hero)
     {
         CachedWeaponStaticMesh = Hero->GetWeaponStaticMesh();
-
-        if (CachedWeaponStaticMesh)
-        {
-            CachedWeaponStaticMesh->OnComponentBeginOverlap.AddUniqueDynamic(this, &UHeroCombatComponent::OnWeaponBeginOverlap);
-        }
     }
 }
 
-void UHeroCombatComponent::ToggleWeaponCollision(bool bEnableCollision)
+void UHeroCombatComponent::ActivateWeaponTrace(bool bEnableTrace, float InTraceDebugDuration)
 {
     if (!CachedWeaponStaticMesh) return;
 
-    if (bEnableCollision)
+    // 트레이스를 켜서 액터를 감지하여 overrapedActor에 추가
+    FVector StartLocation = CachedWeaponStaticMesh->GetSocketLocation(TEXT("WeaponTraceStart"));
+    FVector EndLocation = CachedWeaponStaticMesh->GetSocketLocation(TEXT("WeaponTraceEnd"));
+    ETraceTypeQuery TraceChannel = UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel1); //DefaultEngine.ini에서 선언된 AttackTrace 채널
+    TArray<FHitResult> OutHits;
+
+    UKismetSystemLibrary::BoxTraceMulti(
+        this,
+        StartLocation,
+        EndLocation,
+        WeaponTraceBoxExtent,
+        FRotator::ZeroRotator,
+        TraceChannel,
+        false,
+        TArray<AActor*>(),
+        bEnableTrace ? EDrawDebugTrace::ForDuration : EDrawDebugTrace::None,
+        OutHits,
+        true,
+        FLinearColor::Red, FLinearColor::Green, 1.f
+    );
+
+    // 히트된 액터들 처리
+    if (OutHits.Num() > 0)
     {
-        CachedWeaponStaticMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-    }
-    else
-    {
-        // 콜리전 비활성화 로직
-        CachedWeaponStaticMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-        OverlappedActors.Empty();
+        for (const FHitResult& Hit : OutHits)
+        {
+            AActor* HitActor = Hit.GetActor();
+            if (HitActor && HitActor != GetOwner())
+            {
+                OnHitTargetActor(HitActor);
+            }
+        }
     }
 }
 
 void UHeroCombatComponent::OnHitTargetActor(AActor* HitActor)
 {
+    // 중복 데미지 처리 방지
     if (OverlappedActors.Contains(HitActor))
     {
         return;
@@ -57,12 +77,4 @@ void UHeroCombatComponent::OnHitTargetActor(AActor* HitActor)
         PGGameplayTags::Shared_Event_MeleeHit,
         Data
     );
-}
-
-void UHeroCombatComponent::OnWeaponBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-    if (OtherActor && OtherActor != GetOwner())
-    {
-        OnHitTargetActor(OtherActor);
-    }
 }
