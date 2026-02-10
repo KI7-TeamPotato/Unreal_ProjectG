@@ -8,11 +8,10 @@
 #include "EnhancedInputComponent.h"
 #include "Components/Resource/HeroResourceComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/Equipment/EquipmentComponent.h"
 #include "UI/ControlPanel.h"
 #include "Components/Combat/HeroCombatComponent.h"
 #include "DataAssets/StartUp/DataAsset_HeroStartupData.h"
-#include "AbilitySystemComponent.h"
-#include "AbilitySystem/PGCharacterAttributeSet.h"
 
 // Sets default values
 AHeroCharacter::AHeroCharacter()
@@ -33,11 +32,13 @@ AHeroCharacter::AHeroCharacter()
     CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
     CameraComponent->SetupAttachment(SpringArm);
 
-    AbilitySystemComponent = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
-
-    ResourceAttribute = CreateDefaultSubobject<UPGCharacterAttributeSet>(TEXT("ResourceAttribute"));
+    WeaponStaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponStaticMesh"));
+    WeaponStaticMesh->SetupAttachment(GetMesh());
+    WeaponStaticMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
     HeroCombatComponent = CreateDefaultSubobject<UHeroCombatComponent>(TEXT("HeroCombatComponent"));
+    ResourceManager = CreateDefaultSubobject<UHeroResourceComponent>(TEXT("ResourceManager"));
+    EquipmentComponent = CreateDefaultSubobject<UEquipmentComponent>(TEXT("EquipmentComponent"));
 }
 
 UPawnCombatComponent* AHeroCharacter::GetPawnCombatComponent() const
@@ -45,7 +46,7 @@ UPawnCombatComponent* AHeroCharacter::GetPawnCombatComponent() const
     return HeroCombatComponent;
 }
 
-void AHeroCharacter::SpawnHero()
+void AHeroCharacter::SpawnCharacter()
 {
     USkeletalMeshComponent* MeshComp = GetMesh();
     MeshComp->bPauseAnims = false;
@@ -97,10 +98,6 @@ void AHeroCharacter::BeginPlay()
         {
             LoadData->GiveToAbilitySystemComponent(PGAbilitySystemComponent);
         }
-    }
-    if (AbilitySystemComponent)
-    {
-        AbilitySystemComponent->InitAbilityActorInfo(this, this);
     }
 }
 

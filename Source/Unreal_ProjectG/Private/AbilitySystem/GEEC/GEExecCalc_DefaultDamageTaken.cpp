@@ -74,6 +74,8 @@ void UGEExecCalc_DefaultDamageTaken::Execute_Implementation(const FGameplayEffec
 
     const float FinalDamage = BaseDamage;
 
+    UE_LOG(LogTemp, Warning, TEXT("Final Damage Taken : %f"), FinalDamage);
+
     if (FinalDamage > 0.f)
     {
         OutExecutionOutput.AddOutputModifier(

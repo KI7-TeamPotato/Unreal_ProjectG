@@ -42,4 +42,11 @@ protected:
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability|Melee Attack")
     FScalableFloat MeleeAttackSkillMultiplier;
+
+    // 최대 공격 가능한 적의 수
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability|Melee Attack")
+    int32 MaxHitTargets = 1;
+
+private:
+    int32 CurrentHitTargets = 0;
 };
