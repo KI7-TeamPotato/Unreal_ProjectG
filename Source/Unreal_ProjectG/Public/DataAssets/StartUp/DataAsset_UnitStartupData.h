@@ -6,7 +6,7 @@
 #include "DataAssets/StartUp/DataAsset_StartupDataBase.h"
 #include "GameplayTagContainer.h"
 #include "DataAsset_UnitStartupData.generated.h"
-
+class UBranchDataAsset;
 class UPGUnitGameplayAbility;
 
 /**
@@ -28,7 +28,7 @@ public:
     FGameplayTag SideTag;
 
     UPROPERTY(EditAnywhere, Category = "Stats")
-    UDataAsset* BranchData;
+    UBranchDataAsset* BranchData;
 
     // --- [2] 외형 ---
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Visual")

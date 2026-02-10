@@ -29,6 +29,10 @@ public:
     // 컴뱂 인터페이스 구현
     virtual UPawnCombatComponent* GetPawnCombatComponent() const override;
 
+    float GetDetectRangeKey() { return DetectRangeKey; }
+    float GetAttackRangeKey() { return AttackRangeKey; }
+    UBehaviorTree* GetSubBTAssetKey() { return SubBTAssetKey; }
+
     FORCEINLINE UUnitCombatComponent* GetUnitCombatComponent() const { return UnitCombatComponent; }
 public:
     //공격 대상 정하는 함수
@@ -68,5 +72,9 @@ private:
 
     class UAnimMontage* AttackMontage = nullptr;
 
+    float DetectRangeKey = 0.0f;
 
+    float AttackRangeKey = 0.0f;
+
+    TObjectPtr<UBehaviorTree> SubBTAssetKey = nullptr;
 };

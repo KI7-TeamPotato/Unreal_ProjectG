@@ -12,6 +12,7 @@
 #include "AIController.h"
 #include "DataAssets/Unit/UnitData.h"
 #include "AbilitySystem/PGCharacterAttributeSet.h"
+#include "DataAssets/Unit/BranchDataAsset.h"
 
 AUnitCharacter::AUnitCharacter()
 {
@@ -108,6 +109,12 @@ void AUnitCharacter::InitUnitStartUpData()
                     {
                         GetMesh()->SetAnimInstanceClass(StartUpData->AnimBlueprint);
                     }
+
+                    DetectRangeKey = StartUpData->BranchData->DetectRange;
+
+                    AttackRangeKey = StartUpData->BranchData->AttackRange;
+
+                    SubBTAssetKey = StartUpData->BranchData->SubBTAsset;
                 }
             }
         )

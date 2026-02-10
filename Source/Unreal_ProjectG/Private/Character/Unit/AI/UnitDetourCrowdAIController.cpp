@@ -16,13 +16,17 @@ AUnitDetourCrowdAIController::AUnitDetourCrowdAIController(const FObjectInitiali
 
 void AUnitDetourCrowdAIController::OnPossess(APawn* InPawn)
 {
+
+    /*지금 방식은 비동기 로딩이 끝나기 전에 빙의하기 때문에 작동 안될 가능성이 높음.
+    제미나이 물어보니 델리게이트를 이용하라 하는데 이건 내일 한번 상의해야 할듯???*/
+    
     Super::OnPossess(InPawn);
 
     AUnitCharacter* Unit = Cast<AUnitCharacter>(InPawn);
     if (Unit && GetBlackboardComponent())
     {
-        //GetBlackboardComponent()->SetValueAsFloat(TEXT("Range"), Unit->DetectRange);
-        //GetBlackboardComponent()->SetValueAsFloat(TEXT("AttackRange"), Unit->AttackRange);
+        GetBlackboardComponent()->SetValueAsFloat(TEXT("Range"), Unit->GetDetectRangeKey());
+        GetBlackboardComponent()->SetValueAsFloat(TEXT("AttackRange"), Unit->GetAttackRangeKey());
     }
 
     UCrowdFollowingComponent* CrowdComp = Cast<UCrowdFollowingComponent>(GetPathFollowingComponent());
@@ -38,19 +42,15 @@ void AUnitDetourCrowdAIController::OnPossess(APawn* InPawn)
             UE_LOG(LogTemp, Log, TEXT("메인 BT 실행 성공"));
             SetUnitState(EUnitState::Move);
 
-            //AUnitCharacter* CrowdUnit = Cast<AUnitCharacter>(InPawn);
-            //if (CrowdUnit && CrowdUnit->SubBTAsset)
-            //{
-            //    UBehaviorTreeComponent* BTComp = Cast<UBehaviorTreeComponent>(BrainComponent);
-            //    if (BTComp)
-            //    {
-            //        FGameplayTag CombatTag = FGameplayTag::RequestGameplayTag(TEXT("AI.State.Combat"));
-
-            //        BTComp->SetDynamicSubtree(CombatTag, CrowdUnit->SubBTAsset);
-            //        UE_LOG(LogTemp, Log, TEXT("%s : 다이나믹트리(%s)"),
-            //            *InPawn->GetName(), *CrowdUnit->SubBTAsset->GetName());
-            //    }
-            //}
+            AUnitCharacter* CrowdUnit = Cast<AUnitCharacter>(InPawn);
+            if (CrowdUnit && CrowdUnit->GetSubBTAssetKey())
+            {
+                UBehaviorTreeComponent* BTComp = Cast<UBehaviorTreeComponent>(BrainComponent);
+                if (BTComp)
+                {
+                    FGameplayTag CombatTag = FGameplayTag::RequestGameplayTag(TEXT("AI.State.Combat"));
+                }
+            }
         }
         else
         {
