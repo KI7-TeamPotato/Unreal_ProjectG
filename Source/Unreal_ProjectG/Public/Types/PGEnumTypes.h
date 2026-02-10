@@ -24,3 +24,15 @@ enum class EPGToggleType : uint8
     Off,
     Toggle
 };
+
+// --- 팀 구분 (피아 식별용) ---
+// 블루프린트 에디터에서 드롭다운으로 선택 가능
+UENUM(BlueprintType)
+enum class ETeamType : uint8
+{
+    None        UMETA(DisplayName = "None"),
+    Player      UMETA(DisplayName = "Player Hero"), // 플레이어 영웅
+    Ally        UMETA(DisplayName = "Ally Unit"),   // 아군 소환수
+    Enemy       UMETA(DisplayName = "Enemy Unit"),  // 적군
+    Neutral     UMETA(DisplayName = "Neutral")      // 중립 (오브젝트 등)
+};
