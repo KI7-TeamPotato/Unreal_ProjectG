@@ -4,7 +4,6 @@
 #include "Notify/AnimNotifyState/ANS_ToggleNotifyCollision.h"
 #include "PGFunctionLibrary.h"
 #include "Components/Combat/PawnCombatComponent.h"
-#include "Items/Weapons/PGWeaponBase.h"
 
 void UANS_ToggleNotifyCollision::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)
 {
@@ -18,10 +17,10 @@ void UANS_ToggleNotifyCollision::NotifyBegin(USkeletalMeshComponent* MeshComp, U
     }
 
     AActor* OwnerActor = MeshComp->GetOwner();
-
-    if (APGWeaponBase* ToggleWeapon = UPGFunctionLibrary::NativeGetCombatComponentFromActor(OwnerActor)->GetCharacterCurrentEquippedWeapon())
+    UPawnCombatComponent* PawnCombatComp = UPGFunctionLibrary::NativeGetCombatComponentFromActor(OwnerActor);
+    if (PawnCombatComp)
     {
-        ToggleWeapon->ToggleWeaponCollision(true);
+        PawnCombatComp->ToggleWeaponCollision(true);
     }
 }
 
@@ -34,10 +33,10 @@ void UANS_ToggleNotifyCollision::NotifyEnd(USkeletalMeshComponent* MeshComp, UAn
     }
 
     AActor* OwnerActor = MeshComp->GetOwner();
-
-    if (APGWeaponBase* ToggleWeapon = UPGFunctionLibrary::NativeGetCombatComponentFromActor(OwnerActor)->GetCharacterCurrentEquippedWeapon())
+    UPawnCombatComponent* PawnCombatComp = UPGFunctionLibrary::NativeGetCombatComponentFromActor(OwnerActor);
+    if (PawnCombatComp)
     {
-        ToggleWeapon->ToggleWeaponCollision(false);
+        PawnCombatComp->ToggleWeaponCollision(false);
     }
 
     Super::NotifyEnd(MeshComp, Animation, EventReference);

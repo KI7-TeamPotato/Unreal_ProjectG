@@ -24,11 +24,14 @@ public:
         const FGameplayAbilityActivationInfo ActivationInfo,
         const FGameplayEventData* TriggerEventData) override;
 
-protected:
-    UFUNCTION()
-    void RespawnHero();
+    // 어빌리티를 발동시키는 입력이 끝났을 때 실행될 함수
+    virtual void InputReleased(
+        const FGameplayAbilitySpecHandle Handle,
+        const FGameplayAbilityActorInfo* ActorInfo,
+        const FGameplayAbilityActivationInfo ActivationInfo) override;
 
 protected:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ability")
     float RespawnTime = 10.0f;
+
 };

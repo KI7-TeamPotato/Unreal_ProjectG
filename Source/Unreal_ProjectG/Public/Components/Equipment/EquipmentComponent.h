@@ -15,6 +15,7 @@ class UNREAL_PROJECTG_API UEquipmentComponent : public UPawnExtensionComponentBa
 {
 	GENERATED_BODY()
 	
-
+protected:
+    virtual void BeginPlay() override;
 
 };
