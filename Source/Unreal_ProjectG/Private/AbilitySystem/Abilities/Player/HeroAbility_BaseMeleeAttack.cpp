@@ -4,9 +4,9 @@
 #include "AbilitySystem/Abilities/Player/HeroAbility_BaseMeleeAttack.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
+#include "Components/Combat/HeroCombatComponent.h"
 #include "PGGameplayTags.h"
 #include "GameplayCueFunctionLibrary.h"
-#include "Character/Hero/HeroCharacter.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Types/PGEnumTypes.h"
 #include "TimerManager.h"
@@ -19,7 +19,10 @@ UHeroAbility_BaseMeleeAttack::UHeroAbility_BaseMeleeAttack()
 
 void UHeroAbility_BaseMeleeAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
-    CachedWeaponStaticMesh = GetHeroCharacterFromActorInfo()->GetWeaponStaticMesh();
+    if (CachedWeaponStaticMesh == nullptr)
+    {
+        CachedWeaponStaticMesh = GetHeroCombatComponentFromActorInfo()->CachedWeaponMeshComponent.Get();
+    }
 
     checkf(!MeleeAttackMontages.IsEmpty(), TEXT("MeleeAttackMontages 배열이 비어있습니다!"));
 
@@ -39,7 +42,7 @@ void UHeroAbility_BaseMeleeAttack::ActivateAbility(const FGameplayAbilitySpecHan
     }
 
     // 게임플레이 이벤트 대기 태스크 생성
-    UAbilityTask_WaitGameplayEvent* MeleeHitEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, PGGameplayTags::Shared_Event_MeleeHit);
+    UAbilityTask_WaitGameplayEvent* MeleeHitEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, PGGameplayTags::Shared_Event_AttackTraceToggle);
 
     // 이벤트 수신 핸들러 바인딩
     MeleeHitEventTask->EventReceived.AddUniqueDynamic(this, &UHeroAbility_BaseMeleeAttack::ToggleWeaponTrace);

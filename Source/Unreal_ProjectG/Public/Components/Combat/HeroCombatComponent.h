@@ -19,4 +19,6 @@ class UNREAL_PROJECTG_API UHeroCombatComponent : public UPawnCombatComponent
 protected:
     virtual void BeginPlay() override;
 
+public:
+    TWeakObjectPtr<UStaticMeshComponent> CachedWeaponMeshComponent;
 };
