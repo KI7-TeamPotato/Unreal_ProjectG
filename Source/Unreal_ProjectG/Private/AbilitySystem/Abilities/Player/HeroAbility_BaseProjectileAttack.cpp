@@ -55,15 +55,18 @@ void UHeroAbility_BaseProjectileAttack::SpawnProjectile(FGameplayEventData InEve
 {
     FVector SpawnLocation = CachedWeaponStaticMesh->GetSocketLocation(FName("SpawnProjectileSocket"));
     FRotator SpawnRotation = GetAvatarActorFromActorInfo()->GetActorForwardVector().Rotation();
-    FActorSpawnParameters SpawnParams;
-    SpawnParams.Owner = GetAvatarActorFromActorInfo();
-    SpawnParams.Instigator = Cast<APawn>(GetAvatarActorFromActorInfo());
 
-    APGProjectileBase* SpawnedProjectile = GetWorld()->SpawnActor<APGProjectileBase>(SpawnedProjectileClass, SpawnLocation, SpawnRotation);
-    
-    float ProjectileMultiplierValue = ProjectileAttackSkillMultiplier.GetValueAtLevel(GetAbilityLevel());
-    FGameplayEffectSpecHandle ProjectileDamageEffectSpecHandle = MakeOutgoingGameplayEffectSpec(ProjectileAttackDamageEffectClass, ProjectileMultiplierValue);
-    SpawnedProjectile->SetProjectileDamageEffectSpecHandle(ProjectileDamageEffectSpecHandle);
+    APGProjectileBase* SpawnedProjectile = GetWorld()->SpawnActorDeferred<APGProjectileBase>(SpawnedProjectileClass, FTransform(SpawnRotation, SpawnLocation),
+        GetAvatarActorFromActorInfo(), Cast<APawn>(GetAvatarActorFromActorInfo()), ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+
+    if (SpawnedProjectile)
+    {
+        float ProjectileMultiplierValue = ProjectileAttackSkillMultiplier.GetValueAtLevel(GetAbilityLevel());
+        FGameplayEffectSpecHandle ProjectileDamageEffectSpecHandle = MakeOutgoingGameplayEffectSpec(ProjectileAttackDamageEffectClass, ProjectileMultiplierValue);
+        SpawnedProjectile->SetProjectileDamageEffectSpecHandle(ProjectileDamageEffectSpecHandle);
+
+        SpawnedProjectile->FinishSpawning(FTransform(SpawnRotation, SpawnLocation));
+    }
 }
 
 void UHeroAbility_BaseProjectileAttack::OnMontageFinished()

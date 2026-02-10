@@ -15,7 +15,7 @@ APGProjectileBase::APGProjectileBase()
     ProjectileCollisionComponent->SetCollisionResponseToChannel(ECC_Pawn, ECR_Block);
     ProjectileCollisionComponent->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Block);
     ProjectileCollisionComponent->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
-    ProjectileCollisionComponent->OnComponentHit.AddUniqueDynamic(this, &APGProjectileBase::OnProjectileHit);
+    //ProjectileCollisionComponent->OnComponentHit.AddUniqueDynamic(this, &APGProjectileBase::OnProjectileHit);
     ProjectileCollisionComponent->OnComponentBeginOverlap.AddUniqueDynamic(this, &APGProjectileBase::OnProjectileBeginOverlap);
 
     ProjectileNiagaraComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("ProjectileNiagaraComponent"));
@@ -45,12 +45,14 @@ void APGProjectileBase::OnProjectileHit(UPrimitiveComponent* HitComponent, AActo
 {
     APawn* HitPawn = Cast<APawn>(OtherActor);
 
-    // 히트한 액터가 같은 팀이거나 플레이어면 무시
-    if (!HitPawn || HitPawn->IsPlayerControlled())
+    // 히트한 액터가 플레이어면 무시
+    if (OtherActor == GetInstigator())
     {
-        Destroy();
+        UE_LOG(LogTemp, Warning, TEXT("APGProjectileBase::OnProjectileHit OtherComponent: %s"), *OtherComp->GetName());
         return;
     }
+
+    UE_LOG(LogTemp, Warning, TEXT("APGProjectileBase::OnProjectileHit OtherActor: %s"), *OtherActor->GetName());
 
     FGameplayEventData Data;
     Data.Instigator = this;
@@ -63,12 +65,15 @@ void APGProjectileBase::OnProjectileHit(UPrimitiveComponent* HitComponent, AActo
 
 void APGProjectileBase::OnProjectileBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-    // 추후 오버랩이 필요하면 구현
-
+    // 오버랩한 액터가 발사자 자신이면 무시
     if(OtherActor == GetInstigator())
     {
+        UE_LOG(LogTemp, Warning, TEXT("01   APGProjectileBase::OnProjectileBeginOverlap OtherActor: %s"), *OtherActor->GetName());
         return;
     }
+
+    UE_LOG(LogTemp, Warning, TEXT("02   APGProjectileBase::OnProjectileBeginOverlap OtherActor: %s"), *OtherActor->GetName());
+
     APawn* OverlappedPawn = Cast<APawn>(OtherActor);
 
     FGameplayEventData Data;
