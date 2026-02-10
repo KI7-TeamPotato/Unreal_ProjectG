@@ -45,7 +45,6 @@ public:
 protected:
     virtual void PossessedBy(AController* NewController) override;
 
-    virtual void InitUnitByData();
 private:
     void InitUnitStartUpData();
 
@@ -53,8 +52,6 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI Movement")
     TObjectPtr<AActor> TargetActor = nullptr;
             
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
-    TObjectPtr<UUnitData> UnitData;
 protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
     TObjectPtr<UUnitCombatComponent> UnitCombatComponent;
@@ -62,5 +59,6 @@ protected:
 private:
     // AI 컨트롤러 캐싱
     class AAIController* AIController = nullptr;
+
 
 };

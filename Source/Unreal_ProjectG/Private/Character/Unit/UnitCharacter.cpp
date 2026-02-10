@@ -74,26 +74,6 @@ void AUnitCharacter::PossessedBy(AController* NewController)
     InitUnitStartUpData();
 }
 
-void AUnitCharacter::InitUnitByData()
-{
-    if (!UnitData) return;
-
-    // 1. 외형 변경 (메쉬)
-    if (UnitData->SkeletalMesh)
-    {
-        GetMesh()->SetSkeletalMesh(UnitData->SkeletalMesh);
-    }
-
-    // 2. 애니메이션 변경
-    if (UnitData->AnimBlueprint)
-    {
-        GetMesh()->SetAnimInstanceClass(UnitData->AnimBlueprint);
-    }
-
-    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats")
-    float MoveSpeed = 300.0f;
-}
-
 void AUnitCharacter::InitUnitStartUpData()
 {
     if(CharacterStartupData.IsNull())
@@ -110,6 +90,10 @@ void AUnitCharacter::InitUnitStartUpData()
                 if (UDataAsset_StartupDataBase* LoadedData = CharacterStartupData.Get())
                 {
                     LoadedData->GiveToAbilitySystemComponent(PGAbilitySystemComponent);
+
+                    UDataAsset_UnitStartupData* StartUpData = Cast<UDataAsset_UnitStartupData>(LoadedData);
+                    //StartUpData = 이전 코드의 unitdata라고 생각하면 됩니다..
+                    
                 }
             }
         )
