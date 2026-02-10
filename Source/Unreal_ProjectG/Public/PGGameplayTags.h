@@ -37,4 +37,24 @@ namespace PGGameplayTags
 
     // 공유 SetByCaller 태그
     UNREAL_PROJECTG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_SetByCaller_DamageMultiplier);
+
+    //유닛 등급 태그
+    UE_DECLARE_GAMEPLAY_TAG_EXTERN(Unit_Tier_Normal);
+    UE_DECLARE_GAMEPLAY_TAG_EXTERN(Unit_Tier_Rare);
+    UE_DECLARE_GAMEPLAY_TAG_EXTERN(Unit_Tier_Epic);
+
+    //유닛 속성 태그
+    UE_DECLARE_GAMEPLAY_TAG_EXTERN(Unit_Element_Fire);
+    UE_DECLARE_GAMEPLAY_TAG_EXTERN(Unit_Element_Water);
+    UE_DECLARE_GAMEPLAY_TAG_EXTERN(Unit_Element_Electric);
+
+    //유닛 병과 태그
+    UE_DECLARE_GAMEPLAY_TAG_EXTERN(Unit_Branch_Melee);
+    UE_DECLARE_GAMEPLAY_TAG_EXTERN(Unit_Branch_Ranged);
+    UE_DECLARE_GAMEPLAY_TAG_EXTERN(Unit_Branch_Mage);
+    UE_DECLARE_GAMEPLAY_TAG_EXTERN(Unit_Branch_Tank);
+
+    //아군 적군 구분 태그
+    UE_DECLARE_GAMEPLAY_TAG_EXTERN(Unit_Side_Ally);
+    UE_DECLARE_GAMEPLAY_TAG_EXTERN(Unit_Side_Foe);
 }

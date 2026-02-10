@@ -6,11 +6,14 @@
 #include "GameFramework/Character.h"
 #include "AbilitySystemInterface.h"
 #include "Interfaces/PawnCombatInterface.h"
+#include "Types/PGEnumTypes.h"
 #include "PGCharacterBase.generated.h"
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCharacterDiedDelegate, ABaseCharacter*, DeadCharacter);
 
 class UPGCharacterAttributeSet;
 class UPGAbilitySystemComponent;
 class UDataAsset_StartupDataBase;
+
 
 UCLASS()
 class UNREAL_PROJECTG_API APGCharacterBase : public ACharacter, public IAbilitySystemInterface, public IPawnCombatInterface
@@ -32,6 +35,7 @@ public:
 protected:
     virtual void PossessedBy(AController* NewController) override;
 
+    virtual void OnDie() {};
 protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AbilitySystem")
     TObjectPtr<UPGAbilitySystemComponent> PGAbilitySystemComponent;
@@ -41,4 +45,8 @@ protected:
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CharacterData", meta = (AllowPrivateAccess = "true"))
     TSoftObjectPtr<UDataAsset_StartupDataBase> CharacterStartupData;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
+    ETeamType TeamID; // Player, Ally, Enemy 구분
+
 };
