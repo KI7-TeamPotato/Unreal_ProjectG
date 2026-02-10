@@ -27,7 +27,7 @@ public:
 
     //캐릭터 사망
     UFUNCTION(BlueprintCallable, Category = "HeroCharacter")
-    void OnDie();
+    virtual void OnDie() override;
 
     void SetJoystickWidget(class UControlPanel* InWidget) { JoystickWidget = InWidget; }
 
