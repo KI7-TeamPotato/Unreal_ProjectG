@@ -29,6 +29,9 @@ public:
     UFUNCTION(BlueprintCallable, Category = "HeroCharacter")
     virtual void OnDie() override;
 
+    void MakeHeroDead();
+
+
     void SetJoystickWidget(class UControlPanel* InWidget) { JoystickWidget = InWidget; }
 
     FORCEINLINE UHeroCombatComponent* GetHeroCombatComponent() const { return HeroCombatComponent; }
@@ -71,6 +74,7 @@ protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
     TObjectPtr<class UEquipmentComponent> EquipmentComponent = nullptr;
 
+
     //input action
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "InputAction")
     TObjectPtr<class UInputAction> IA_Move = nullptr;
@@ -88,6 +92,12 @@ protected:
     // 조이스틱
     UPROPERTY()
     TObjectPtr<class UControlPanel> JoystickWidget = nullptr;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+    TObjectPtr<class UPGCharacterAttributeSet> ResourceAttribute = nullptr;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ability")
+    TSubclassOf<class UGameplayAbility> GA_Die = nullptr;
 
 private:
     //ABP
