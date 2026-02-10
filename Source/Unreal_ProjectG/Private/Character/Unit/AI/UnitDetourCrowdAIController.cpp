@@ -2,4 +2,104 @@
 
 
 #include "Character/Unit/AI/UnitDetourCrowdAIController.h"
+#include "Character/Unit/UnitCharacter.h"
+#include "BehaviorTree/BehaviorTree.h"
+#include "BehaviorTree/BlackboardComponent.h"
+#include "Navigation/CrowdFollowingComponent.h"
+#include "BehaviorTree/BehaviorTreeComponent.h"
 
+AUnitDetourCrowdAIController::AUnitDetourCrowdAIController(const FObjectInitializer& ObjectInitializer)
+    : Super(ObjectInitializer.SetDefaultSubobjectClass<UCrowdFollowingComponent>(TEXT("PathFollowingComponent")))
+{
+    BlackboardComp = CreateDefaultSubobject<UBlackboardComponent>(TEXT("BlackboardComp"));
+}
+
+void AUnitDetourCrowdAIController::OnPossess(APawn* InPawn)
+{
+    Super::OnPossess(InPawn);
+
+    AUnitCharacter* Unit = Cast<AUnitCharacter>(InPawn);
+    if (Unit && GetBlackboardComponent())
+    {
+        //GetBlackboardComponent()->SetValueAsFloat(TEXT("Range"), Unit->DetectRange);
+        //GetBlackboardComponent()->SetValueAsFloat(TEXT("AttackRange"), Unit->AttackRange);
+    }
+
+    UCrowdFollowingComponent* CrowdComp = Cast<UCrowdFollowingComponent>(GetPathFollowingComponent());
+    if (CrowdComp)
+    {
+        CrowdComp->SetCrowdAvoidanceQuality(ECrowdAvoidanceQuality::High);
+    }
+
+    if (BTAsset)
+    {
+        if (RunBehaviorTree(BTAsset))
+        {
+            UE_LOG(LogTemp, Log, TEXT("메인 BT 실행 성공"));
+            SetUnitState(EUnitState::Move);
+
+            //AUnitCharacter* CrowdUnit = Cast<AUnitCharacter>(InPawn);
+            //if (CrowdUnit && CrowdUnit->SubBTAsset)
+            //{
+            //    UBehaviorTreeComponent* BTComp = Cast<UBehaviorTreeComponent>(BrainComponent);
+            //    if (BTComp)
+            //    {
+            //        FGameplayTag CombatTag = FGameplayTag::RequestGameplayTag(TEXT("AI.State.Combat"));
+
+            //        BTComp->SetDynamicSubtree(CombatTag, CrowdUnit->SubBTAsset);
+            //        UE_LOG(LogTemp, Log, TEXT("%s : 다이나믹트리(%s)"),
+            //            *InPawn->GetName(), *CrowdUnit->SubBTAsset->GetName());
+            //    }
+            //}
+        }
+        else
+        {
+            UE_LOG(LogTemp, Error, TEXT("FailRunBehaviorTree"));
+        }
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("BTAssetNull"));
+    }
+}
+
+void AUnitDetourCrowdAIController::OnUnPossess()
+{
+    if (UBehaviorTreeComponent* BTComp = Cast<UBehaviorTreeComponent>(BrainComponent))
+    {
+        BTComp->StopTree(EBTStopMode::Safe);
+    }
+
+    Super::OnUnPossess();
+}
+
+FGenericTeamId AUnitDetourCrowdAIController::GetGenericTeamId() const
+{
+    return FGenericTeamId();
+}
+
+void AUnitDetourCrowdAIController::SetUnitState(EUnitState NewState)
+{
+    if (Blackboard)
+    {
+        Blackboard->SetValueAsEnum(StateKeyName, static_cast<uint8>(NewState));
+        UCrowdFollowingComponent* CrowdComp = Cast<UCrowdFollowingComponent>(GetPathFollowingComponent());
+        if (CrowdComp)
+        {
+            if (NewState == EUnitState::Combat)
+            {
+                //CrowdComp->SetCrowdAvoidanceQuality(ECrowdAvoidanceQuality::Low);
+
+            }
+            else if (NewState == EUnitState::Dead)
+            {
+                CrowdComp->SetCrowdSimulationState(ECrowdSimulationState::Disabled);
+            }
+            else
+            {
+                CrowdComp->SetCrowdSimulationState(ECrowdSimulationState::Enabled);
+                CrowdComp->SetCrowdAvoidanceQuality(ECrowdAvoidanceQuality::High);
+            }
+        }
+    }
+}

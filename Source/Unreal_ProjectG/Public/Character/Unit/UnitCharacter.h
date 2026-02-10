@@ -31,9 +31,11 @@ public:
 
     FORCEINLINE UUnitCombatComponent* GetUnitCombatComponent() const { return UnitCombatComponent; }
 public:
+    //공격 대상 정하는 함수
     UFUNCTION(BlueprintCallable, Category = "RVO")
     void SetAttackTarget(AActor* InTargetActor);
 
+    //공격 실행하는 함수
     UFUNCTION(BlueprintCallable, Category = "Combat")
     virtual void Attack();
 
@@ -43,15 +45,19 @@ public:
     // 풀로 돌아갈 때: AI 중지 + GAS 정리
     virtual void DeactivateUnit();
 protected:
+    //
     virtual void PossessedBy(AController* NewController) override;
 
 private:
+    //비동기로 스타트업 데이터 로드 및 적용, 데이터 에셋에 있는 데이터를 전부 삽입하는 함수
     void InitUnitStartUpData();
 
 public:
+    //공격
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI Movement")
     TObjectPtr<AActor> TargetActor = nullptr;
             
+
 protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
     TObjectPtr<UUnitCombatComponent> UnitCombatComponent;
@@ -59,6 +65,8 @@ protected:
 private:
     // AI 컨트롤러 캐싱
     class AAIController* AIController = nullptr;
+
+    class UAnimMontage* AttackMontage = nullptr;
 
 
 };

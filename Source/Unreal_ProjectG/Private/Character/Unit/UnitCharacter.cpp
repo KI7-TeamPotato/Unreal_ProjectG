@@ -11,6 +11,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "AIController.h"
 #include "DataAssets/Unit/UnitData.h"
+#include "AbilitySystem/PGCharacterAttributeSet.h"
 
 AUnitCharacter::AUnitCharacter()
 {
@@ -93,7 +94,20 @@ void AUnitCharacter::InitUnitStartUpData()
 
                     UDataAsset_UnitStartupData* StartUpData = Cast<UDataAsset_UnitStartupData>(LoadedData);
                     //StartUpData = 이전 코드의 unitdata라고 생각하면 됩니다..
-                    
+                    StartUpData->SkeletalMesh;
+                    CharacterAttributeSet->InitHealth(StartUpData->Health);
+                    CharacterAttributeSet->InitAttackPower(StartUpData->AttackDamage);
+                    CharacterAttributeSet->InitAttackSpeed(StartUpData->AttackSpeed);
+
+                    if (StartUpData->SkeletalMesh)
+                    {
+                        GetMesh()->SetSkeletalMesh(StartUpData->SkeletalMesh);
+                    }
+
+                    if (StartUpData->AnimBlueprint)
+                    {
+                        GetMesh()->SetAnimInstanceClass(StartUpData->AnimBlueprint);
+                    }
                 }
             }
         )

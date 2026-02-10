@@ -48,6 +48,9 @@ public:
     float AttackDamage = 10.0f;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats")
+    float AttackSpeed = 1.0f;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats")
     float MoveSpeed = 300.0f;
 private:
     UPROPERTY(EditDefaultsOnly, Category = "StartupData")

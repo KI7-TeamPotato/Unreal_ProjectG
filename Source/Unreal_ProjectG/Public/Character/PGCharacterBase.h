@@ -30,7 +30,7 @@ public:
     virtual UPawnCombatComponent* GetPawnCombatComponent() const override;
 
     FORCEINLINE UPGAbilitySystemComponent* GetPGAbilitySystemComponent() const { return PGAbilitySystemComponent; }
-    FORCEINLINE UPGCharacterAttributeSet* GetHeroAttributeSet() const { return HeroAttributeSet; }
+    FORCEINLINE UPGCharacterAttributeSet* GetHeroAttributeSet() const { return CharacterAttributeSet; }
 
 protected:
     virtual void PossessedBy(AController* NewController) override;
@@ -41,7 +41,7 @@ protected:
     TObjectPtr<UPGAbilitySystemComponent> PGAbilitySystemComponent;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AbilitySystem")
-    TObjectPtr<UPGCharacterAttributeSet> HeroAttributeSet;
+    TObjectPtr<UPGCharacterAttributeSet> CharacterAttributeSet;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CharacterData", meta = (AllowPrivateAccess = "true"))
     TSoftObjectPtr<UDataAsset_StartupDataBase> CharacterStartupData;
