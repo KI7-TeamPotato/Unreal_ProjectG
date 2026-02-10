@@ -26,11 +26,6 @@ void UPawnCombatComponent::AssignBaseAttackAbilitySpecHandle(const FGameplayAbil
     GrantedBaseAttackAbilitySpecHandle = InHandle;
 }
 
-void UPawnCombatComponent::ActivateWeaponTrace(bool bEnableTraceDebug, float InTraceDebugDuration)
-{
-    return;
-}
-
 void UPawnCombatComponent::OnHitTargetActor(AActor* HitActor)
 {
     return;

@@ -35,12 +35,6 @@ public:
     UFUNCTION(BlueprintCallable, Category = "Combat")
     TArray<FGameplayAbilitySpecHandle> GetSkillAbilitySpecHandles() const { return GrantedSkillAbilitySpecHandles; }
 
-    UFUNCTION(BlueprintCallable, Category = "Combat")
-    virtual void ActivateWeaponTrace(bool bEnableTraceDebug, float InTraceDebugDuration);
-
-    UFUNCTION(BlueprintCallable, Category = "Combat")
-    FORCEINLINE void ResetOverlappedActors() { OverlappedActors.Empty(); }
-
 protected:
     UFUNCTION(BlueprintCallable, Category = "Combat")
     virtual void OnHitTargetActor(AActor* HitActor);
@@ -59,6 +53,6 @@ protected:
     UPROPERTY(VisibleAnywhere, Category = "Combat|Data")
     FGameplayAbilitySpecHandle GrantedBaseAttackAbilitySpecHandle;
 
-    // 무기 충돌에 겹쳐있는 액터들
-    TArray<AActor*> OverlappedActors;
+    //// 무기 충돌에 겹쳐있는 액터들
+    //TArray<AActor*> OverlappedActors;
 };

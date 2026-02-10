@@ -16,3 +16,11 @@ enum class EPGSuccessType : uint8
     Successful,
     Failed
 };
+
+UENUM()
+enum class EPGToggleType : uint8
+{
+    On,
+    Off,
+    Toggle
+};

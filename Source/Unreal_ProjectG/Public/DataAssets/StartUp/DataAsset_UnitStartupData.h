@@ -19,6 +19,10 @@ class UNREAL_PROJECTG_API UDataAsset_UnitStartupData : public UDataAsset_Startup
 public:
     virtual void GiveToAbilitySystemComponent(UPGAbilitySystemComponent* InASCToGive, int32 InLevel = 1) override;
 
+public:
+    UPROPERTY(EditDefaultsOnly, Category = "StartupData|Visual")
+    TObjectPtr<UAnimMontage> AttackMontage;
+
 private:
     UPROPERTY(EditDefaultsOnly, Category = "StartupData")
     TArray<TSubclassOf<UPGUnitGameplayAbility>> UnitCombatAbilities;
