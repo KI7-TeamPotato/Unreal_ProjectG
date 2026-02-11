@@ -33,7 +33,7 @@ void UHeroAbility_AOEAttack::ActivateAbility(const FGameplayAbilitySpecHandle Ha
     }
 
     // 게임 플레이 이벤트 대기 태스크 생성
-    UAbilityTask_WaitGameplayEvent* AOEAttackEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, PGGameplayTags::Shared_Event_AOEAttackCastingComplete);
+    UAbilityTask_WaitGameplayEvent* AOEAttackEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, PGGameplayTags::Shared_Event_AOEExecute);
 
     // 이벤트 수신 핸들러 바인딩
     AOEAttackEventTask->EventReceived.AddUniqueDynamic(this, &UHeroAbility_AOEAttack::OnAOECastingEnded);

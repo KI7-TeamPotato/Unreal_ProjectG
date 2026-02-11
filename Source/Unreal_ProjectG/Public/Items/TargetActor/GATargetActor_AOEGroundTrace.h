@@ -39,17 +39,26 @@ protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Targeting")
     TObjectPtr<USphereComponent> AOERadiusSphere;
 
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Targeting")
+    TObjectPtr<UDecalComponent> AOEDecalComponent;
+
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Targeting", meta = (ExposeOnSpawn = true))
-    float AOETraceRadius;
+    float AOERadius;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Targeting", meta = (ExposeOnSpawn = true))
+    float AOEDecalSize;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Targeting", meta = (ExposeOnSpawn = true))
+    FRotator AOEDecalRotation;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Targeting", meta = (ExposeOnSpawn = true))
     TObjectPtr<UMaterialInterface> AOETraceDecalMaterial;
 
     UPROPERTY()
-    TWeakObjectPtr<UDecalComponent> AOEDecalComponent;
-
-    UPROPERTY()
     TArray<TObjectPtr<AActor>> OverlappedActors;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Targeting", meta = (ExposeOnSpawn = true))
+    bool bShowDebugSphere = false;
 
     bool bIsTouching = false;
     FVector LastTouchLocation;

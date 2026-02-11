@@ -15,6 +15,10 @@ AGATargetActor_AOEGroundTrace::AGATargetActor_AOEGroundTrace()
 
     AOERadiusSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     AOERadiusSphere->SetGenerateOverlapEvents(true);
+
+    AOEDecalComponent = CreateDefaultSubobject<UDecalComponent>(TEXT("AOEDecalComponent"));
+    AOEDecalComponent->SetupAttachment(RootComponent);
+    AOEDecalComponent->SetVisibility(false);
 }
 
 void AGATargetActor_AOEGroundTrace::StartTargeting(UGameplayAbility* InAbility)
@@ -30,6 +34,14 @@ void AGATargetActor_AOEGroundTrace::StartTargeting(UGameplayAbility* InAbility)
         // 터치 이벤트 활성화
         PC->bEnableTouchEvents = true;
     }
+
+    // 데칼 컴포넌트 설정
+    AOEDecalComponent->SetDecalMaterial(AOETraceDecalMaterial);
+    AOEDecalComponent->SetWorldRotation(AOEDecalRotation);
+    AOEDecalComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+    AOEDecalComponent->DecalSize = FVector(10, AOEDecalSize, AOEDecalSize);
+
+    AOERadiusSphere->SetSphereRadius(AOERadius);
 }
 
 void AGATargetActor_AOEGroundTrace::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -46,6 +58,7 @@ void AGATargetActor_AOEGroundTrace::Tick(float DeltaSeconds)
     {
         return;
     }
+
 
     FVector2D TouchLocation = FVector2D::ZeroVector;
     bool bIsCurrentlyTouching = false;
@@ -84,8 +97,10 @@ void AGATargetActor_AOEGroundTrace::Tick(float DeltaSeconds)
         }
     }
 
-    DrawDebugSphere(GetWorld(), LastTouchLocation, AOERadiusSphere->GetScaledSphereRadius(), 12, FColor::Red, false, -1, 0, 2);
-
+    if (bShowDebugSphere)
+    {
+        DrawDebugSphere(GetWorld(), LastTouchLocation, AOERadiusSphere->GetScaledSphereRadius(), 12, FColor::Green, false, -1, 0, 2);
+    }
 }
 
 void AGATargetActor_AOEGroundTrace::OnSphereOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -122,44 +137,40 @@ void AGATargetActor_AOEGroundTrace::OnTouchPressed()
     // 터치 시작 시에 데칼 컴포넌트 생성
     bIsTouching = true;
 
-    AOEDecalComponent = UGameplayStatics::SpawnDecalAttached(
-        AOETraceDecalMaterial,
-        FVector(10, AOETraceRadius, AOETraceRadius),
-        GetRootComponent(),
-        NAME_None,
-        FVector::ZeroVector,
-        FRotator(-90.f, 0.f, 0.0f),
-        EAttachLocation::KeepRelativeOffset
-    );
+    // 데칼 컴포넌트 표시
+    AOEDecalComponent->SetVisibility(true);
     
     // 스피어 컴포넌트의 반지름을 설정
-    AOERadiusSphere->SetSphereRadius(AOETraceRadius);
     AOERadiusSphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 }
 
 void AGATargetActor_AOEGroundTrace::OnTouchReleased()
 {
     bIsTouching = false;
-    if (AOEDecalComponent.IsValid())
-    {
-        AOEDecalComponent->DestroyComponent();
-        AOEDecalComponent = nullptr;
-    }
+
     AOERadiusSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-    FGameplayAbilityTargetDataHandle TargetData;
+    // 하이라이트된 액터 모두 초기화
+    ClearAllHighlightedActors();
 
-    // HitLocation만 넘기기
+    // 히트 로케이션만 포함하는 타겟 데이터 생성
+    FGameplayAbilityTargetDataHandle TargetData;
+    FHitResult HitResult;
+    HitResult.Location = LastTouchLocation;
+    TargetData.Add(new FGameplayAbilityTargetData_SingleTargetHit(HitResult));
+    TargetDataReadyDelegate.Broadcast(TargetData);
 }
 
 void AGATargetActor_AOEGroundTrace::OnHighlightActorInAOE(AActor* InActor)
 {
-    UE_LOG(LogTemp, Log, TEXT("Highlight Actor In AOE: %s"), *InActor->GetName());
+    //UE_LOG(LogTemp, Log, TEXT("Highlight Actor In AOE: %s"), *InActor->GetName());
+    // 머티리얼 변경 
 }
 
 void AGATargetActor_AOEGroundTrace::OnUnhighlightActorOutAOE(AActor* InActor)
 {
-    UE_LOG(LogTemp, Log, TEXT("Unhighlight Actor Out AOE: %s"), *InActor->GetName());
+    //UE_LOG(LogTemp, Log, TEXT("Unhighlight Actor Out AOE: %s"), *InActor->GetName());
+    // 머티리얼 원래대로 복원
 }
 
 void AGATargetActor_AOEGroundTrace::ClearAllHighlightedActors()
