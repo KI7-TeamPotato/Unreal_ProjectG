@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "UnitSlot.generated.h"
+#include "UnitSlotWidget.generated.h"
 
 class UUnitUIDataAsset;
 class UButton;
@@ -14,7 +14,7 @@ class UTextBlock;
  * 
  */
 UCLASS()
-class UNREAL_PROJECTG_API UUnitSlot : public UUserWidget
+class UNREAL_PROJECTG_API UUnitSlotWidget : public UUserWidget
 {
 	GENERATED_BODY()
 

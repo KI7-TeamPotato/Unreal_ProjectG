@@ -9,7 +9,7 @@
 #include "Components/Resource/HeroResourceComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/Equipment/EquipmentComponent.h"
-#include "UI/ControlPanel.h"
+#include "UI/Battle/ControlPanelWidget.h"
 #include "Components/Combat/HeroCombatComponent.h"
 #include "DataAssets/StartUp/DataAsset_HeroStartupData.h"
 #include "AbilitySystem/PGCharacterAttributeSet.h"

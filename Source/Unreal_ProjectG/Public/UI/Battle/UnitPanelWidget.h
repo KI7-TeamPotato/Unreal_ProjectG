@@ -4,16 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "UnitPanel.generated.h"
+#include "UnitPanelWidget.generated.h"
 
 class UUnitUIDataAsset;
-class UUnitSlot;
+class UUnitSlotWidget;
 
 /**
  * 
  */
 UCLASS()
-class UNREAL_PROJECTG_API UUnitPanel : public UUserWidget
+class UNREAL_PROJECTG_API UUnitPanelWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
@@ -28,21 +28,21 @@ public:
 protected:
     // 유닛 슬롯 위젯
     UPROPERTY(meta = (BindWidget))
-    TObjectPtr<UUnitSlot> UnitSlot1;
+    TObjectPtr<UUnitSlotWidget> UnitSlot1;
 
     UPROPERTY(meta = (BindWidget))
-    TObjectPtr<UUnitSlot> UnitSlot2;
+    TObjectPtr<UUnitSlotWidget> UnitSlot2;
 
     UPROPERTY(meta = (BindWidget))
-    TObjectPtr<UUnitSlot> UnitSlot3;
+    TObjectPtr<UUnitSlotWidget> UnitSlot3;
 
     UPROPERTY(meta = (BindWidget))
-    TObjectPtr<UUnitSlot> UnitSlot4;
+    TObjectPtr<UUnitSlotWidget> UnitSlot4;
 
     UPROPERTY(meta = (BindWidget))
-    TObjectPtr<UUnitSlot> UnitSlot5;
+    TObjectPtr<UUnitSlotWidget> UnitSlot5;
 
 private:
     // 슬롯들을 배열로 관리하기 위한 편의용 포인터 배열
-    TArray<TObjectPtr<UUnitSlot>> SlotArray;
+    TArray<TObjectPtr<UUnitSlotWidget>> SlotArray;
 };

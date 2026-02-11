@@ -1,10 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "UI/UnitPanel.h"
-#include "UI/UnitSlot.h"
+#include "UI/Battle/UnitPanelWidget.h"
+#include "UI/Battle/UnitSlotWidget.h"
 
-void UUnitPanel::NativeConstruct()
+void UUnitPanelWidget::NativeConstruct()
 {
     Super::NativeConstruct();
 

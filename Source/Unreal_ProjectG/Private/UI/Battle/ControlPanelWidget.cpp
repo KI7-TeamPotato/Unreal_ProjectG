@@ -1,30 +1,30 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "UI/ControlPanel.h"
+#include "UI/Battle/ControlPanelWidget.h"
 #include "Components/Image.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Character/Hero/HeroCharacter.h"
 #include "AbilitySystem/PGCharacterAttributeSet.h"
-#include "UI/BarWidget.h"
+#include "UI/Battle/BarWidget.h"
 
-void UControlPanel::InitBar(float CurrentHP, float MaxHP, float CurrentCost, float MaxCost)
+void UControlPanelWidget::InitBar(float CurrentHP, float MaxHP, float CurrentCost, float MaxCost)
 {
     HPBar->InitProgressBar(FLinearColor::Red, FText::FromString(TEXT("Hero HP")), CurrentHP, MaxHP);
     CostBar->InitProgressBar(FLinearColor::Blue, FText::FromString(TEXT("Cost")), CurrentCost, MaxCost);
 }
 
-void UControlPanel::UpdateHP(float InValue)
+void UControlPanelWidget::UpdateHP(float InValue)
 {
     HPBar->UpdateCurrent(InValue);
 }
 
-void UControlPanel::UpdateCost(float InValue)
+void UControlPanelWidget::UpdateCost(float InValue)
 {
     CostBar->UpdateCurrent(InValue);
 }
 
-void UControlPanel::NativeConstruct()
+void UControlPanelWidget::NativeConstruct()
 {
     Super::NativeConstruct();
 
@@ -38,7 +38,7 @@ void UControlPanel::NativeConstruct()
     }
 }
 
-FReply UControlPanel::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+FReply UControlPanelWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
     if (JoyStickBackground)
     {
@@ -58,7 +58,7 @@ FReply UControlPanel::NativeOnMouseButtonDown(const FGeometry& InGeometry, const
     return FReply::Unhandled();
 }
 
-FReply UControlPanel::NativeOnMouseMove(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+FReply UControlPanelWidget::NativeOnMouseMove(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
     if (bIsAreaPressed)
     {
@@ -93,7 +93,7 @@ FReply UControlPanel::NativeOnMouseMove(const FGeometry& InGeometry, const FPoin
     return FReply::Unhandled();
 }
 
-FReply UControlPanel::NativeOnMouseButtonUp(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+FReply UControlPanelWidget::NativeOnMouseButtonUp(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
     if (bIsAreaPressed)
     {

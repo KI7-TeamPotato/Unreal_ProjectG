@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "ControlPanel.generated.h"
+#include "ControlPanelWidget.generated.h"
 
 class UImage;
 class UBarWidget;
@@ -13,7 +13,7 @@ class UBarWidget;
  * 
  */
 UCLASS()
-class UNREAL_PROJECTG_API UControlPanel : public UUserWidget
+class UNREAL_PROJECTG_API UControlPanelWidget : public UUserWidget
 {
 	GENERATED_BODY()
 

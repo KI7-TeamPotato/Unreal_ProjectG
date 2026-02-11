@@ -1,12 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "UI/UnitSlot.h"
+#include "UI/Battle/UnitSlotWidget.h"
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
 #include "DataAssets/UI/UnitUIDataAsset.h"
 
-void UUnitSlot::InitializeSlot(UUnitUIDataAsset* InDataAsset)
+void UUnitSlotWidget::InitializeSlot(UUnitUIDataAsset* InDataAsset)
 {
     if (!InDataAsset) return;
 
@@ -33,17 +33,17 @@ void UUnitSlot::InitializeSlot(UUnitUIDataAsset* InDataAsset)
     UnitButton->SetStyle(NewStyle);
 }
 
-void UUnitSlot::NativeConstruct()
+void UUnitSlotWidget::NativeConstruct()
 {
     Super::NativeConstruct();
 
     if (UnitButton)
     {
-        UnitButton->OnClicked.AddDynamic(this, &UUnitSlot::OnUnitButtonClicked);
+        UnitButton->OnClicked.AddDynamic(this, &UUnitSlotWidget::OnUnitButtonClicked);
     }
 }
 
-void UUnitSlot::OnUnitButtonClicked()
+void UUnitSlotWidget::OnUnitButtonClicked()
 {
     if (!UnitData || !UnitData->UnitClass)
     {
