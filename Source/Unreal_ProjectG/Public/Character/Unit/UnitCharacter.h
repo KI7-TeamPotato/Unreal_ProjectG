@@ -11,7 +11,12 @@
 class UBehaviorTree;
 class UUnitData;
 class UUnitCombatComponent;
+
+/*데이터 동기화가 끝났을때 호출하는 델리게이트,
+* 데이터 적용이 너무 빨라가지고 onpoesses랑 beginplay 시점에 데이터가 안들어가서 델리게이트로 해결함
+*/
 DECLARE_MULTICAST_DELEGATE(FOnUnitStartUpDataLoaded);
+
 /**
  * 
  */
@@ -32,6 +37,9 @@ public:
 
     FOnUnitStartUpDataLoaded OnUnitStartUpDataLoadedDelegate;
 
+    //블랙보드 키를 넣으려고 만든 getter, 좀 무식하긴 한데 이게 제일 쉬운 방법이라 그럼
+    //DetectRangeKey = 적 감지 범위 AttackRangeKey = 공격 사거리 SubBTAssetKey = 병과별 서브 트리
+    //AUnitDetourCrowdAIController의 InitializeAI에서 사용함
     float GetDetectRangeKey() { return DetectRangeKey; }
     float GetAttackRangeKey() { return AttackRangeKey; }
     UBehaviorTree* GetSubBTAssetKey() { return SubBTAssetKey; }
@@ -60,7 +68,7 @@ private:
     void InitUnitStartUpData();
 
 public:
-    //공격
+    //적 베이스 정하려고 만든 변수(EditAnywhere긴 한데 현재는 정하는게 의미가 없긴 함)
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI Movement")
     TObjectPtr<AActor> TargetActor = nullptr;
             

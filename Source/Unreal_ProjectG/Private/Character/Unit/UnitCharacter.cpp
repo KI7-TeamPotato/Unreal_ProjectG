@@ -27,6 +27,7 @@ AUnitCharacter::AUnitCharacter()
     UCharacterMovementComponent* MovementComponent = GetCharacterMovement();
     if (MovementComponent)
     {
+        //크라우드 우회를 사용하기 때문에 RVO는 꺼야함, 기본적으로 꺼져있지만 혹시 몰라서 생성자에서 다시 끄기
         MovementComponent->bUseRVOAvoidance = false;
     }
 }
@@ -51,6 +52,7 @@ void AUnitCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
     if (UUnitSubsystem* Subsystem = GetWorld()->GetSubsystem<UUnitSubsystem>())
      {
+        //유닛 서브시스템에서 정한 팀을 해제함 
         Subsystem->UnregisterUnit(this, SideTag);
      }
 
@@ -129,17 +131,19 @@ void AUnitCharacter::InitUnitStartUpData()
                     UE_LOG(LogTemp, Log, TEXT("HP : %f"), CharacterAttributeSet->GetHealth());
                     UE_LOG(LogTemp, Log, TEXT("InitUnitStartUpData"));
 
-                    if (OnUnitStartUpDataLoadedDelegate.IsBound())
-                    {
-                        OnUnitStartUpDataLoadedDelegate.Broadcast();
-                    }
-
                     SideTag = StartUpData->SideTag;
 
+                    //유닛 서브시스템을 이용한 태그별 팀 설정
                     if (UUnitSubsystem* Subsystem = GetWorld()->GetSubsystem<UUnitSubsystem>())
                     {
                         Subsystem->RegisterUnit(this, SideTag);
                         UE_LOG(LogTemp, Log, TEXT("태그: %s"), *SideTag.ToString());
+                    }
+
+                    //데이터 삽입이 끝나면 델리게이트를 브로드캐스트해서 블랙보드가 값을 받기 시작함
+                    if (OnUnitStartUpDataLoadedDelegate.IsBound())
+                    {
+                        OnUnitStartUpDataLoadedDelegate.Broadcast();
                     }
                 }
             }
@@ -149,6 +153,7 @@ void AUnitCharacter::InitUnitStartUpData()
 
 void AUnitCharacter::SetAttackTarget(AActor* InTargetActor)
 {
+    //적 베이스로 돌격하기 위한 함수, 지금은 유닛 블루프린트의 beginplay에서만 호출하는데 + 여기서만 적 베이스를 정할 수 있는데 나중ㅇ 바꿀듯????
     TargetActor = InTargetActor;
     if (!AIController)
     {
@@ -169,6 +174,7 @@ void AUnitCharacter::Attack()
 {
     UE_LOG(LogTemp, Warning, TEXT("Attack"));
 
+    //attack에서는 몽타주만 재생함, 노티파이랑 GAS를 이용해서 UGEExecCalc_DefaultDamageTaken에서 데미지 처리
     if (UnitAttackMontage)
     {
         PlayAnimMontage(UnitAttackMontage);
@@ -176,6 +182,9 @@ void AUnitCharacter::Attack()
 
     }
 }
+
+
+//오브젝트 풀링을 위한 함수들, 아직 미구현
 
 void AUnitCharacter::ActivateUnit()
 {
