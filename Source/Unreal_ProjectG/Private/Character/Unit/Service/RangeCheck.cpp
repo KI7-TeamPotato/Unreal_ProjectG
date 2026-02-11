@@ -60,9 +60,9 @@ void URangeCheck::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
 
     const TArray<TWeakObjectPtr<AActor>>& EnemyList = UnitSubSystem->GetUnitsByTeam(EnemyTag);
 
-    AActor* ClosestTarget = nullptr;
+    AActor* TargetEnemy = nullptr;
     float MinDistSq = RangeSq;
-    bool bInRange = false;
+    bool bInDetectRange = false;
     bool bInAttackRange = false;
 
     FVector MyLocation = ControllPawn->GetActorLocation();
@@ -76,12 +76,12 @@ void URangeCheck::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
         if (DistSq <= MinDistSq)
         {
             MinDistSq = DistSq;
-            ClosestTarget = Enemy;
-            bInRange = true;
+            TargetEnemy = Enemy;
+            bInDetectRange = true;
         }
     }
 
-    if (bInRange && ClosestTarget)
+    if (bInDetectRange && TargetEnemy)
     {
         if (MinDistSq <= AttackRangeSq)
         {
@@ -89,8 +89,8 @@ void URangeCheck::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
         }
     }
 
-    Blackboard->SetValueAsObject(TargetActorKey.SelectedKeyName, ClosestTarget);
-    Blackboard->SetValueAsBool(IsInDetectRangeKey.SelectedKeyName, bInRange);
+    Blackboard->SetValueAsObject(TargetActorKey.SelectedKeyName, TargetEnemy);
+    Blackboard->SetValueAsBool(IsInDetectRangeKey.SelectedKeyName, bInDetectRange);
     Blackboard->SetValueAsBool(IsInAttackRangeKey.SelectedKeyName, bInAttackRange);
 
     DrawDebugCircle(
@@ -108,12 +108,12 @@ void URangeCheck::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
         false                      // 채우기 여부
     );
 
-    if (ClosestTarget)
+    if (TargetEnemy)
     {
         DrawDebugLine(
             GetWorld(),
             ControllPawn->GetActorLocation(),
-            ClosestTarget->GetActorLocation(),
+            TargetEnemy->GetActorLocation(),
             FColor::Yellow, // 타겟 연결선은 노란색
             false,
             Interval + 0.1f,
@@ -122,8 +122,12 @@ void URangeCheck::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
         );
     }
 
+    UE_LOG(LogTemp, Log, TEXT("Target: %s, InDetect: %d, InAttack: %d"),
+        TargetEnemy ? *TargetEnemy->GetName() : TEXT("None"),
+        bInDetectRange, bInAttackRange);
+
     if (AIC)
     {
-        AIC->SetUnitState(bInRange ? EUnitState::Combat : EUnitState::Move);
+        AIC->SetUnitState(bInDetectRange ? EUnitState::Combat : EUnitState::Move);
     }
 }

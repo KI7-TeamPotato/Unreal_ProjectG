@@ -79,5 +79,7 @@ private:
 
     float AttackRangeKey = 0.0f;
 
+    FGameplayTag SideTag;
+
     TObjectPtr<UBehaviorTree> SubBTAssetKey = nullptr;
 };
