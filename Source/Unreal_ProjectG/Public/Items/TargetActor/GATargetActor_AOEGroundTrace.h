@@ -42,13 +42,15 @@ protected:
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Targeting", meta = (ExposeOnSpawn = true))
     float AOETraceRadius;
 
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Targeting")
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Targeting", meta = (ExposeOnSpawn = true))
     TObjectPtr<UMaterialInterface> AOETraceDecalMaterial;
+
+    UPROPERTY()
+    TWeakObjectPtr<UDecalComponent> AOEDecalComponent;
 
     UPROPERTY()
     TArray<TObjectPtr<AActor>> OverlappedActors;
 
-    TWeakObjectPtr<UDecalComponent> SpawnedDecalComponent;
     bool bIsTouching = false;
     FVector LastTouchLocation;
 };
