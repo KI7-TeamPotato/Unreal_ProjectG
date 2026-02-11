@@ -90,7 +90,7 @@ protected:
     TObjectPtr<UAnimMontage> Attack_Magic = nullptr;
 
     // 조이스틱
-    UPROPERTY()
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
     TObjectPtr<class UControlPanel> JoystickWidget = nullptr;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))

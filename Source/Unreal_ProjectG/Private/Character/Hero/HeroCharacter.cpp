@@ -131,6 +131,7 @@ void AHeroCharacter::Tick(float DeltaTime)
     if (JoystickWidget)
     {
         FVector2D JoyInput = JoystickWidget->GetJoystickVector();
+        UE_LOG(LogTemp, Log, TEXT("조이스틱 위젯 확인"));
 
         if (!JoyInput.IsNearlyZero())
         {
@@ -141,7 +142,7 @@ void AHeroCharacter::Tick(float DeltaTime)
             AddMovementInput(ForwardDirection, -JoyInput.Y);
             AddMovementInput(RightDirection, JoyInput.X);
 
-            //UE_LOG(LogTemp, Log, TEXT("JoyInput: X=%.2f, Y=%.2f"), JoyInput.X, JoyInput.Y);
+            UE_LOG(LogTemp, Log, TEXT("JoyInput: X=%.2f, Y=%.2f"), JoyInput.X, JoyInput.Y);
         }
     }
 }

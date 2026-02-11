@@ -21,7 +21,7 @@ public:
     // 외부(캐릭터)에서 조이스틱 값을 가져갈 함수
     FVector2D GetJoystickVector() const { return JoystickVector; }
 
-    void InitBar(float MaxHP, float MaxCost);
+    void InitBar(float CurrentHP, float MaxHP, float CurrentCost, float MaxCost);
 
     void UpdateHP(float InValue);
     void UpdateCost(float InValue);
