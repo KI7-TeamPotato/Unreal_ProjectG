@@ -59,6 +59,7 @@ void UHeroAbility_BaseProjectileAttack::SpawnProjectile(FGameplayEventData InEve
     APGProjectileBase* SpawnedProjectile = GetWorld()->SpawnActorDeferred<APGProjectileBase>(SpawnedProjectileClass, FTransform(SpawnRotation, SpawnLocation),
         GetAvatarActorFromActorInfo(), Cast<APawn>(GetAvatarActorFromActorInfo()), ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 
+    // 프로젝타일에 데미지 이펙트 스펙 핸들을 설정한 후에 스폰 완료
     if (SpawnedProjectile)
     {
         float ProjectileMultiplierValue = ProjectileAttackSkillMultiplier.GetValueAtLevel(GetAbilityLevel());

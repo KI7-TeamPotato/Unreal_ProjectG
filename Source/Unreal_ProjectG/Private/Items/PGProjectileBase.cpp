@@ -12,10 +12,10 @@ APGProjectileBase::APGProjectileBase()
     ProjectileCollisionComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("ProjectileCollisionComponent"));
     SetRootComponent(ProjectileCollisionComponent);
     ProjectileCollisionComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-    ProjectileCollisionComponent->SetCollisionResponseToChannel(ECC_Pawn, ECR_Block);
+    ProjectileCollisionComponent->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
     ProjectileCollisionComponent->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Block);
     ProjectileCollisionComponent->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
-    //ProjectileCollisionComponent->OnComponentHit.AddUniqueDynamic(this, &APGProjectileBase::OnProjectileHit);
+    ProjectileCollisionComponent->OnComponentHit.AddUniqueDynamic(this, &APGProjectileBase::OnProjectileHit);
     ProjectileCollisionComponent->OnComponentBeginOverlap.AddUniqueDynamic(this, &APGProjectileBase::OnProjectileBeginOverlap);
 
     ProjectileNiagaraComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("ProjectileNiagaraComponent"));
@@ -34,31 +34,38 @@ void APGProjectileBase::BeginPlay()
 {
 	Super::BeginPlay();
 	
-    // 데미지 적용 정책에 따른 콜리전 응답 설정
-    if (ProjectileDamagePolicy == EProjectileDamagePolicy::OnBeginOverlap)
+    //checkf(GetInstigator(), TEXT("Projectile %s has no valid Instigator assigned!"), *GetName());
+
+    if (AActor* OwnerActor = GetInstigator())
     {
-        ProjectileCollisionComponent->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+        ProjectileCollisionComponent->IgnoreActorWhenMoving(GetInstigator(), true);
+    }
+
+    // 데미지 적용 정책에 따른 콜리전 응답 설정
+    if (ProjectileDamagePolicy == EProjectileDamagePolicy::OnHit)
+    {
+        ProjectileCollisionComponent->SetCollisionResponseToChannel(ECC_Pawn, ECR_Block);
     }
 }
 
 void APGProjectileBase::OnProjectileHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-    APawn* HitPawn = Cast<APawn>(OtherActor);
-
     // 히트한 액터가 플레이어면 무시
     if (OtherActor == GetInstigator())
     {
-        UE_LOG(LogTemp, Warning, TEXT("APGProjectileBase::OnProjectileHit OtherComponent: %s"), *OtherComp->GetName());
         return;
     }
 
-    UE_LOG(LogTemp, Warning, TEXT("APGProjectileBase::OnProjectileHit OtherActor: %s"), *OtherActor->GetName());
+    APawn* HitPawn = Cast<APawn>(OtherActor);
+    // 맞은 액터가 Pawn이면 데미지 적용
+    if(HitPawn)
+    {
+        FGameplayEventData Data;
+        Data.Instigator = this;
+        Data.Target = HitPawn;
 
-    FGameplayEventData Data;
-    Data.Instigator = this;
-    Data.Target = HitPawn;
-
-    HandleApplyProjectileDamage(HitPawn, Data);
+        HandleApplyProjectileDamage(HitPawn, Data);
+    }
 
     Destroy();
 }
@@ -68,19 +75,18 @@ void APGProjectileBase::OnProjectileBeginOverlap(UPrimitiveComponent* Overlapped
     // 오버랩한 액터가 발사자 자신이면 무시
     if(OtherActor == GetInstigator())
     {
-        UE_LOG(LogTemp, Warning, TEXT("01   APGProjectileBase::OnProjectileBeginOverlap OtherActor: %s"), *OtherActor->GetName());
         return;
     }
 
-    UE_LOG(LogTemp, Warning, TEXT("02   APGProjectileBase::OnProjectileBeginOverlap OtherActor: %s"), *OtherActor->GetName());
-
     APawn* OverlappedPawn = Cast<APawn>(OtherActor);
+    if (OverlappedPawn)
+    {
+        FGameplayEventData Data;
+        Data.Instigator = this;
+        Data.Target = OverlappedPawn;
 
-    FGameplayEventData Data;
-    Data.Instigator = this;
-    Data.Target = OverlappedPawn;
-
-    HandleApplyProjectileDamage(OverlappedPawn, Data);
+        HandleApplyProjectileDamage(OverlappedPawn, Data);
+    }
 
     Destroy();
 }

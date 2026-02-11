@@ -53,7 +53,7 @@ protected:
     TObjectPtr<UProjectileMovementComponent> ProjectileMovementComponent;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Projectile")
-    EProjectileDamagePolicy ProjectileDamagePolicy = EProjectileDamagePolicy::OnHit;
+    EProjectileDamagePolicy ProjectileDamagePolicy = EProjectileDamagePolicy::OnBeginOverlap;
 
     UPROPERTY(BlueprintReadOnly, Category = "Projectile", meta = (ExposeOnSpawn = "true"))
     FGameplayEffectSpecHandle ProjectileDamageEffectSpecHandle;
