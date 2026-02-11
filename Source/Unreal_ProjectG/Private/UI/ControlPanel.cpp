@@ -5,12 +5,13 @@
 #include "Components/Image.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Character/Hero/HeroCharacter.h"
+#include "AbilitySystem/PGCharacterAttributeSet.h"
 #include "UI/BarWidget.h"
 
 void UControlPanel::InitBar(float MaxHP, float MaxCost)
 {
-    HPBar->InitProgressBar(FLinearColor::Red, FText(), MaxHP);
-    CostBar->InitProgressBar(FLinearColor::Blue, FText(), MaxCost);
+    HPBar->InitProgressBar(FLinearColor::Red, FText::FromString(TEXT("Hero HP")), MaxHP);
+    CostBar->InitProgressBar(FLinearColor::Blue, FText::FromString(TEXT("Cost")), MaxCost);
 }
 
 void UControlPanel::UpdateHP(float InValue)
@@ -31,6 +32,8 @@ void UControlPanel::NativeConstruct()
     if (Hero)
     {
         Hero->SetJoystickWidget(this);
+        UPGCharacterAttributeSet* AttributeSet = Hero->GetHeroAttributeSet();
+        InitBar(AttributeSet->GetMaxHealth(), AttributeSet->GetMaxCost());
     }
 }
 
