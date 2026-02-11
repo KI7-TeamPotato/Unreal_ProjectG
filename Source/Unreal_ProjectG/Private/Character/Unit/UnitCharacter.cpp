@@ -112,6 +112,11 @@ void AUnitCharacter::InitUnitStartUpData()
                         GetMesh()->SetAnimInstanceClass(StartUpData->AnimBlueprint);
                     }
 
+                    if (StartUpData->AttackMontage)
+                    {
+                        UnitAttackMontage = StartUpData->AttackMontage;
+                    }
+
                     if (StartUpData->BranchData)
                     {
                         DetectRangeKey = StartUpData->BranchData->DetectRange;
@@ -164,10 +169,12 @@ void AUnitCharacter::Attack()
 {
     UE_LOG(LogTemp, Warning, TEXT("Attack"));
 
-    //if (AttackMontage)
-    //{
-    //    PlayAnimMontage(AttackMontage);
-    //}
+    if (UnitAttackMontage)
+    {
+        PlayAnimMontage(UnitAttackMontage);
+        UE_LOG(LogTemp, Warning, TEXT("PlayMontage"));
+
+    }
 }
 
 void AUnitCharacter::ActivateUnit()

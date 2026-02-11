@@ -73,7 +73,7 @@ private:
     // AI 컨트롤러 캐싱
     class AAIController* AIController = nullptr;
 
-    class UAnimMontage* AttackMontage = nullptr;
+    class UAnimMontage* UnitAttackMontage = nullptr;
 
     float DetectRangeKey = 0.0f;
 
