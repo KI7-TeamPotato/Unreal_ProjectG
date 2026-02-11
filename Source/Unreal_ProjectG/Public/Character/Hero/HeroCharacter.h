@@ -25,12 +25,13 @@ public:
     UFUNCTION(BlueprintCallable, Category = "HeroCharacter")
     void SpawnHero();
 
-    //캐릭터 사망
+    //사망 호출
     UFUNCTION(BlueprintCallable, Category = "HeroCharacter")
     virtual void OnDie() override;
 
+    //사망상태로 만듬
+    UFUNCTION()
     void MakeHeroDead();
-
 
     void SetJoystickWidget(class UControlPanel* InWidget) { JoystickWidget = InWidget; }
 
@@ -49,6 +50,9 @@ private:
     //공격
     UFUNCTION()
     void OnAttackInput();
+
+    UFUNCTION()
+    void OnOverlapBegin(AActor* OverlappedActor, AActor* OtherActor);
 
 public:
     UPROPERTY(BlueprintAssignable, Category = "Event")
@@ -73,7 +77,9 @@ protected:
     TObjectPtr<UHeroCombatComponent> HeroCombatComponent = nullptr;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
     TObjectPtr<class UEquipmentComponent> EquipmentComponent = nullptr;
-
+    //공격 판정용 콜리전. 공격 범위 처리용
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Component")
+    TObjectPtr<class USphereComponent> AggroCollision = nullptr;
 
     //input action
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "InputAction")
@@ -93,11 +99,17 @@ protected:
     UPROPERTY()
     TObjectPtr<class UControlPanel> JoystickWidget = nullptr;
 
+    //리소스를 관리하는 어트리뷰트
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
     TObjectPtr<class UPGCharacterAttributeSet> ResourceAttribute = nullptr;
 
+    //사망 어빌리티
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ability")
     TSubclassOf<class UGameplayAbility> GA_Die = nullptr;
+
+    //공격
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ability")
+    TSubclassOf<UGameplayAbility> GA_Attack = nullptr;
 
 private:
     //ABP

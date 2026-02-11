@@ -149,3 +149,8 @@ void AUnitCharacter::ActivateUnit()
 void AUnitCharacter::DeactivateUnit()
 {
 }
+
+FGameplayTag AUnitCharacter::GetUnitSideTag()
+{
+    return UnitData->SideTag;
+}

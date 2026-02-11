@@ -42,6 +42,10 @@ public:
 
     // 풀로 돌아갈 때: AI 중지 + GAS 정리
     virtual void DeactivateUnit();
+
+    //적 팀인지 아군 팀인지 확인
+    FGameplayTag GetUnitSideTag();
+    
 protected:
     virtual void PossessedBy(AController* NewController) override;
 

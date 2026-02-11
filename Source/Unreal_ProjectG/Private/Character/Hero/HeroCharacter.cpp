@@ -14,6 +14,9 @@
 #include "DataAssets/StartUp/DataAsset_HeroStartupData.h"
 #include "AbilitySystem/PGCharacterAttributeSet.h"
 #include "AbilitySystem/PGAbilitySystemComponent.h"
+#include "Components/SphereComponent.h"
+#include "Character/Unit/UnitCharacter.h"
+#include "PGGameplayTags.h"
 
 // Sets default values
 AHeroCharacter::AHeroCharacter()
@@ -42,6 +45,8 @@ AHeroCharacter::AHeroCharacter()
     HeroCombatComponent = CreateDefaultSubobject<UHeroCombatComponent>(TEXT("HeroCombatComponent"));
     ResourceManager = CreateDefaultSubobject<UHeroResourceComponent>(TEXT("ResourceManager"));
     EquipmentComponent = CreateDefaultSubobject<UEquipmentComponent>(TEXT("EquipmentComponent"));
+
+    AggroCollision = CreateDefaultSubobject<USphereComponent>(TEXT("AggroCollision"));
 }
 
 UPawnCombatComponent* AHeroCharacter::GetPawnCombatComponent() const
@@ -119,7 +124,13 @@ void AHeroCharacter::BeginPlay()
         {
             PGAbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(GA_Die, 1, 0, this));
         }
+        if (GA_Attack)
+        {
+            PGAbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(GA_Attack, 1, 1, this));
+        }
     }
+
+    OnActorBeginOverlap.AddDynamic(this, &AHeroCharacter::OnOverlapBegin);
 }
 
 // Called every frame
@@ -174,6 +185,22 @@ void AHeroCharacter::OnMovementInput(const FInputActionValue& InValue)
 
 void AHeroCharacter::OnAttackInput()
 {
+    if (PGAbilitySystemComponent)
+    {
+        PGAbilitySystemComponent->TryActivateAbilityByClass(GA_Attack);
+    }
+}
 
+void AHeroCharacter::OnOverlapBegin(AActor* OverlappedActor, AActor* OtherActor)
+{
+    AUnitCharacter* Unit = Cast<AUnitCharacter>(OtherActor);
+
+    if (Unit)
+    {
+        if (Unit->GetUnitSideTag() == PGGameplayTags::Unit_Side_Foe)
+        {
+            PGAbilitySystemComponent->TryActivateAbilityByClass(GA_Attack);
+        }
+    }
 }
 
