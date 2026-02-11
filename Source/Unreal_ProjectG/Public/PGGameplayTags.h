@@ -35,6 +35,8 @@ namespace PGGameplayTags
     // 공유 이벤트 태그
     UNREAL_PROJECTG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Event_AttackTraceToggle); // 몽타주에서 공격 트레이스 온오프 토글용
     UNREAL_PROJECTG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Event_ProjectileSpawn);
+    UNREAL_PROJECTG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Event_MeleeHit);
+    UNREAL_PROJECTG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Event_AOEAttackCastingComplete);
     UNREAL_PROJECTG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Event_WeaponSpawn);
 
     // 공유 SetByCaller 태그

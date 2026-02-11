@@ -32,6 +32,8 @@ namespace PGGameplayTags
     // 이벤트 태그
     UE_DEFINE_GAMEPLAY_TAG(Shared_Event_AttackTraceToggle, "Shared.Event.AttackTraceToggle");
     UE_DEFINE_GAMEPLAY_TAG(Shared_Event_ProjectileSpawn, "Shared.Event.ProjectileSpawn");
+    UE_DEFINE_GAMEPLAY_TAG(Shared_Event_MeleeHit, "Shared.Event.MeleeHit");
+    UE_DEFINE_GAMEPLAY_TAG(Shared_Event_AOEAttackCastingComplete, "Shared.Event.AOEAttackCastingComplete");
     UE_DEFINE_GAMEPLAY_TAG(Shared_Event_WeaponSpawn, "Shared.Event.WeaponSpawn");
 
     // SetByCaller 태그
