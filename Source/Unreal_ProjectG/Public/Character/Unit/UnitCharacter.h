@@ -11,6 +11,7 @@
 class UBehaviorTree;
 class UUnitData;
 class UUnitCombatComponent;
+DECLARE_MULTICAST_DELEGATE(FOnUnitStartUpDataLoaded);
 /**
  * 
  */
@@ -28,6 +29,8 @@ public:
     virtual void GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const override;
     // 컴뱂 인터페이스 구현
     virtual UPawnCombatComponent* GetPawnCombatComponent() const override;
+
+    FOnUnitStartUpDataLoaded OnUnitStartUpDataLoadedDelegate;
 
     float GetDetectRangeKey() { return DetectRangeKey; }
     float GetAttackRangeKey() { return AttackRangeKey; }

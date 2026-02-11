@@ -112,15 +112,22 @@ void AUnitCharacter::InitUnitStartUpData()
                         GetMesh()->SetAnimInstanceClass(StartUpData->AnimBlueprint);
                     }
 
-                    DetectRangeKey = StartUpData->BranchData->DetectRange;
+                    if (StartUpData->BranchData)
+                    {
+                        DetectRangeKey = StartUpData->BranchData->DetectRange;
 
-                    AttackRangeKey = StartUpData->BranchData->AttackRange;
+                        AttackRangeKey = StartUpData->BranchData->AttackRange;
 
-                    SubBTAssetKey = StartUpData->BranchData->SubBTAsset;
-
+                        SubBTAssetKey = StartUpData->BranchData->SubBTAsset;
+                    }
                     UE_LOG(LogTemp, Log, TEXT("InitUnitStartUpData"));
                     UE_LOG(LogTemp, Log, TEXT("HP : %f"), CharacterAttributeSet->GetHealth());
                     UE_LOG(LogTemp, Log, TEXT("InitUnitStartUpData"));
+
+                    if (OnUnitStartUpDataLoadedDelegate.IsBound())
+                    {
+                        OnUnitStartUpDataLoadedDelegate.Broadcast();
+                    }
 
                 }
             }
@@ -141,7 +148,7 @@ void AUnitCharacter::SetAttackTarget(AActor* InTargetActor)
         UBlackboardComponent* BBComp = AIController->GetBlackboardComponent();
         if (BBComp)
         {
-            BBComp->SetValueAsObject(TEXT("AttackTarget"), InTargetActor);
+            BBComp->SetValueAsObject(TEXT("AttackTargetBase"), InTargetActor);
         }
     }
 }

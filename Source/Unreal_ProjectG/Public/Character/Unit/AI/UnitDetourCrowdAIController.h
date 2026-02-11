@@ -28,6 +28,7 @@ protected:
 public:
     virtual FGenericTeamId GetGenericTeamId() const override;
 
+    void InitializeAI();
 
 public:
     UFUNCTION(BlueprintCallable, Category = "AI")

@@ -23,45 +23,18 @@ void AUnitDetourCrowdAIController::OnPossess(APawn* InPawn)
     
     Super::OnPossess(InPawn);
 
-    AUnitCharacter* Unit = Cast<AUnitCharacter>(InPawn);
-    if (Unit && GetBlackboardComponent())
-    {
-        GetBlackboardComponent()->SetValueAsFloat(TEXT("DetectRange"), Unit->GetDetectRangeKey());
-        GetBlackboardComponent()->SetValueAsFloat(TEXT("AttackRange"), Unit->GetAttackRangeKey());
-    }
-
     UCrowdFollowingComponent* CrowdComp = Cast<UCrowdFollowingComponent>(GetPathFollowingComponent());
     if (CrowdComp)
     {
         CrowdComp->SetCrowdAvoidanceQuality(ECrowdAvoidanceQuality::High);
     }
 
-    if (BTAsset)
+    AUnitCharacter* Unit = Cast<AUnitCharacter>(InPawn);
+    if (Unit)
     {
-        if (RunBehaviorTree(BTAsset))
-        {
-            UE_LOG(LogTemp, Log, TEXT("메인 BT 실행 성공"));
-            SetUnitState(EUnitState::Move);
+        Unit->OnUnitStartUpDataLoadedDelegate.AddUObject(this, &AUnitDetourCrowdAIController::InitializeAI);
+    }
 
-            AUnitCharacter* CrowdUnit = Cast<AUnitCharacter>(InPawn);
-            if (CrowdUnit && CrowdUnit->GetSubBTAssetKey())
-            {
-                UBehaviorTreeComponent* BTComp = Cast<UBehaviorTreeComponent>(BrainComponent);
-                if (BTComp)
-                {
-                    FGameplayTag CombatTag = FGameplayTag::RequestGameplayTag(TEXT("AI.State.Combat"));
-                }
-            }
-        }
-        else
-        {
-            UE_LOG(LogTemp, Error, TEXT("FailRunBehaviorTree"));
-        }
-    }
-    else
-    {
-        UE_LOG(LogTemp, Error, TEXT("BTAssetNull"));
-    }
 }
 
 void AUnitDetourCrowdAIController::OnUnPossess()
@@ -69,6 +42,12 @@ void AUnitDetourCrowdAIController::OnUnPossess()
     if (UBehaviorTreeComponent* BTComp = Cast<UBehaviorTreeComponent>(BrainComponent))
     {
         BTComp->StopTree(EBTStopMode::Safe);
+    }
+
+    AUnitCharacter* Unit = Cast<AUnitCharacter>(GetPawn());
+    if (Unit)
+    {
+        Unit->OnUnitStartUpDataLoadedDelegate.RemoveAll(this);
     }
 
     Super::OnUnPossess();
@@ -79,9 +58,49 @@ FGenericTeamId AUnitDetourCrowdAIController::GetGenericTeamId() const
     return FGenericTeamId();
 }
 
+void AUnitDetourCrowdAIController::InitializeAI()
+{
+    AUnitCharacter* CrowdUnit = Cast<AUnitCharacter>(GetPawn());
+
+    if (CrowdUnit && BlackboardComp)
+    {
+        BlackboardComp->SetValueAsFloat(TEXT("DetectRange"), CrowdUnit->GetDetectRangeKey());
+        BlackboardComp->SetValueAsFloat(TEXT("AttackRange"), CrowdUnit->GetAttackRangeKey());
+
+        if (UBehaviorTree* SubTree = CrowdUnit->GetSubBTAssetKey())
+        {
+            BlackboardComp->SetValueAsObject(TEXT("SubBT"), SubTree);
+        }
+
+        if (BTAsset)
+        {
+            if (RunBehaviorTree(BTAsset))
+            {
+                UE_LOG(LogTemp, Log, TEXT("메인 BT 실행 성공"));
+                SetUnitState(EUnitState::Move);
+
+                UBehaviorTreeComponent* BTComp = Cast<UBehaviorTreeComponent>(BrainComponent);
+                if (BTComp)
+                {
+                    //나중에 pggameplaytag 사용하게 수정하면 조음-
+                    FGameplayTag CombatTag = FGameplayTag::RequestGameplayTag(TEXT("Unit.State.Combat"));
+                }
+            }
+            else
+            {
+                UE_LOG(LogTemp, Error, TEXT("FailRunBehaviorTree"));
+            }
+        }
+        else
+        {
+            UE_LOG(LogTemp, Error, TEXT("BTAssetNull"));
+        }
+    }
+}
+
 void AUnitDetourCrowdAIController::SetUnitState(EUnitState NewState)
 {
-    if (Blackboard)
+    if (BlackboardComp)
     {
         Blackboard->SetValueAsEnum(StateKeyName, static_cast<uint8>(NewState));
         UCrowdFollowingComponent* CrowdComp = Cast<UCrowdFollowingComponent>(GetPathFollowingComponent());
