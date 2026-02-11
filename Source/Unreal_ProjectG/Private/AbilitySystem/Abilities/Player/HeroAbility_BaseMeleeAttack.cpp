@@ -59,11 +59,11 @@ void UHeroAbility_BaseMeleeAttack::EndAbility(const FGameplayAbilitySpecHandle H
 
 
 
-void UHeroAbility_BaseMeleeAttack::ToggleWeaponTrace(FGameplayEventData InEventDtatab)
+void UHeroAbility_BaseMeleeAttack::ToggleWeaponTrace(FGameplayEventData InEventDtata)
 {
     if (!CachedWeaponStaticMesh) return;
 
-    EPGToggleType ToggleType = static_cast<EPGToggleType>(static_cast<int32>(InEventDtatab.EventMagnitude));
+    EPGToggleType ToggleType = static_cast<EPGToggleType>(static_cast<int32>(InEventDtata.EventMagnitude));
 
     if (ToggleType == EPGToggleType::On)
     {
