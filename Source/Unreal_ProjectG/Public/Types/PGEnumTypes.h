@@ -17,6 +17,14 @@ enum class EPGSuccessType : uint8
     Failed
 };
 
+UENUM()
+enum class EPGToggleType : uint8
+{
+    On,
+    Off,
+    Toggle
+};
+
 // --- 팀 구분 (피아 식별용) ---
 // 블루프린트 에디터에서 드롭다운으로 선택 가능
 UENUM(BlueprintType)
