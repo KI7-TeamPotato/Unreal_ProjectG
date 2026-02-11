@@ -8,6 +8,7 @@
 
 class UImage;
 class UBarWidget;
+class UActiveSkillWidget;
 
 /**
  * 
@@ -45,12 +46,18 @@ protected:
     UPROPERTY(meta = (BindWidget))
     TObjectPtr<UImage> JoyStickBackground;
 
+    // 영웅 상태 바
     UPROPERTY(meta = (BindWidget))
     TObjectPtr<UBarWidget> HPBar;
 
     UPROPERTY(meta = (BindWidget))
     TObjectPtr<UBarWidget> CostBar;
 
+    // 액티브 스킬
+    UPROPERTY(meta = (BindWidget))
+    TObjectPtr<UActiveSkillWidget> WeaponSkill;
+    
+private:
     // 내부 변수
     bool bIsAreaPressed = false;
     float JoystickRange = 150.0f; // 블루프린트의 Clamp 값

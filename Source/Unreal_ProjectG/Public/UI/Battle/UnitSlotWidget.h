@@ -20,7 +20,7 @@ class UNREAL_PROJECTG_API UUnitSlotWidget : public UUserWidget
 
 public:
     // 데이터 에셋을 가져와서 초기화
-    UFUNCTION(BlueprintCallable, Category = "Unit UI")
+    UFUNCTION(BlueprintCallable, Category = "BattelUI")
     void InitializeSlot(UUnitUIDataAsset* InDataAsset);
 
 protected:
@@ -32,7 +32,7 @@ protected:
     void OnUnitButtonClicked();
 
 protected:
-    UPROPERTY(BlueprintReadOnly, Category = "Unit UI")
+    UPROPERTY(BlueprintReadOnly, Category = "BattelUI")
     TObjectPtr<UUnitUIDataAsset> UnitData;
 
     UPROPERTY(meta = (BindWidget))
