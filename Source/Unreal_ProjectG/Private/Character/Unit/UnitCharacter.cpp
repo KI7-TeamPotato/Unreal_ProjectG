@@ -94,7 +94,6 @@ void AUnitCharacter::InitUnitStartUpData()
                     LoadedData->GiveToAbilitySystemComponent(PGAbilitySystemComponent);
 
                     UDataAsset_UnitStartupData* StartUpData = Cast<UDataAsset_UnitStartupData>(LoadedData);
-                    //StartUpData = 이전 코드의 unitdata라고 생각하면 됩니다..
                     StartUpData->SkeletalMesh;
                     CharacterAttributeSet->InitHealth(StartUpData->Health);
                     CharacterAttributeSet->InitAttackPower(StartUpData->AttackDamage);
@@ -141,6 +140,8 @@ void AUnitCharacter::SetAttackTarget(AActor* InTargetActor)
 
 void AUnitCharacter::Attack()
 {
+    UE_LOG(LogTemp, Warning, TEXT("Attack"));
+
     //if (AttackMontage)
     //{
     //    PlayAnimMontage(AttackMontage);
