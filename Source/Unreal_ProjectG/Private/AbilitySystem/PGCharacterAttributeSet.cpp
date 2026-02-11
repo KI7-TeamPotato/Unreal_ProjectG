@@ -2,13 +2,14 @@
 
 #include "AbilitySystem/PGCharacterAttributeSet.h"
 #include "GameplayEffectExtension.h"
+#include "Character/Hero/HeroCharacter.h"
 
 UPGCharacterAttributeSet::UPGCharacterAttributeSet()
 {
     InitMaxHealth(100.0f);
     InitHealth(100.0f);
     InitCost(0.0f);
-    InitCost(100.0f);
+    InitMaxCost(100.0f);
     InitAttackPower(10.0f);
     InitAttackSpeed(1.0f);
 }
@@ -33,13 +34,25 @@ void UPGCharacterAttributeSet::PostGameplayEffectExecute(const FGameplayEffectMo
 
     if (Data.EvaluatedData.Attribute == GetHealthAttribute())
     {
-        const float NewCurrentHealth = FMath::Clamp(GetHealth(), 0.f, GetMaxHealth());
+        SetHealth(FMath::Clamp(GetHealth(), 0.0f, GetMaxHealth()));
 
-        SetHealth(NewCurrentHealth);
+        UE_LOG(LogTemp, Log, TEXT("Health : %f"), GetHealth());
 
         if (FMath::IsNearlyZero(GetHealth()))
         {
             UE_LOG(LogTemp, Log, TEXT("Dead"));
+            AHeroCharacter* HeroCharacter = Cast<AHeroCharacter>(GetOwningAbilitySystemComponent()->GetAvatarActor());
+            if (HeroCharacter)
+            {
+                HeroCharacter->OnDie();
+            }
         }
+    }
+
+    if (Data.EvaluatedData.Attribute == GetCostAttribute())
+    {
+        SetCost(FMath::Clamp(GetCost(), 0.0f, GetMaxCost()));
+
+        UE_LOG(LogTemp, Log, TEXT("Cost : %f"), GetCost());
     }
 }

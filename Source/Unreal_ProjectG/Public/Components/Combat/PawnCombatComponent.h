@@ -36,8 +36,12 @@ public:
     TArray<FGameplayAbilitySpecHandle> GetSkillAbilitySpecHandles() const { return GrantedSkillAbilitySpecHandles; }
 
     UFUNCTION(BlueprintCallable, Category = "Combat")
-    virtual void ToggleWeaponCollision(bool bEnableCollision);
+    virtual void ActivateWeaponTrace(bool bEnableTraceDebug, float InTraceDebugDuration);
 
+    UFUNCTION(BlueprintCallable, Category = "Combat")
+    FORCEINLINE void ResetOverlappedActors() { OverlappedActors.Empty(); }
+
+protected:
     UFUNCTION(BlueprintCallable, Category = "Combat")
     virtual void OnHitTargetActor(AActor* HitActor);
 

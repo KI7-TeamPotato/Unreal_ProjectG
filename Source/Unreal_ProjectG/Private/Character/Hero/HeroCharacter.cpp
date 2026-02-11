@@ -12,6 +12,8 @@
 #include "UI/ControlPanel.h"
 #include "Components/Combat/HeroCombatComponent.h"
 #include "DataAssets/StartUp/DataAsset_HeroStartupData.h"
+#include "AbilitySystem/PGCharacterAttributeSet.h"
+#include "AbilitySystem/PGAbilitySystemComponent.h"
 
 // Sets default values
 AHeroCharacter::AHeroCharacter()
@@ -35,6 +37,7 @@ AHeroCharacter::AHeroCharacter()
     WeaponStaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponStaticMesh"));
     WeaponStaticMesh->SetupAttachment(GetMesh());
     WeaponStaticMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    ResourceAttribute = CreateDefaultSubobject<UPGCharacterAttributeSet>(TEXT("ResourceAttribute"));
 
     HeroCombatComponent = CreateDefaultSubobject<UHeroCombatComponent>(TEXT("HeroCombatComponent"));
     ResourceManager = CreateDefaultSubobject<UHeroResourceComponent>(TEXT("ResourceManager"));
@@ -63,7 +66,7 @@ void AHeroCharacter::SpawnCharacter()
     MovementComponent->Activate();
 }
 
-void AHeroCharacter::OnDie()
+void AHeroCharacter::MakeHeroDead()
 {
     MovementComponent->DisableMovement();
     MovementComponent->StopMovementImmediately();
@@ -84,6 +87,16 @@ void AHeroCharacter::OnDie()
     }
 }
 
+void AHeroCharacter::OnDie()
+{
+    if (PGAbilitySystemComponent && GA_Die)
+    {
+        PGAbilitySystemComponent->TryActivateAbilityByClass(GA_Die);
+    }
+    else
+        UE_LOG(LogTemp, Warning, TEXT("AbilitySystem Unavailable"));
+}
+
 // Called when the game starts or when spawned
 void AHeroCharacter::BeginPlay()
 {
@@ -97,6 +110,14 @@ void AHeroCharacter::BeginPlay()
         if(UDataAsset_StartupDataBase* LoadData = CharacterStartupData.LoadSynchronous())
         {
             LoadData->GiveToAbilitySystemComponent(PGAbilitySystemComponent);
+        }
+    }
+
+    if (PGAbilitySystemComponent)
+    {
+        if (GA_Die)
+        {
+            PGAbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(GA_Die, 1, 0, this));
         }
     }
 }

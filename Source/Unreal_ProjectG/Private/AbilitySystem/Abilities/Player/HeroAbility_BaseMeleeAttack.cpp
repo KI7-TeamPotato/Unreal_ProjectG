@@ -17,6 +17,9 @@ void UHeroAbility_BaseMeleeAttack::ActivateAbility(const FGameplayAbilitySpecHan
 {
     checkf(!MeleeAttackMontages.IsEmpty(), TEXT("MeleeAttackMontages 배열이 비어있습니다!"));
 
+    // 초기화
+    CurrentHitTargets = 0;
+
     // 애니메이션 몽타주 재생
     UAnimMontage* SelectedMontage = MeleeAttackMontages[FMath::RandRange(0, MeleeAttackMontages.Num() - 1)];
     UAbilityTask_PlayMontageAndWait* MeleeMontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, NAME_None, SelectedMontage);
@@ -54,6 +57,13 @@ void UHeroAbility_BaseMeleeAttack::HandleApplyDamage(FGameplayEventData InEventD
     //// 게임플레이 큐 실행
     //UGameplayCueFunctionLibrary::ExecuteGameplayCueOnActor(GetAvatarActorFromActorInfo(), MeleeAttackCueTag, FGameplayCueParameters());
 
+    // 최대 타겟 수에 도달했는지 확인
+    if(CurrentHitTargets >= MaxHitTargets)
+    {
+        return;
+    }
+
+    // 타겟 액터 가져오기
     AActor* TargetActor = const_cast<AActor*>(InEventData.Target.Get());
     UE_LOG(LogTemp, Warning, TEXT("Target Actor : %s"), *InEventData.Target->GetName());
 
@@ -62,6 +72,7 @@ void UHeroAbility_BaseMeleeAttack::HandleApplyDamage(FGameplayEventData InEventD
     FGameplayEffectSpecHandle EffectSpecHandle = MakeHeroDamageEffectSpecHandle(MeleeAttackDamageEffectClass, SkillMultiplierValue);
     
     NativeApplyEffectSpecHandleToTarget(TargetActor, EffectSpecHandle);
+    CurrentHitTargets++;
 }
 
 void UHeroAbility_BaseMeleeAttack::OnMontageFinished()
