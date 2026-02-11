@@ -31,4 +31,7 @@ protected:
 protected:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ability")
     float RespawnTime = 10.0f;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ability")
+    TSubclassOf<class UGameplayEffect> FullHealth = nullptr;
 };

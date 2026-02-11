@@ -23,15 +23,19 @@ public:
 
     //캐릭터 스폰(시작 혹은 부활 시)
     UFUNCTION(BlueprintCallable, Category = "HeroCharacter")
-    void SpawnHero();
+    void SpawnCharacter();
 
     //캐릭터 사망
     UFUNCTION(BlueprintCallable, Category = "HeroCharacter")
-    void OnDie();
+    virtual void OnDie() override;
+
+    void MakeHeroDead();
+
 
     void SetJoystickWidget(class UControlPanel* InWidget) { JoystickWidget = InWidget; }
 
     FORCEINLINE UHeroCombatComponent* GetHeroCombatComponent() const { return HeroCombatComponent; }
+    FORCEINLINE UStaticMeshComponent* GetWeaponStaticMesh() const { return WeaponStaticMesh; }
 
 protected:
 	virtual void BeginPlay() override;
@@ -58,15 +62,18 @@ protected:
     //카메라
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
     TObjectPtr<class UCameraComponent> CameraComponent = nullptr;
+    //무기 스태틱 메시 컴포넌트
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Component")
+    TObjectPtr<class UStaticMeshComponent> WeaponStaticMesh = nullptr;
     //움직임 컴포넌트
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
     TObjectPtr<class UCharacterMovementComponent> MovementComponent = nullptr;
     // 컴뱃 컴포넌트
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component", meta = (AllowPrivateAccess = "true"))
-    TObjectPtr<UHeroCombatComponent> HeroCombatComponent;
-    //어빌리티
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Ability")
-    TObjectPtr<class UAbilitySystemComponent> AbilitySystemComponent = nullptr;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
+    TObjectPtr<UHeroCombatComponent> HeroCombatComponent = nullptr;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
+    TObjectPtr<class UEquipmentComponent> EquipmentComponent = nullptr;
+
 
     //input action
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "InputAction")
@@ -88,10 +95,16 @@ protected:
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
     TObjectPtr<class UPGCharacterAttributeSet> ResourceAttribute = nullptr;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ability")
+    TSubclassOf<class UGameplayAbility> GA_Die = nullptr;
+
 private:
     //ABP
     UPROPERTY()
     TObjectPtr<class UAnimInstance> AnimInstance = nullptr;
 
     //리소스 컴포넌트
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+    TObjectPtr<class UHeroResourceComponent> ResourceManager = nullptr;
 };

@@ -3,25 +3,21 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Items/Weapons/PGWeaponBase.h"
+#include "Engine/DataAsset.h"
 #include "Types/PGStructTypes.h"
-#include "PGHeroWeapon.generated.h"
+#include "DataAsset_WeaponData.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class UNREAL_PROJECTG_API APGHeroWeapon : public APGWeaponBase
+class UNREAL_PROJECTG_API UDataAsset_WeaponData : public UPrimaryDataAsset
 {
 	GENERATED_BODY()
 	
 public:
     FORCEINLINE const FPGHeroWeaponData& GetHeroWeaponData() const { return HeroWeaponData; }
 
-protected:
-    virtual void WeaponHitTargetHandler(AActor* HitActor) override;
-    virtual void WeaponPulledFromTargetHandler(AActor* HitActor) override;
-    
 protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon|Data")
     FPGHeroWeaponData HeroWeaponData;

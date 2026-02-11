@@ -2,3 +2,11 @@
 
 
 #include "Components/Equipment/EquipmentComponent.h"
+
+void UEquipmentComponent::BeginPlay()
+{
+    Super::BeginPlay();
+
+}
+
+
