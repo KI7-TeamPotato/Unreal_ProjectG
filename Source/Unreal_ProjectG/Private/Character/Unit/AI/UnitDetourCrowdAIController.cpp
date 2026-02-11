@@ -16,6 +16,7 @@ AUnitDetourCrowdAIController::AUnitDetourCrowdAIController(const FObjectInitiali
 
 void AUnitDetourCrowdAIController::OnPossess(APawn* InPawn)
 {
+    UE_LOG(LogTemp, Log, TEXT("OnPossess"));
 
     /*지금 방식은 비동기 로딩이 끝나기 전에 빙의하기 때문에 작동 안될 가능성이 높음.
     제미나이 물어보니 델리게이트를 이용하라 하는데 이건 내일 한번 상의해야 할듯???*/
@@ -25,7 +26,7 @@ void AUnitDetourCrowdAIController::OnPossess(APawn* InPawn)
     AUnitCharacter* Unit = Cast<AUnitCharacter>(InPawn);
     if (Unit && GetBlackboardComponent())
     {
-        GetBlackboardComponent()->SetValueAsFloat(TEXT("Range"), Unit->GetDetectRangeKey());
+        GetBlackboardComponent()->SetValueAsFloat(TEXT("DetectRange"), Unit->GetDetectRangeKey());
         GetBlackboardComponent()->SetValueAsFloat(TEXT("AttackRange"), Unit->GetAttackRangeKey());
     }
 

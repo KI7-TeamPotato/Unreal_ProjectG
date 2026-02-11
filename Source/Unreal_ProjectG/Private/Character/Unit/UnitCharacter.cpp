@@ -42,6 +42,9 @@ void AUnitCharacter::BeginPlay()
     Super::BeginPlay();
 
     AIController = Cast<AAIController>(GetController());
+
+    UE_LOG(LogTemp, Log, TEXT("BeginPlay"));
+
     //if (UUnitSubsystem* Subsystem = GetWorld()->GetSubsystem<UUnitSubsystem>())
     //{
     //    Subsystem->RegisterUnit(this, SideTag);
@@ -114,6 +117,11 @@ void AUnitCharacter::InitUnitStartUpData()
                     AttackRangeKey = StartUpData->BranchData->AttackRange;
 
                     SubBTAssetKey = StartUpData->BranchData->SubBTAsset;
+
+                    UE_LOG(LogTemp, Log, TEXT("InitUnitStartUpData"));
+                    UE_LOG(LogTemp, Log, TEXT("HP : %f"), CharacterAttributeSet->GetHealth());
+                    UE_LOG(LogTemp, Log, TEXT("InitUnitStartUpData"));
+
                 }
             }
         )
