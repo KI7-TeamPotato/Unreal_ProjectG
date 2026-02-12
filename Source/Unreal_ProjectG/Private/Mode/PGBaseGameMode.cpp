@@ -124,7 +124,7 @@ void APGBaseGameMode::OnGameOver(ETeamType DefeatedTeam)
         UE_LOG(LogTemp, Warning, TEXT("Game Over: Player Defeat"));
     }
 
-    // 1. 결과 UI 호출 (BP_QuaterGameMode에서 위젯 생성)
+    // 1. 결과 UI 호출 (BP_GameMode에서 위젯 생성)
     BP_ShowResultUI(bIsPlayerVictory, FinalStarCount);
 
     // 2. 플레이어 조작 비활성화 (선택 사항)
