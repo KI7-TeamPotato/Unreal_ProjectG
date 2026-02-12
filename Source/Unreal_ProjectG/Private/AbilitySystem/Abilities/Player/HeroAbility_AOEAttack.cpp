@@ -4,19 +4,25 @@
 #include "AbilitySystem/Abilities/Player/HeroAbility_AOEAttack.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
-#include "Abilities/Tasks/AbilityTask_WaitTargetData.h"
 #include "PGGameplayTags.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "Character/Unit/UnitCharacter.h"
 
 UHeroAbility_AOEAttack::UHeroAbility_AOEAttack()
 {
     InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
 }
 
-void UHeroAbility_AOEAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
+void UHeroAbility_AOEAttack::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
-    UAbilityTask_WaitTargetData* TargetDataTask = UAbilityTask_WaitTargetData::WaitTargetDataUsingActor(this, NAME_None, EGameplayTargetingConfirmation::UserConfirmed, nullptr);
+    HitActors.Empty();
 
-    checkf(AEOAttackMontage != nullptr, TEXT("AEOAttackMontage가 할당되지 않았습니다!"));
+    Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
+}
+
+void UHeroAbility_AOEAttack::OnHitLocationReady(FVector InHitLocation)
+{
+    CachedHitLocation = InHitLocation;
 
     // 애니메이션 몽타주 재생
     UAbilityTask_PlayMontageAndWait* AOEMontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, NAME_None, AEOAttackMontage);
@@ -36,20 +42,35 @@ void UHeroAbility_AOEAttack::ActivateAbility(const FGameplayAbilitySpecHandle Ha
     UAbilityTask_WaitGameplayEvent* AOEAttackEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, PGGameplayTags::Shared_Event_AOEExecute);
 
     // 이벤트 수신 핸들러 바인딩
-    AOEAttackEventTask->EventReceived.AddUniqueDynamic(this, &UHeroAbility_AOEAttack::OnAOECastingEnded);
+    AOEAttackEventTask->EventReceived.AddUniqueDynamic(this, &UHeroAbility_AOEAttack::OnApplyAOEDamage);
     AOEAttackEventTask->ReadyForActivation();
-
-    // 적한한 광역 공격의 중심을 찾는 로직은 TriggerEventData를 활용하여 구현할 수 있습니다.
 }
 
-void UHeroAbility_AOEAttack::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
+void UHeroAbility_AOEAttack::OnApplyAOEDamage(FGameplayEventData EventData)
 {
-    Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
-}
+    // 무시할 액터 설정
+    TArray<AActor*> IgnoredActors;
+    IgnoredActors.Add(GetAvatarActorFromActorInfo());
+    // 히트 위치 주변의 액터 오버랩 검사
+    UKismetSystemLibrary::SphereOverlapActors(
+        this,
+        CachedHitLocation,
+        AOEAttackRadius,
+        TArray<TEnumAsByte<EObjectTypeQuery>>{ EObjectTypeQuery::ObjectTypeQuery3 }, // Pawn 객체 타입
+        AUnitCharacter::StaticClass(),
+        IgnoredActors,
+        HitActors
+    );
 
-void UHeroAbility_AOEAttack::OnAOECastingEnded(FGameplayEventData InEventData)
-{
+    float SkillMultiplierValue = AOEAttackSkillMultiplier.GetValueAtLevel(GetAbilityLevel());
+    FGameplayEffectSpecHandle EffectSpecHandle = MakeHeroDamageEffectSpecHandle(AOEAttackDamageEffectClass, SkillMultiplierValue);
 
+    for (AActor* HitActor : HitActors)
+    {
+        NativeApplyEffectSpecHandleToTarget(HitActor, EffectSpecHandle);
+    }
+
+    EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, false, false);
 }
 
 void UHeroAbility_AOEAttack::OnAOEMontageFinished()
