@@ -122,10 +122,6 @@ void URangeCheck::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
         );
     }
 
-    UE_LOG(LogTemp, Log, TEXT("Target: %s, InDetect: %d, InAttack: %d"),
-        TargetEnemy ? *TargetEnemy->GetName() : TEXT("None"),
-        bInDetectRange, bInAttackRange);
-
     if (AIC)
     {
         AIC->SetUnitState(bInDetectRange ? EUnitState::Combat : EUnitState::Move);

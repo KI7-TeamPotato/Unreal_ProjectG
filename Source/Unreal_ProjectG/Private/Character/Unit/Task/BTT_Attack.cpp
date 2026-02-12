@@ -19,7 +19,7 @@ EBTNodeResult::Type UBTT_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, 
     AUnitCharacter* Unit = Cast<AUnitCharacter>(AIC->GetPawn());
     if (!Unit) return EBTNodeResult::Failed;
 
-    Unit->Attack();
+   // Unit->Attack();
 
     return EBTNodeResult::Succeeded;
 }

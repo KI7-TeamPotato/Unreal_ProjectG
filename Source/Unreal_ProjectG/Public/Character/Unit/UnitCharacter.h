@@ -42,6 +42,7 @@ public:
     //AUnitDetourCrowdAIController의 InitializeAI에서 사용함
     float GetDetectRangeKey() { return DetectRangeKey; }
     float GetAttackRangeKey() { return AttackRangeKey; }
+    float GetAttackMarginKey() { return AttackMarginKey; }
     UBehaviorTree* GetSubBTAssetKey() { return SubBTAssetKey; }
 
     FORCEINLINE UUnitCombatComponent* GetUnitCombatComponent() const { return UnitCombatComponent; }
@@ -50,15 +51,14 @@ public:
     UFUNCTION(BlueprintCallable, Category = "RVO")
     void SetAttackTarget(AActor* InTargetActor);
 
-    //공격 실행하는 함수
-    UFUNCTION(BlueprintCallable, Category = "Combat")
-    virtual void Attack();
-
     // 풀에서 꺼내질 때: GAS 초기화 + AI 재가동
     virtual void ActivateUnit();
 
     // 풀로 돌아갈 때: AI 중지 + GAS 정리
     virtual void DeactivateUnit();
+
+    virtual void OnDie() override;
+
 protected:
     //
     virtual void PossessedBy(AController* NewController) override;
@@ -87,7 +87,11 @@ private:
 
     float AttackRangeKey = 0.0f;
 
+    float AttackMarginKey = 0.0f;
+
     FGameplayTag SideTag;
+
+    bool IsActive;
 
     TObjectPtr<UBehaviorTree> SubBTAssetKey = nullptr;
 };

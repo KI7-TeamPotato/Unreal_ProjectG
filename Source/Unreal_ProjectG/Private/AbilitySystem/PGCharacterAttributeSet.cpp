@@ -3,6 +3,7 @@
 #include "AbilitySystem/PGCharacterAttributeSet.h"
 #include "GameplayEffectExtension.h"
 #include "Character/Hero/HeroCharacter.h"
+#include "Character/Unit/UnitCharacter.h"
 
 UPGCharacterAttributeSet::UPGCharacterAttributeSet()
 {
@@ -42,9 +43,14 @@ void UPGCharacterAttributeSet::PostGameplayEffectExecute(const FGameplayEffectMo
         {
             UE_LOG(LogTemp, Log, TEXT("Dead"));
             AHeroCharacter* HeroCharacter = Cast<AHeroCharacter>(GetOwningAbilitySystemComponent()->GetAvatarActor());
+            AUnitCharacter* UnitCharacter = Cast<AUnitCharacter>(GetOwningAbilitySystemComponent()->GetAvatarActor());
             if (HeroCharacter)
             {
                 HeroCharacter->OnDie();
+            }
+            if (UnitCharacter)
+            {
+                UnitCharacter->OnDie();
             }
         }
     }
