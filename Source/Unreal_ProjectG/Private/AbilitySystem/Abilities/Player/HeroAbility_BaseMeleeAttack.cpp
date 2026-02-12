@@ -63,6 +63,8 @@ void UHeroAbility_BaseMeleeAttack::ToggleWeaponTrace(FGameplayEventData InEventD
 {
     if (!CachedWeaponStaticMesh) return;
 
+    UE_LOG(LogTemp, Warning, TEXT("ToggleWeaponTrace Called - EventMagnitude: %f"), InEventDtata.EventMagnitude);
+
     EPGToggleType ToggleType = static_cast<EPGToggleType>(static_cast<int32>(InEventDtata.EventMagnitude));
 
     if (ToggleType == EPGToggleType::On)
@@ -93,12 +95,13 @@ void UHeroAbility_BaseMeleeAttack::PerformWeaponTrace()
     ETraceTypeQuery TraceChannel = UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel1); //DefaultEngine.ini에서 선언된 AttackTrace 채널
     TArray<FHitResult> OutHits;
 
-    UKismetSystemLibrary::BoxTraceMulti(
+    UE_LOG(LogTemp, Warning, TEXT("PerformWeaponTrace Called - StartLocation: %s, EndLocation: %s"), *StartLocation.ToString(), *EndLocation.ToString());
+
+    UKismetSystemLibrary::SphereTraceMulti(
         this,
         StartLocation,
         EndLocation,
-        WeaponTraceBoxExtent,
-        FRotator::ZeroRotator,
+        WeaponTraceSphereRadius,
         TraceChannel,
         false,
         TArray<AActor*>(),
