@@ -19,25 +19,20 @@ namespace PGGameplayTags
     UNREAL_PROJECTG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_BasicAttack_Projectile);
     UNREAL_PROJECTG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_Skill_1);
     UNREAL_PROJECTG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_Skill_2);
-    UNREAL_PROJECTG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_EquipWeapon);
 
     // 플레이어 무기 게임 플레이 태그 
-    UNREAL_PROJECTG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Weapon_Axe);
+    UNREAL_PROJECTG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Weapon_Sword);
 
     // 플레이어 이벤트 태그
 
     // 유닛 어빌리티 태그
     UNREAL_PROJECTG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Unit_Ability_BasicAttack_Melee);
 
-    // 공유 어빌리티 태그
-    UNREAL_PROJECTG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Ability_SpawnWeapon);
-
     // 공유 이벤트 태그
     UNREAL_PROJECTG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Event_AttackTraceToggle); // 몽타주에서 공격 트레이스 온오프 토글용
     UNREAL_PROJECTG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Event_ProjectileSpawn);
     UNREAL_PROJECTG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Event_MeleeHit);
-    UNREAL_PROJECTG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Event_AOEAttackCastingComplete);
-    UNREAL_PROJECTG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Event_WeaponSpawn);
+    UNREAL_PROJECTG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_Event_AOEExecute);
 
     // 공유 SetByCaller 태그
     UNREAL_PROJECTG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_SetByCaller_DamageMultiplier);

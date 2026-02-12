@@ -40,6 +40,9 @@ struct FPGHeroWeaponData
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     TSoftObjectPtr<UStaticMesh> SoftWeaponMesh;
 
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    FName WeaponSocketName;
+
     // 무기 애니메이션 레이어
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     TSubclassOf<UPGHeroLinkedAnimLayer> WeaponAnimLayer;    

@@ -93,12 +93,11 @@ void UHeroAbility_BaseMeleeAttack::PerformWeaponTrace()
     ETraceTypeQuery TraceChannel = UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel1); //DefaultEngine.ini에서 선언된 AttackTrace 채널
     TArray<FHitResult> OutHits;
 
-    UKismetSystemLibrary::BoxTraceMulti(
+    UKismetSystemLibrary::SphereTraceMulti(
         this,
         StartLocation,
         EndLocation,
-        WeaponTraceBoxExtent,
-        FRotator::ZeroRotator,
+        WeaponTraceSphereRadius,
         TraceChannel,
         false,
         TArray<AActor*>(),
@@ -139,7 +138,7 @@ void UHeroAbility_BaseMeleeAttack::HandleApplyDamage(AActor* InTargetActor)
         return;
     }
 
-    UE_LOG(LogTemp, Warning, TEXT("Target Actor : %s"), *InTargetActor->GetName());
+    UE_LOG(LogTemp, Warning, TEXT("Target Actor : %s"), *GetNameSafe(InTargetActor));
     
     //// 게임플레이 큐 실행
     //UGameplayCueFunctionLibrary::ExecuteGameplayCueOnActor(GetAvatarActorFromActorInfo(), MeleeAttackCueTag, FGameplayCueParameters());

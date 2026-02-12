@@ -57,10 +57,10 @@ protected:
     int32 MaxHitTargets = 1;
 
     UPROPERTY(EditDefaultsOnly, Category = "Ability|Melee Attack")
-    FVector WeaponTraceBoxExtent = FVector(5.f, 5.f, 50.f);
+    float WeaponTraceSphereRadius = 50.f;
 
     UPROPERTY(EditDefaultsOnly, Category = "Ability|Melee Attack")
-    float WeaponTraceInterval = 0.1f;
+    float WeaponTraceInterval = 0.33f;
 
     UPROPERTY(EditDefaultsOnly, Category = "Ability|Debug")
     bool bEnableTraceDebug = false;

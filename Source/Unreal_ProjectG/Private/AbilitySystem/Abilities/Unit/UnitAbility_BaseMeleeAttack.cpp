@@ -22,7 +22,7 @@ void UUnitAbility_BaseMeleeAttack::ActivateAbility(const FGameplayAbilitySpecHan
     FHitResult HitResult;
     
     // 가장 가까운 폰 액터 찾기
-    UKismetSystemLibrary::SphereTraceSingle(this, StartLocation, EndLocation, 100.0f, UEngineTypes::ConvertToTraceType(ECC_Pawn), false, TArray<AActor*>(), EDrawDebugTrace::None, HitResult, true);
+    UKismetSystemLibrary::SphereTraceSingleForObjects(this, StartLocation, EndLocation, MeleeAttackDamageRadius, TArray<TEnumAsByte<EObjectTypeQuery>>{ EObjectTypeQuery::ObjectTypeQuery3 /* Pawn */ }, false, TArray<AActor*>(), bEnableTraceDebug ? EDrawDebugTrace::ForDuration : EDrawDebugTrace::None, HitResult, true, FLinearColor::Red, FLinearColor::Green, TraceDebugDuration);
     
     if (HitResult.GetActor())
     {
@@ -67,9 +67,9 @@ void UUnitAbility_BaseMeleeAttack::EndAbility(const FGameplayAbilitySpecHandle H
 void UUnitAbility_BaseMeleeAttack::HandleApplyDamage(FGameplayEventData InEventData)
 {
     //// 게임플레이 큐 실행
-//UGameplayCueFunctionLibrary::ExecuteGameplayCueOnActor(GetAvatarActorFromActorInfo(), MeleeAttackCueTag, FGameplayCueParameters());
+    //UGameplayCueFunctionLibrary::ExecuteGameplayCueOnActor(GetAvatarActorFromActorInfo(), MeleeAttackCueTag, FGameplayCueParameters());
     AActor* TargetActor = CachedTargetActor.Get();
-    UE_LOG(LogTemp, Warning, TEXT("Target Actor : %s"), *InEventData.Target->GetName());
+    UE_LOG(LogTemp, Warning, TEXT("Target Actor : %s"), *GetNameSafe(TargetActor));
 
     //// TODO : 스킬의 데미지 Multiflier를 변수화
     float SkillMultiplierValue = MeleeAttackSkillMultiplier.GetValueAtLevel(GetAbilityLevel());
