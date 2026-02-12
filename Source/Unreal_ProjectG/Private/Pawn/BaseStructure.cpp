@@ -1,34 +1,109 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 
 #include "Pawn/BaseStructure.h"
+#include "AbilitySystem/PGAbilitySystemComponent.h"
+#include "AbilitySystem/PGCharacterAttributeSet.h"
+#include "Components/CapsuleComponent.h"
+#include "Kismet/GameplayStatics.h"
 
-// Sets default values
+
 ABaseStructure::ABaseStructure()
 {
- 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+    PrimaryActorTick.bCanEverTick = false;
+
+    // 1. 캡슐 컴포넌트 설정 (루트)
+    CapsuleComp = CreateDefaultSubobject<UCapsuleComponent>(TEXT("CapsuleComp"));
+    SetRootComponent(CapsuleComp);
+    CapsuleComp->SetCollisionProfileName(TEXT("Pawn")); 
+
+    // 2. 메쉬 설정
+    MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
+    MeshComp->SetupAttachment(RootComponent);
+    MeshComp->SetCollisionProfileName(TEXT("NoCollision")); // 판정은 캡슐이 담당
+
+    // 3. GAS 컴포넌트 생성
+    AbilitySystemComponent = CreateDefaultSubobject<UPGAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
+    AbilitySystemComponent->SetIsReplicated(true);
+
+    // 기지도 체력이 있어야 하므로 AttributeSet을 생성해야 함
+    AttributeSet = CreateDefaultSubobject<UPGCharacterAttributeSet>(TEXT("AttributeSet"));
+   
 
 }
+
+UAbilitySystemComponent* ABaseStructure::GetAbilitySystemComponent() const
+{
+    return AbilitySystemComponent;
+}
+
 
 // Called when the game starts or when spawned
 void ABaseStructure::BeginPlay()
 {
 	Super::BeginPlay();
 	
+    if (AbilitySystemComponent)
+    {
+        // 1. GAS 초기화 (Owner = this, Avatar = this)
+        AbilitySystemComponent->InitAbilityActorInfo(this, this);
+
+        // 2. 초기 스탯 적용 (Health 등)
+        if (InitStatEffect)
+        {
+            FGameplayEffectContextHandle ContextHandle = AbilitySystemComponent->MakeEffectContext();
+            ContextHandle.AddSourceObject(this);
+            FGameplayEffectSpecHandle SpecHandle = AbilitySystemComponent->MakeOutgoingSpec(InitStatEffect, 1.0f, ContextHandle);
+
+            if (SpecHandle.IsValid())
+            {
+                AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+            }
+        }
+
+        // 3. 체력 변경 감지 (AttributeSet의 Health 값이 변할 때마다 호출됨)
+        // UPGCharacterAttributeSet의 Health 속성을 감지
+        AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
+            UPGCharacterAttributeSet::GetHealthAttribute()).AddUObject(this, &ABaseStructure::OnHealthChangedCallback);
+    }
 }
 
-// Called every frame
-void ABaseStructure::Tick(float DeltaTime)
+void ABaseStructure::OnHealthChangedCallback(const FOnAttributeChangeData& Data)
 {
-	Super::Tick(DeltaTime);
+    float NewHealth = Data.NewValue;
 
+    // 체력이 0 이하이고 아직 파괴되지 않았다면
+    if (NewHealth <= 0.0f)
+    {
+        DestroyBase();
+    }
+
+    // 여기서 체력바 UI 업데이트 로직을 추가
+    OnHealthChanged(NewHealth, 1000.0f); // MaxHealth는 가져오는 로직 필요 (일단 하드코딩)
 }
 
-// Called to bind functionality to input
-void ABaseStructure::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+void ABaseStructure::OnHealthChanged(float NewHealth, float MaxHealth)
+{
+    // 블루프린트에서 UI 갱신 등을 위해 사용
+    UE_LOG(LogTemp, Log, TEXT("Base Structure Health: %f"), NewHealth);
+}
+
+void ABaseStructure::DestroyBase()
+{
+    // 이미 파괴된 상태라면 무시 (중복 호출 방지)
+    if (!this->IsValidLowLevel() || IsActorBeingDestroyed()) return;
+
+    UE_LOG(LogTemp, Warning, TEXT("Base Destroyed! Team: %d"), (int32)TeamID);
+
+    // 1. 게임 모드 (승패 판정)
+    if (OnBaseDestroyed.IsBound())
+    {
+        OnBaseDestroyed.Broadcast(TeamID);
+    }
+
+    // 2. 시각 효과 (폭발 등) - 블루프린트에서 확장하거나 여기서 구성
+    
+
+    // 3. 기지 파괴
+    Destroy();
 }
 

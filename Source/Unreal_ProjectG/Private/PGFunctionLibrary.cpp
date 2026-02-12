@@ -45,3 +45,13 @@ UPawnCombatComponent* UPGFunctionLibrary::BP_GetCombatComponentFromActor(AActor*
     OutValidType = EquipComp ? EPGValidType::Valid : EPGValidType::InValid;
     return EquipComp;
 }
+
+bool UPGFunctionLibrary::ApplyGameplayEffectSpecHandleToTargetActor(AActor* InInstigator, AActor* InTargetActor, const FGameplayEffectSpecHandle& InSpecHandle)
+{
+    UPGAbilitySystemComponent* TargetASC = NativeGetWarriorASCFromActor(InTargetActor);
+    UPGAbilitySystemComponent* SourceASC = NativeGetWarriorASCFromActor(InInstigator);
+
+    FActiveGameplayEffectHandle ActivateGameplayEffectHandle = SourceASC->ApplyGameplayEffectSpecToTarget(*InSpecHandle.Data, TargetASC);
+
+    return ActivateGameplayEffectHandle.WasSuccessfullyApplied();
+}

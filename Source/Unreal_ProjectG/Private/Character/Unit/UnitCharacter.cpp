@@ -2,6 +2,7 @@
 
 
 #include "Character/Unit/UnitCharacter.h"
+#include "Character/Unit/SubSystem/UnitSubsystem.h"
 #include "Components/Combat/UnitCombatComponent.h"
 #include "Engine/AssetManager.h"
 #include "DataAssets/StartUp/DataAsset_UnitStartupData.h"
@@ -44,19 +45,14 @@ void AUnitCharacter::BeginPlay()
     AIController = Cast<AAIController>(GetController());
 
     UE_LOG(LogTemp, Log, TEXT("BeginPlay"));
-
-    //if (UUnitSubsystem* Subsystem = GetWorld()->GetSubsystem<UUnitSubsystem>())
-    //{
-    //    Subsystem->RegisterUnit(this, SideTag);
-    //}
 }
 
 void AUnitCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-    //if (UUnitSubsystem* Subsystem = GetWorld()->GetSubsystem<UUnitSubsystem>())
-    // //{
-    // //Subsystem->UnregisterUnit(this, SideTag);
-    // //}
+    if (UUnitSubsystem* Subsystem = GetWorld()->GetSubsystem<UUnitSubsystem>())
+     {
+        Subsystem->UnregisterUnit(this, SideTag);
+     }
 
     Super::EndPlay(EndPlayReason);
 }
@@ -68,6 +64,10 @@ void AUnitCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 void AUnitCharacter::GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const
 {
+    if (SideTag.IsValid())
+    {
+        TagContainer.AddTag(SideTag);
+    }
 }
 
 
@@ -129,6 +129,13 @@ void AUnitCharacter::InitUnitStartUpData()
                         OnUnitStartUpDataLoadedDelegate.Broadcast();
                     }
 
+                    SideTag = StartUpData->SideTag;
+
+                    if (UUnitSubsystem* Subsystem = GetWorld()->GetSubsystem<UUnitSubsystem>())
+                    {
+                        Subsystem->RegisterUnit(this, SideTag);
+                        UE_LOG(LogTemp, Log, TEXT("태그: %s"), *SideTag.ToString());
+                    }
                 }
             }
         )
