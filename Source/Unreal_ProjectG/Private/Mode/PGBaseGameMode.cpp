@@ -7,14 +7,7 @@
 #include "GameFramework/PlayerController.h"
 
 APGBaseGameMode::APGBaseGameMode()
-{
-    // 기본값 설정
-    MAX_ALLY_COUNT;
-    MAX_ENEMY_COUNT;
-    
-    // 시간 제한 예시 (1분, 3분)
-    ClearTimeLimit_3Stars;
-    ClearTimeLimit_2Stars;
+{   
 
     // 1. 게임 시작 시간 기록
     GameStartTime = GetWorld()->GetTimeSeconds();
