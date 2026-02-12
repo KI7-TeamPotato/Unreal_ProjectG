@@ -9,8 +9,8 @@
 APGBaseGameMode::APGBaseGameMode()
 {
     // 기본값 설정
-    MAX_ALLY_COUNT = 15;
-    MAX_ENEMY_COUNT = 15;
+    MAX_ALLY_COUNT;
+    MAX_ENEMY_COUNT;
     
     // 시간 제한 예시 (1분, 3분)
     ClearTimeLimit_3Stars = 60.0f;
