@@ -127,7 +127,7 @@ void APGBaseGameMode::OnGameOver(ETeamType DefeatedTeam)
         PC->SetCinematicMode(true, false, false, true, true); // 조작 차단
         PC->bShowMouseCursor = true; // 마우스 커서 보이기
     }
-    }
+    
 }
 
 
