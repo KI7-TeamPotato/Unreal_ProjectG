@@ -3,17 +3,38 @@
 
 #include "Mode/PGBaseGameMode.h"
 #include "Kismet/GameplayStatics.h"
+#include "Pawn/BaseStructure.h"
 #include "GameFramework/PlayerController.h"
 
 APGBaseGameMode::APGBaseGameMode()
 {
-    // 인구수 초기화
-    CurrentAllyCount = 0;
-    CurrentEnemyCount = 0;
-    bIsGameOver = false;
+    // 기본값 설정
+    MAX_ALLY_COUNT = 15;
+    MAX_ENEMY_COUNT = 15;
+    
+    // 시간 제한 예시 (1분, 3분)
+    ClearTimeLimit_3Stars = 60.0f;
+    ClearTimeLimit_2Stars = 180.0f;
+
+    // 1. 게임 시작 시간 기록
+    GameStartTime = GetWorld()->GetTimeSeconds();
+
+    // 2. 맵에 배치된 모든 기지(BaseStructure)를 찾아서 파괴 이벤트 연결
+    TArray<AActor*> FoundBases;
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABaseStructure::StaticClass(), FoundBases);
+
+    for (AActor* Actor : FoundBases)
+    {
+        ABaseStructure* Base = Cast<ABaseStructure>(Actor);
+        if (Base)
+        {
+            // 기지가 파괴되면 OnGameOver 함수가 실행되도록 연결
+            Base->OnBaseDestroyed.AddDynamic(this, &APGBaseGameMode::OnGameOver);
+        }
+    }
 }
 
-// --- [1] 인구수 제한 로직 ---
+// --- 인구수 제한 로직 ---
 bool APGBaseGameMode::CanSpawnUnit(ETeamType Team)
 {
     if (Team == ETeamType::Ally)
@@ -58,33 +79,61 @@ void APGBaseGameMode::UnregisterUnit(ETeamType Team)
     }
 }
 
-// --- [2] 승패 판정 로직 ---
+// --- 시간 및 등급 관리 ---
+float APGBaseGameMode::GetCurrentPlayTime() const
+{
+    // 현재 서버 시간 - 게임 시작 시간
+    return GetWorld()->GetTimeSeconds() - GameStartTime;
+}
+
+// --- 승패 판정 로직 ---
 void APGBaseGameMode::OnGameOver(ETeamType DefeatedTeam)
 {
-    // 1. 중복 호출 방지 (이미 게임이 끝났으면 무시)
-    if (bIsGameOver) return;
+    if (bIsGameOver) return; // 이미 종료된 게임이면 무시
     bIsGameOver = true;
 
-    // 2. 승리 여부 판단
-    // 파괴된 기지가 적군기지 -> 플레이어 승리 (true)
-    // 파괴된 기지가 아군기지 -> 플레이어 패배 (false)
-    bool bIsVictory = (DefeatedTeam == ETeamType::Enemy);
+    bool bIsPlayerVictory = false;
+    int32 FinalStarCount = 0;
 
-    UE_LOG(LogTemp, Warning, TEXT("Game Over! Player Won: %s"), bIsVictory ? TEXT("True") : TEXT("False"));
+    // 파괴된 팀이 'Enemy'라면 -> 플레이어 승리
+    if (DefeatedTeam == ETeamType::Enemy)
+    {
+        bIsPlayerVictory = true;
 
-    // 3. 결과 UI 호출 (블루프린트 이벤트 실행)
-    BP_ShowResultUI(bIsVictory);
+        // 클리어 시간 체크
+        float PlayTime = GetCurrentPlayTime();
+        UE_LOG(LogTemp, Warning, TEXT("Game Clear! PlayTime: %.2f sec"), PlayTime);
 
-    // 4. 연출: 슬로우 모션 (0.1배속)
-    UGameplayStatics::SetGlobalTimeDilation(this, 0.1f);
+        if (PlayTime <= ClearTimeLimit_3Stars)
+        {
+            FinalStarCount = 3; // 3성 (빠른 클리어)
+        }
+        else if (PlayTime <= ClearTimeLimit_2Stars)
+        {
+            FinalStarCount = 2; // 2성 (보통)
+        }
+        else
+        {
+            FinalStarCount = 1; // 1성 (턱걸이)
+        }
+    }
+    else // 플레이어 기지 파괴 -> 패배
+    {
+        bIsPlayerVictory = false;
+        FinalStarCount = 0; // 패배 시 별 없음
+        UE_LOG(LogTemp, Warning, TEXT("Game Over: Player Defeat"));
+    }
 
-    // 5. 플레이어 조작 차단
+    // 1. 결과 UI 호출 (BP_QuaterGameMode에서 위젯 생성)
+    BP_ShowResultUI(bIsPlayerVictory, FinalStarCount);
+
+    // 2. 플레이어 조작 비활성화 (선택 사항)
     APlayerController* PC = GetWorld()->GetFirstPlayerController();
     if (PC)
     {
-        // 입력, 이동, 회전 모두 막음
-        PC->SetCinematicMode(true, false, false, true, true);
-        PC->bShowMouseCursor = true; // 결과창 클릭을 위해 커서는 보이게
+        PC->SetCinematicMode(true, false, false, true, true); // 조작 차단
+        PC->bShowMouseCursor = true; // 마우스 커서 보이기
+    }
     }
 }
 
