@@ -85,7 +85,7 @@ void AHeroTestCharacter::SetupWeaponToPawn()
                 WeaponStaticMesh->AttachToComponent(
                     GetMesh(),
                     FAttachmentTransformRules::SnapToTargetNotIncludingScale,
-                    FName("WeaponSocket")
+                    WeaponDataAsset->GetHeroWeaponData().WeaponSocketName
                 );
                 WeaponStaticMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
                 WeaponStaticMesh->SetCollisionProfileName(TEXT("OverlapOnlyPawn"));

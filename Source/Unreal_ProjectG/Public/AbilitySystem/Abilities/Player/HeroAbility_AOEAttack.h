@@ -33,11 +33,11 @@ protected:
     TSubclassOf<UGameplayEffect> AOEAttackDamageEffectClass;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability|AOE Attack")
-    TObjectPtr<UAnimMontage> AEOAttackMontage;
+    TObjectPtr<UAnimMontage> AOEAttackMontage;
 
     // 데미지가 들어갈 때 호출될 게임 플레이 큐
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability|AOE Attack")
-    FGameplayTag AEOImpactCueTag;
+    FGameplayTag AOEImpactCueTag;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability|AOE Attack")
     int32 MaxHitTargets = 3;

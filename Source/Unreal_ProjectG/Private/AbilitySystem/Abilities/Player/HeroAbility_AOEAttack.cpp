@@ -25,11 +25,13 @@ void UHeroAbility_AOEAttack::OnHitLocationReady(FVector InHitLocation)
     CachedHitLocation = InHitLocation;
 
     // 애니메이션 몽타주 재생
-    UAbilityTask_PlayMontageAndWait* AOEMontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, NAME_None, AEOAttackMontage);
+    UAbilityTask_PlayMontageAndWait* AOEMontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, NAME_None, AOEAttackMontage);
 
     // 몽타주 완료 이벤트 바인딩
     if (AOEMontageTask)
     {
+        UE_LOG(LogTemp, Warning, TEXT("AOE Attack Montage Play!"));
+
         AOEMontageTask->OnCompleted.AddUniqueDynamic(this, &UHeroAbility_AOEAttack::OnAOEMontageFinished);
         AOEMontageTask->OnInterrupted.AddUniqueDynamic(this, &UHeroAbility_AOEAttack::OnAOEMontageFinished);
         AOEMontageTask->OnBlendOut.AddUniqueDynamic(this, &UHeroAbility_AOEAttack::OnAOEMontageFinished);
@@ -69,8 +71,6 @@ void UHeroAbility_AOEAttack::OnApplyAOEDamage(FGameplayEventData EventData)
     {
         NativeApplyEffectSpecHandleToTarget(HitActor, EffectSpecHandle);
     }
-
-    EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, false, false);
 }
 
 void UHeroAbility_AOEAttack::OnAOEMontageFinished()

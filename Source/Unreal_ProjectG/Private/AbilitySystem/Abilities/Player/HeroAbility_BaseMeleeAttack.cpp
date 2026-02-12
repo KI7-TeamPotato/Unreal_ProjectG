@@ -63,8 +63,6 @@ void UHeroAbility_BaseMeleeAttack::ToggleWeaponTrace(FGameplayEventData InEventD
 {
     if (!CachedWeaponStaticMesh) return;
 
-    UE_LOG(LogTemp, Warning, TEXT("ToggleWeaponTrace Called - EventMagnitude: %f"), InEventDtata.EventMagnitude);
-
     EPGToggleType ToggleType = static_cast<EPGToggleType>(static_cast<int32>(InEventDtata.EventMagnitude));
 
     if (ToggleType == EPGToggleType::On)
@@ -94,8 +92,6 @@ void UHeroAbility_BaseMeleeAttack::PerformWeaponTrace()
     FVector EndLocation = CachedWeaponStaticMesh->GetSocketLocation(TEXT("WeaponTraceEnd"));
     ETraceTypeQuery TraceChannel = UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel1); //DefaultEngine.ini에서 선언된 AttackTrace 채널
     TArray<FHitResult> OutHits;
-
-    UE_LOG(LogTemp, Warning, TEXT("PerformWeaponTrace Called - StartLocation: %s, EndLocation: %s"), *StartLocation.ToString(), *EndLocation.ToString());
 
     UKismetSystemLibrary::SphereTraceMulti(
         this,
@@ -142,7 +138,7 @@ void UHeroAbility_BaseMeleeAttack::HandleApplyDamage(AActor* InTargetActor)
         return;
     }
 
-    UE_LOG(LogTemp, Warning, TEXT("Target Actor : %s"), *InTargetActor->GetName());
+    UE_LOG(LogTemp, Warning, TEXT("Target Actor : %s"), *GetNameSafe(InTargetActor));
     
     //// 게임플레이 큐 실행
     //UGameplayCueFunctionLibrary::ExecuteGameplayCueOnActor(GetAvatarActorFromActorInfo(), MeleeAttackCueTag, FGameplayCueParameters());
