@@ -13,8 +13,8 @@
 UCLASS()
 class UNREAL_PROJECTG_API APGBaseGameMode : public AGameModeBase
 {
-	GENERATED_BODY()
-	
+    GENERATED_BODY()
+
 public:
     APGBaseGameMode();
 
@@ -37,36 +37,30 @@ public:
     void UnregisterUnit(ETeamType Team);
 
     // ---  클리어 등급 설정 (시간 제한) ---
-    // 3별을 받기 위한 제한 시간 (초 단위, 예: 60초)
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GameRule|Grade")
     float ClearTimeLimit_3Stars = 60.0f;
 
-    // 2별을 받기 위한 제한 시간 (초 단위, 예: 180초)
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GameRule|Grade")
     float ClearTimeLimit_2Stars = 180.0f;
-   
 
     // 현재 플레이 시간(초)을 반환하는 함수 (UI 표시용)
     UFUNCTION(BlueprintPure, Category = "GameRule|Time")
     float GetCurrentPlayTime() const;
 
+protected:
+    virtual void BeginPlay() override;
+
 public:
-    // --- [2] 승패 판정 로직 ---
-    // 기지가 파괴되었을 때 호출되는 함수
+    //기지 파괴 시 호출될 게임오버 함수
+    UFUNCTION()
     void OnGameOver(ETeamType DefeatedTeam);
 
-   
-
 protected:
-    // 게임 종료 상태 플래그 (중복 호출 방지)
+    // 상태 및 시간 저장용 변수
     bool bIsGameOver = false;
-
-    // 게임 시작 시간 기록
     float GameStartTime = 0.0f;
- 
-    // [BP 연동] 결과 UI를 띄우기 위한 이벤트
-     // bIsVictory: 승리 여부
-     // StarCount: 획득한 별 개수 (0: 패배, 1~3: 승리)
+
+    //  UI 출력 이벤트
     UFUNCTION(BlueprintImplementableEvent, Category = "GameRule")
     void BP_ShowResultUI(bool bIsVictory, int32 StarCount);
 };

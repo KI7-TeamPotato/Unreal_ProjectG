@@ -8,6 +8,14 @@
 
 APGBaseGameMode::APGBaseGameMode()
 {   
+    PrimaryActorTick.bCanEverTick = true;
+    
+}
+
+
+void APGBaseGameMode::BeginPlay()
+{
+    Super::BeginPlay(); 
 
     // 1. 게임 시작 시간 기록
     GameStartTime = GetWorld()->GetTimeSeconds();
@@ -32,44 +40,27 @@ bool APGBaseGameMode::CanSpawnUnit(ETeamType Team)
 {
     if (Team == ETeamType::Ally)
     {
-        // 아군 유닛이 15마리 미만일 때만 스폰 가능
+        // 아군 유닛이 MAX 미만일 때만 스폰 가능
         return CurrentAllyCount < MAX_ALLY_COUNT;
     }
     else if (Team == ETeamType::Enemy)
     {
-        // 적군 유닛이 15마리 미만일 때만 스폰 가능
+        // 적군 유닛이 MAX 미만일 때만 스폰 가능
         return CurrentEnemyCount < MAX_ENEMY_COUNT;
     }
-
-    // 플레이어나 중립 유닛은 제한 없음
     return true;
 }
 
 void APGBaseGameMode::RegisterUnit(ETeamType Team)
 {
-    if (Team == ETeamType::Ally)
-    {
-        CurrentAllyCount++;
-    }
-    else if (Team == ETeamType::Enemy)
-    {
-        CurrentEnemyCount++;
-    }
-
-    // (디버깅용 로그) 현재 인구수 확인
-    // UE_LOG(LogTemp, Log, TEXT("Current Population - Ally: %d, Enemy: %d"), CurrentAllyCount, CurrentEnemyCount);
+    if (Team == ETeamType::Ally) CurrentAllyCount++;
+    else if (Team == ETeamType::Enemy) CurrentEnemyCount++;
 }
 
 void APGBaseGameMode::UnregisterUnit(ETeamType Team)
 {
-    if (Team == ETeamType::Ally)
-    {
-        CurrentAllyCount = FMath::Max(0, CurrentAllyCount - 1);
-    }
-    else if (Team == ETeamType::Enemy)
-    {
-        CurrentEnemyCount = FMath::Max(0, CurrentEnemyCount - 1);
-    }
+    if (Team == ETeamType::Ally) CurrentAllyCount = FMath::Max(0, CurrentAllyCount - 1);
+    else if (Team == ETeamType::Enemy) CurrentEnemyCount = FMath::Max(0, CurrentEnemyCount - 1);
 }
 
 // --- 시간 및 등급 관리 ---
@@ -127,7 +118,4 @@ void APGBaseGameMode::OnGameOver(ETeamType DefeatedTeam)
         PC->SetCinematicMode(true, false, false, true, true); // 조작 차단
         PC->bShowMouseCursor = true; // 마우스 커서 보이기
     }
-    
 }
-
-

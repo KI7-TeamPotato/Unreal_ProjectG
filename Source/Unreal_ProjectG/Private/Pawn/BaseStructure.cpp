@@ -4,6 +4,7 @@
 #include "AbilitySystem/PGCharacterAttributeSet.h"
 #include "Components/CapsuleComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "GameplayEffectTypes.h"
 
 
 ABaseStructure::ABaseStructure()
@@ -18,7 +19,7 @@ ABaseStructure::ABaseStructure()
     // 2. 메쉬 설정
     MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
     MeshComp->SetupAttachment(RootComponent);
-    MeshComp->SetCollisionProfileName(TEXT("NoCollision")); // 판정은 캡슐이 담당
+    MeshComp->SetCollisionProfileName(TEXT("NoCollision")); 
 
     // 3. GAS 컴포넌트 생성
     AbilitySystemComponent = CreateDefaultSubobject<UPGAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
@@ -30,23 +31,17 @@ ABaseStructure::ABaseStructure()
 
 }
 
-UAbilitySystemComponent* ABaseStructure::GetAbilitySystemComponent() const
-{
-    return AbilitySystemComponent;
-}
 
-
-// Called when the game starts or when spawned
 void ABaseStructure::BeginPlay()
 {
-	Super::BeginPlay();
-	
+    Super::BeginPlay();
+
     if (AbilitySystemComponent)
     {
-        // 1. GAS 초기화 (Owner = this, Avatar = this)
+        // GAS 초기화 (Owner = this, Avatar = this)
         AbilitySystemComponent->InitAbilityActorInfo(this, this);
 
-        // 2. 초기 스탯 적용 (Health 등)
+        // 초기 스탯 적용 (InitStatEffect가 있다면)
         if (InitStatEffect)
         {
             FGameplayEffectContextHandle ContextHandle = AbilitySystemComponent->MakeEffectContext();
@@ -59,11 +54,18 @@ void ABaseStructure::BeginPlay()
             }
         }
 
-        // 3. 체력 변경 감지 (AttributeSet의 Health 값이 변할 때마다 호출됨)
-        // UPGCharacterAttributeSet의 Health 속성을 감지
-        AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
-            UPGCharacterAttributeSet::GetHealthAttribute()).AddUObject(this, &ABaseStructure::OnHealthChangedCallback);
+        // 체력 변경 감지
+        if (AttributeSet)
+        {
+            AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
+                UPGCharacterAttributeSet::GetHealthAttribute()).AddUObject(this, &ABaseStructure::OnHealthChangedCallback);
+        }
     }
+}
+
+UAbilitySystemComponent* ABaseStructure::GetAbilitySystemComponent() const
+{
+    return AbilitySystemComponent;
 }
 
 void ABaseStructure::OnHealthChangedCallback(const FOnAttributeChangeData& Data)
@@ -81,29 +83,20 @@ void ABaseStructure::OnHealthChangedCallback(const FOnAttributeChangeData& Data)
 }
 
 
-void ABaseStructure::OnHealthChanged(float NewHealth, float MaxHealth)
-{
-    // 블루프린트에서 UI 갱신 등을 위해 사용
-    UE_LOG(LogTemp, Log, TEXT("Base Structure Health: %f"), NewHealth);
-}
 
 void ABaseStructure::DestroyBase()
 {
-    // 이미 파괴된 상태라면 무시 (중복 호출 방지)
+    // 이미 파괴된 상태라면 무시
     if (!this->IsValidLowLevel() || IsActorBeingDestroyed()) return;
 
     UE_LOG(LogTemp, Warning, TEXT("Base Destroyed! Team: %d"), (int32)TeamID);
 
-    // 1. 게임 모드 (승패 판정)
+    // 1. 게임 모드에 알림 (승패 판정)
     if (OnBaseDestroyed.IsBound())
     {
         OnBaseDestroyed.Broadcast(TeamID);
     }
 
-    // 2. 시각 효과 (폭발 등) - 블루프린트에서 확장하거나 여기서 구성
-    
-
-    // 3. 기지 파괴
+    // 2. 기지 파괴
     Destroy();
 }
-
