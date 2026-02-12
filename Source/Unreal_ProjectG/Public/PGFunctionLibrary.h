@@ -11,6 +11,7 @@
 class UPGAbilitySystemComponent;
 class UPawnCombatComponent;
 struct FGameplayEffectSpecHandle;
+class APGCharacterBase;
 
 /**
  * 
@@ -37,4 +38,7 @@ public:
     // 게임플레이 이펙트 스펙 핸들을 타겟 액터에 적용하는 함수
     UFUNCTION(BlueprintCallable, Category = "ProjectG|FunctionLibrary")
     static bool ApplyGameplayEffectSpecHandleToTargetActor(AActor* InInstigator, AActor* InTargetActor, const FGameplayEffectSpecHandle& InSpecHandle);
+
+    UFUNCTION(BlueprintCallable, Category = "ProjectG|FunctionLibrary")
+    static bool IsTargetCharacterIsHostile(AActor* InInstigator, AActor* InTargetActor);
 };

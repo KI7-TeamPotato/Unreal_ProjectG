@@ -5,6 +5,7 @@
 #include "PGGameplayTags.h"
 #include "GameplayCueFunctionLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "PGFunctionLibrary.h"
 
 UUnitAbility_BaseMeleeAttack::UUnitAbility_BaseMeleeAttack()
 {
@@ -18,20 +19,30 @@ void UUnitAbility_BaseMeleeAttack::ActivateAbility(const FGameplayAbilitySpecHan
 
     // 전방에 박스 트레이스를 발사하여 가장 가까운 타겟 액터를 찾음
     FVector StartLocation = GetAvatarActorFromActorInfo()->GetActorLocation();
-    FVector EndLocation = StartLocation + GetAvatarActorFromActorInfo()->GetActorForwardVector() * 200.0f;
-    FHitResult HitResult;
+    FVector EndLocation = StartLocation + GetAvatarActorFromActorInfo()->GetActorForwardVector() * 500.0f;
+    TArray<FHitResult> HitResults;
     
     // 가장 가까운 폰 액터 찾기
-    UKismetSystemLibrary::SphereTraceSingleForObjects(this, StartLocation, EndLocation, MeleeAttackDamageRadius, TArray<TEnumAsByte<EObjectTypeQuery>>{ EObjectTypeQuery::ObjectTypeQuery3 /* Pawn */ }, false, TArray<AActor*>(), bEnableTraceDebug ? EDrawDebugTrace::ForDuration : EDrawDebugTrace::None, HitResult, true, FLinearColor::Red, FLinearColor::Green, TraceDebugDuration);
+    UKismetSystemLibrary::SphereTraceMultiForObjects(this, StartLocation, EndLocation, MeleeAttackDamageRadius, TArray<TEnumAsByte<EObjectTypeQuery>>{ EObjectTypeQuery::ObjectTypeQuery3 /* Pawn */ }, false, TArray<AActor*>(), bEnableTraceDebug ? EDrawDebugTrace::ForDuration : EDrawDebugTrace::None, HitResults, true, FLinearColor::Red, FLinearColor::Green, TraceDebugDuration);
     
-    if (HitResult.GetActor())
+    // 적대적인 타겟 필터링
+    int32 CurrentHitTargets = 0;
+    for (FHitResult HitResult : HitResults)
     {
-        // 타겟 액터 캐싱
-        CachedTargetActor = HitResult.GetActor();
+        if (MaxHitTargets <= CurrentHitTargets)
+        {
+            break;
+        }
+        if(UPGFunctionLibrary::IsTargetCharacterIsHostile(GetAvatarActorFromActorInfo(), HitResult.GetActor()))
+        {
+            CachedTargetActors.AddUnique(HitResult.GetActor());
+            CurrentHitTargets++;
+        }
     }
-    else
+
+    // 타겟이 없으면 능력 종료
+    if (CurrentHitTargets == 0)
     {
-        // 타겟이 없으면 능력 종료
         EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
         return;
     }
@@ -61,6 +72,7 @@ void UUnitAbility_BaseMeleeAttack::ActivateAbility(const FGameplayAbilitySpecHan
 
 void UUnitAbility_BaseMeleeAttack::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
+    CachedTargetActors.Empty();
     Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
 
@@ -68,14 +80,19 @@ void UUnitAbility_BaseMeleeAttack::HandleApplyDamage(FGameplayEventData InEventD
 {
     //// 게임플레이 큐 실행
     //UGameplayCueFunctionLibrary::ExecuteGameplayCueOnActor(GetAvatarActorFromActorInfo(), MeleeAttackCueTag, FGameplayCueParameters());
-    AActor* TargetActor = CachedTargetActor.Get();
-    UE_LOG(LogTemp, Warning, TEXT("Target Actor : %s"), *GetNameSafe(TargetActor));
 
-    //// TODO : 스킬의 데미지 Multiflier를 변수화
+
+    // 데미지 적용
+    // TODO : 스킬의 데미지 Multiflier를 변수화
     float SkillMultiplierValue = MeleeAttackSkillMultiplier.GetValueAtLevel(GetAbilityLevel());
     FGameplayEffectSpecHandle EffectSpecHandle = MakeOutgoingEffectSpecToTarget(MeleeAttackDamageEffectClass, SkillMultiplierValue);
-
-    NativeApplyEffectSpecHandleToTarget(TargetActor, EffectSpecHandle);
+    for( TWeakObjectPtr<AActor> TargetActor : CachedTargetActors)
+    {
+        if (TargetActor.IsValid())
+        {
+            NativeApplyEffectSpecHandleToTarget(TargetActor.Get(), EffectSpecHandle);
+        }
+    }
 }
 
 void UUnitAbility_BaseMeleeAttack::OnMontageFinished()

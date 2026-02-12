@@ -6,6 +6,7 @@
 #include "AbilitySystem/PGAbilitySystemComponent.h"
 #include "Interfaces/PawnCombatInterface.h"
 #include "Components/Combat/PawnCombatComponent.h"
+#include "Character/PGCharacterBase.h"
 
 UPGAbilitySystemComponent* UPGFunctionLibrary::NativeGetWarriorASCFromActor(AActor* InActor)
 {
@@ -54,4 +55,18 @@ bool UPGFunctionLibrary::ApplyGameplayEffectSpecHandleToTargetActor(AActor* InIn
     FActiveGameplayEffectHandle ActivateGameplayEffectHandle = SourceASC->ApplyGameplayEffectSpecToTarget(*InSpecHandle.Data, TargetASC);
 
     return ActivateGameplayEffectHandle.WasSuccessfullyApplied();
+}
+
+bool UPGFunctionLibrary::IsTargetCharacterIsHostile(AActor* InInstigator, AActor* InTargetActor)
+{
+    // 일단은 두 태그가 다르면 적대 관계로 간주
+    APGCharacterBase* InstigatorCharacter = Cast<APGCharacterBase>(InInstigator);
+    APGCharacterBase* TargetCharacter = Cast<APGCharacterBase>(InTargetActor);
+
+    if(!InstigatorCharacter || !TargetCharacter)
+    {
+        return false;
+    }
+
+    return InstigatorCharacter->GetTeamTag() != TargetCharacter->GetTeamTag();
 }

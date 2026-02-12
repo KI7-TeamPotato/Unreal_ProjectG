@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "AbilitySystemInterface.h"
 #include "Interfaces/PawnCombatInterface.h"
+#include "GameplayTagContainer.h"
 #include "Types/PGEnumTypes.h"
 #include "PGCharacterBase.generated.h"
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCharacterDiedDelegate, ABaseCharacter*, DeadCharacter);
@@ -31,7 +32,7 @@ public:
 
     FORCEINLINE UPGAbilitySystemComponent* GetPGAbilitySystemComponent() const { return PGAbilitySystemComponent; }
     FORCEINLINE UPGCharacterAttributeSet* GetHeroAttributeSet() const { return HeroAttributeSet; }
-
+    FORCEINLINE FGameplayTag GetTeamTag() { return TeamTag; }
 protected:
     virtual void PossessedBy(AController* NewController) override;
 
@@ -49,4 +50,6 @@ protected:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
     ETeamType TeamID; // Player, Ally, Enemy 구분
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
+    FGameplayTag TeamTag;
 };
