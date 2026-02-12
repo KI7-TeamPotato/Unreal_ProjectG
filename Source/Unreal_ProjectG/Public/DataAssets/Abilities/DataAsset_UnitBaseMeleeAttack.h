@@ -15,16 +15,13 @@ class UNREAL_PROJECTG_API UDataAsset_UnitBaseMeleeAttack : public UPrimaryDataAs
 {
 	GENERATED_BODY()
 	
-public:
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ability|Melee Attack")
-    TArray<TObjectPtr<UAnimMontage>> MeleeAttackMontages;
+private:
+    UPROPERTY(EditAnywhere, Category = "Ability|Attack")
+    TArray<TObjectPtr<UAnimMontage>> AttackMontages;
 
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability|Melee Attack")
-    FScalableFloat MeleeAttackSkillMultiplier;
+    UPROPERTY(EditDefaultsOnly, Category = "Ability|Attack")
+    FScalableFloat AttackSkillMultiplier;
 
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability|Melee Attack")
-    float MeleeAttackDamageRadius = 100.f;
-
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability|Melee Attack")
+    UPROPERTY(EditDefaultsOnly, Category = "Ability|Attack")
     int32 MaxHitTargets = 1;
 };
