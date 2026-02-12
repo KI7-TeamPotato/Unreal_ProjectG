@@ -15,6 +15,8 @@ UHeroAbility_BaseMeleeAttack::UHeroAbility_BaseMeleeAttack()
 
 void UHeroAbility_BaseMeleeAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
+    UE_LOG(LogTemp, Log, TEXT("Attack"));
+
     checkf(!MeleeAttackMontages.IsEmpty(), TEXT("MeleeAttackMontages 배열이 비어있습니다!"));
 
     // 초기화

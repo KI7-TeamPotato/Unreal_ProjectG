@@ -52,7 +52,13 @@ private:
     void OnAttackInput();
 
     UFUNCTION()
-    void OnOverlapBegin(AActor* OverlappedActor, AActor* OtherActor);
+    void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+    UFUNCTION()
+    void ActivateAttack();
+
+    UFUNCTION()
+    AActor* GetClosestTarget(const TArray<AActor*>& TargetArray);
 
 public:
     UPROPERTY(BlueprintAssignable, Category = "Event")
@@ -119,4 +125,6 @@ private:
     //리소스 컴포넌트
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
     TObjectPtr<class UHeroResourceComponent> ResourceManager = nullptr;
+
+    TArray<AActor*> PotentialTargets;
 };

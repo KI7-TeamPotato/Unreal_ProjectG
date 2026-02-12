@@ -17,6 +17,7 @@
 #include "Components/SphereComponent.h"
 #include "Character/Unit/UnitCharacter.h"
 #include "PGGameplayTags.h"
+#include "AbilitySystemBlueprintLibrary.h"
 
 // Sets default values
 AHeroCharacter::AHeroCharacter()
@@ -47,6 +48,9 @@ AHeroCharacter::AHeroCharacter()
     EquipmentComponent = CreateDefaultSubobject<UEquipmentComponent>(TEXT("EquipmentComponent"));
 
     AggroCollision = CreateDefaultSubobject<USphereComponent>(TEXT("AggroCollision"));
+    AggroCollision->SetupAttachment(RootComponent);
+    AggroCollision->SetSphereRadius(500.f);
+    AggroCollision->SetGenerateOverlapEvents(true);
 }
 
 UPawnCombatComponent* AHeroCharacter::GetPawnCombatComponent() const
@@ -130,7 +134,11 @@ void AHeroCharacter::BeginPlay()
         }
     }
 
-    OnActorBeginOverlap.AddDynamic(this, &AHeroCharacter::OnOverlapBegin);
+    if (AggroCollision)
+    {
+        AggroCollision->OnComponentBeginOverlap.AddDynamic(this, &AHeroCharacter::OnOverlapBegin);
+        UE_LOG(LogTemp, Log, TEXT("Overlap bind"));
+    }
 }
 
 // Called every frame
@@ -191,16 +199,60 @@ void AHeroCharacter::OnAttackInput()
     }
 }
 
-void AHeroCharacter::OnOverlapBegin(AActor* OverlappedActor, AActor* OtherActor)
+void AHeroCharacter::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+    UE_LOG(LogTemp, Log, TEXT("Overlap"));
+
     AUnitCharacter* Unit = Cast<AUnitCharacter>(OtherActor);
 
     if (Unit)
     {
         if (Unit->GetUnitSideTag() == PGGameplayTags::Unit_Side_Foe)
         {
-            PGAbilitySystemComponent->TryActivateAbilityByClass(GA_Attack);
+            PotentialTargets.AddUnique(Unit);
+
+            ActivateAttack();
         }
     }
+}
+
+void AHeroCharacter::ActivateAttack()
+{
+    AActor* AttackTarget = GetClosestTarget(PotentialTargets);
+
+    FGameplayEventData EventData;
+    EventData.Instigator = this;
+    EventData.Target = AttackTarget;
+
+    /*UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(this, FGameplayTag::RequestGameplayTag(FName("Player_Ability_BasicAttack_Melee")), EventData);*/
+    PGAbilitySystemComponent->TryActivateAbilityByClass(GA_Attack);
+}
+
+AActor* AHeroCharacter::GetClosestTarget(const TArray<AActor*>& TargetArray)
+{
+    if (TargetArray.IsEmpty())
+    {
+        return nullptr;
+    }
+
+    AActor* ClosestActor = nullptr;
+
+    float MinDistanceSq = MAX_flt;
+
+    for (AActor* Target : TargetArray)
+    {
+        if (IsValid(Target))
+        {
+            const float CurrentDistanceSq = this->GetSquaredDistanceTo(Target);
+
+            if (CurrentDistanceSq < MinDistanceSq)
+            {
+                MinDistanceSq = CurrentDistanceSq;
+                ClosestActor = Target;
+            }
+        }
+    }
+
+    return ClosestActor;
 }
 
