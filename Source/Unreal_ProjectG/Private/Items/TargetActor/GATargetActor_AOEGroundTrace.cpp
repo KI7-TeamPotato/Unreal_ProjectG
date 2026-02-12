@@ -153,6 +153,9 @@ void AGATargetActor_AOEGroundTrace::OnTouchReleased()
     // 하이라이트된 액터 모두 초기화
     ClearAllHighlightedActors();
 
+    // 현재 오버랩된 액터들을 기반으로 타겟 데이터 생성
+    FGameplayAbilityTargetDataHandle TargetDataHandle;
+
     // 히트 로케이션만 포함하는 타겟 데이터 생성
     FGameplayAbilityTargetDataHandle TargetData;
     FHitResult HitResult;
@@ -163,14 +166,33 @@ void AGATargetActor_AOEGroundTrace::OnTouchReleased()
 
 void AGATargetActor_AOEGroundTrace::OnHighlightActorInAOE(AActor* InActor)
 {
-    //UE_LOG(LogTemp, Log, TEXT("Highlight Actor In AOE: %s"), *InActor->GetName());
-    // 머티리얼 변경 
+    UE_LOG(LogTemp, Warning, TEXT("OnHighlightActorInAOE: %s"), *InActor->GetName());
+
+    // 머티리얼 변경
+    TArray<UMeshComponent*> TargetMeshComponents;
+    InActor->GetComponents<UMeshComponent>(TargetMeshComponents);
+
+    UE_LOG(LogTemp, Warning, TEXT("TargetMeshComponents Num: %d"), TargetMeshComponents.Num());
+
+    for (UMeshComponent* MeshComp : TargetMeshComponents)
+    {
+        if(UMaterialInstanceDynamic* DynamicMat = MeshComp->CreateAndSetMaterialInstanceDynamic(0))
+        {
+            UE_LOG(LogTemp, Warning, TEXT("Created Dynamic Material for Actor: %s"), *InActor->GetName());
+            DynamicMat->SetScalarParameterValue(FName("OverlapFXSwitch"), 1.f);
+            HighlightedActorMap.Add(InActor, DynamicMat);
+        }
+    }
 }
 
 void AGATargetActor_AOEGroundTrace::OnUnhighlightActorOutAOE(AActor* InActor)
 {
-    //UE_LOG(LogTemp, Log, TEXT("Unhighlight Actor Out AOE: %s"), *InActor->GetName());
     // 머티리얼 원래대로 복원
+    if(UMaterialInstanceDynamic* DynamicMat = *HighlightedActorMap.Find(InActor))
+    {
+        DynamicMat->SetScalarParameterValue(FName("OverlapFXSwitch"), 0.f);
+        HighlightedActorMap.Remove(InActor);
+    }
 }
 
 void AGATargetActor_AOEGroundTrace::ClearAllHighlightedActors()
