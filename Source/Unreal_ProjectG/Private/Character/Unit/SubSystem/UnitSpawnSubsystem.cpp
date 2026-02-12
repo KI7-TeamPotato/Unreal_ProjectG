@@ -29,7 +29,6 @@ void UUnitSpawnSubsystem::PrewarmPool(TSubclassOf<AUnitCharacter> UnitClass, int
     }
 }
 
-// [추가 구현] 헤더에 선언된 private 함수 구현
 AUnitCharacter* UUnitSpawnSubsystem::GetUnitInstance(TSubclassOf<AUnitCharacter> UnitClass)
 {
     if (!UnitClass || !GetWorld()) return nullptr;
@@ -37,7 +36,6 @@ AUnitCharacter* UUnitSpawnSubsystem::GetUnitInstance(TSubclassOf<AUnitCharacter>
     FUnitPoolList& PoolList = PoolStorage.FindOrAdd(UnitClass);
     AUnitCharacter* UnitToReturn = nullptr;
 
-    // 1. 풀에서 유효한 유닛 찾기
     while (PoolList.Units.Num() > 0)
     {
         UnitToReturn = PoolList.Units.Pop();
@@ -59,7 +57,6 @@ AUnitCharacter* UUnitSpawnSubsystem::GetUnitInstance(TSubclassOf<AUnitCharacter>
     return UnitToReturn;
 }
 
-// [수정] 인자를 UnitClass와 UnitData 모두 받도록 변경
 void UUnitSpawnSubsystem::SpawnUnit(TSubclassOf<AUnitCharacter> UnitClass, TSoftObjectPtr<UDataAsset_UnitStartupData> UnitData, FVector Location, FRotator Rotation)
 {
     if (!UnitClass) return;
@@ -78,7 +75,6 @@ void UUnitSpawnSubsystem::SpawnUnit(TSubclassOf<AUnitCharacter> UnitClass, TSoft
     }
 }
 
-// [수정] 인자를 AUnitCharacter* 로 변경
 void UUnitSpawnSubsystem::ReturnToPool(AUnitCharacter* Unit)
 {
     if (!IsValid(Unit)) return;

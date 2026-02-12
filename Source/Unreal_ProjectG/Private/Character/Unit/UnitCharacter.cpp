@@ -96,6 +96,7 @@ void AUnitCharacter::InitUnitStartUpData()
                     UDataAsset_UnitStartupData* StartUpData = Cast<UDataAsset_UnitStartupData>(LoadedData);
                     StartUpData->SkeletalMesh;
                     CharacterAttributeSet->InitHealth(StartUpData->Health);
+                    CharacterAttributeSet->InitMaxHealth(StartUpData->Health);
                     CharacterAttributeSet->InitAttackPower(StartUpData->AttackDamage);
                     CharacterAttributeSet->InitAttackSpeed(StartUpData->AttackSpeed);
 
