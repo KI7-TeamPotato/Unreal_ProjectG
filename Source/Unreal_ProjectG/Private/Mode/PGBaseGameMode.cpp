@@ -13,8 +13,8 @@ APGBaseGameMode::APGBaseGameMode()
     MAX_ENEMY_COUNT;
     
     // 시간 제한 예시 (1분, 3분)
-    ClearTimeLimit_3Stars = 60.0f;
-    ClearTimeLimit_2Stars = 180.0f;
+    ClearTimeLimit_3Stars;
+    ClearTimeLimit_2Stars;
 
     // 1. 게임 시작 시간 기록
     GameStartTime = GetWorld()->GetTimeSeconds();
