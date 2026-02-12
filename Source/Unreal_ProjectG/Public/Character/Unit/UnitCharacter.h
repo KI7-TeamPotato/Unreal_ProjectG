@@ -59,6 +59,10 @@ public:
 
     virtual void OnDie() override;
 
+    void SetCharacterStartupData(const TSoftObjectPtr<class UDataAsset_UnitStartupData>& InData)
+    {
+        CharacterStartupData = InData;
+    }
 protected:
     //
     virtual void PossessedBy(AController* NewController) override;
