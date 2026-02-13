@@ -1,50 +1,67 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "UI/ControlPanel.h"
+#include "UI/Battle/ControlPanelWidget.h"
 #include "Components/Image.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Character/Hero/HeroCharacter.h"
-#include "UI/BarWidget.h"
+#include "UI/Battle/BarWidget.h"
+#include "UI/Battle/ActiveSkillWidget.h"
+#include "AbilitySystem/PGCharacterAttributeSet.h"
+#include "Components/Combat/PawnCombatComponent.h"
 
-void UControlPanel::InitBar(float MaxHP, float MaxCost)
+void UControlPanelWidget::InitBar(float CurrentHP, float MaxHP, float CurrentCost, float MaxCost)
 {
-    HPBar->InitProgressBar(FLinearColor::Red, FText(), MaxHP);
-    CostBar->InitProgressBar(FLinearColor::Blue, FText(), MaxCost);
+    HPBar->InitProgressBar(FLinearColor::Red, FText::FromString(TEXT("Hero HP")), CurrentHP, MaxHP);
+    CostBar->InitProgressBar(FLinearColor::Blue, FText::FromString(TEXT("Cost")), CurrentCost, MaxCost);
 }
 
-void UControlPanel::UpdateHP(float InValue)
+void UControlPanelWidget::UpdateHP(float InValue)
 {
     HPBar->UpdateCurrent(InValue);
 }
 
-void UControlPanel::UpdateCost(float InValue)
+void UControlPanelWidget::UpdateCost(float InValue)
 {
     CostBar->UpdateCurrent(InValue);
 }
 
-void UControlPanel::NativeConstruct()
+void UControlPanelWidget::NativeConstruct()
 {
     Super::NativeConstruct();
 
     AHeroCharacter* Hero = Cast<AHeroCharacter>(GetOwningPlayerPawn());
     if (Hero)
     {
+        UE_LOG(LogTemp, Log, TEXT("영웅 확인 완료"));
+        // 영웅 조이스틱 컨트롤러 설정
         Hero->SetJoystickWidget(this);
+
+        // 영웅 어트리뷰트 셋 설정
+        UPGCharacterAttributeSet* AttributeSet = Hero->GetHeroAttributeSet();
+        InitBar(AttributeSet->GetHealth(), AttributeSet->GetMaxHealth(), AttributeSet->GetCost(), AttributeSet->GetMaxCost());
+
+        // 영웅 무기 스킬 어빌리티 설정
+        TArray<FGameplayAbilitySpecHandle> SpecHandleArray = Hero->GetPawnCombatComponent()->GetSkillAbilitySpecHandles();
+        if (!SpecHandleArray.IsEmpty())
+        {
+            UE_LOG(LogTemp, Log, TEXT("스펙 핸들 가져옴"));
+            WeaponSkill->SetAbilitySpecHandle(SpecHandleArray[0]);
+        }
     }
 }
 
-FReply UControlPanel::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+FReply UControlPanelWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
     if (JoyStickBackground)
     {
-        // 1. 마우스의 스크린 좌표 가져오기
+        // 마우스의 스크린 좌표 가져오기
         FVector2D ScreenPos = InMouseEvent.GetScreenSpacePosition();
 
-        // 2. 조이스틱 배경의 지오메트리 정보 가져오기
+        // 조이스틱 배경의 지오메트리 정보 가져오기
         const FGeometry& BackgroundGeometry = JoyStickBackground->GetCachedGeometry();
 
-        // 3. 해당 배경 영역 안에 마우스가 있는지 체크
+        // 해당 배경 영역 안에 마우스가 있는지 체크
         if (BackgroundGeometry.IsUnderLocation(ScreenPos))
         {
             bIsAreaPressed = true;
@@ -54,28 +71,28 @@ FReply UControlPanel::NativeOnMouseButtonDown(const FGeometry& InGeometry, const
     return FReply::Unhandled();
 }
 
-FReply UControlPanel::NativeOnMouseMove(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+FReply UControlPanelWidget::NativeOnMouseMove(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
     if (bIsAreaPressed)
     {
-        // 1. 마우스의 스크린 좌표 가져오기
+        // 마우스의 스크린 좌표 가져오기
         FVector2D ScreenPos = InMouseEvent.GetScreenSpacePosition();
 
         // 2. 조이스틱 배경의 지오메트리 정보 가져오기
         const FGeometry& BackgroundGeometry = JoyStickBackground->GetCachedGeometry();
 
-        // 1. 위젯 로컬 좌표 계산
+        // 위젯 로컬 좌표 계산
         FVector2D LocalPos = BackgroundGeometry.AbsoluteToLocal(ScreenPos);
         FVector2D Center = BackgroundGeometry.GetLocalSize() / 2.0f;
 
-        // 2. 중심으로부터의 벡터 계산
+        // 중심으로부터의 벡터 계산
         FVector2D Delta = LocalPos - Center;
 
-        // 3. 거리 제한 및 정규화
+        // 거리 제한 및 정규화
         float Distance = FMath::Clamp(Delta.Size(), 0.0f, JoystickRange);
         JoystickVector = Delta.GetSafeNormal(); // 이동 방향
 
-        // 4. 조이스틱 이미지 이동 (Set Render Translation)
+        // 조이스틱 이미지 이동
         if (JoyStick)
         {
             JoyStick->SetRenderTranslation(JoystickVector * Distance);
@@ -89,7 +106,7 @@ FReply UControlPanel::NativeOnMouseMove(const FGeometry& InGeometry, const FPoin
     return FReply::Unhandled();
 }
 
-FReply UControlPanel::NativeOnMouseButtonUp(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+FReply UControlPanelWidget::NativeOnMouseButtonUp(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
     if (bIsAreaPressed)
     {

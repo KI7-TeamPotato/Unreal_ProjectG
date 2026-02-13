@@ -4,16 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "ControlPanel.generated.h"
+#include "ControlPanelWidget.generated.h"
 
 class UImage;
 class UBarWidget;
+class UActiveSkillWidget;
 
 /**
  * 
  */
 UCLASS()
-class UNREAL_PROJECTG_API UControlPanel : public UUserWidget
+class UNREAL_PROJECTG_API UControlPanelWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
@@ -21,7 +22,7 @@ public:
     // 외부(캐릭터)에서 조이스틱 값을 가져갈 함수
     FVector2D GetJoystickVector() const { return JoystickVector; }
 
-    void InitBar(float MaxHP, float MaxCost);
+    void InitBar(float CurrentHP, float MaxHP, float CurrentCost, float MaxCost);
 
     void UpdateHP(float InValue);
     void UpdateCost(float InValue);
@@ -45,12 +46,18 @@ protected:
     UPROPERTY(meta = (BindWidget))
     TObjectPtr<UImage> JoyStickBackground;
 
+    // 영웅 상태 바
     UPROPERTY(meta = (BindWidget))
     TObjectPtr<UBarWidget> HPBar;
 
     UPROPERTY(meta = (BindWidget))
     TObjectPtr<UBarWidget> CostBar;
 
+    // 액티브 스킬
+    UPROPERTY(meta = (BindWidget))
+    TObjectPtr<UActiveSkillWidget> WeaponSkill;
+    
+private:
     // 내부 변수
     bool bIsAreaPressed = false;
     float JoystickRange = 150.0f; // 블루프린트의 Clamp 값
