@@ -59,16 +59,6 @@ void AUnitCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
     Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
-void AUnitCharacter::GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const
-{
-    if (SideTag.IsValid())
-    {
-        TagContainer.AddTag(SideTag);
-    }
-}
-
-
-
 void AUnitCharacter::PossessedBy(AController* NewController)
 {
     Super::PossessedBy(NewController);
@@ -128,12 +118,12 @@ void AUnitCharacter::InitUnitStartUpData()
                     UE_LOG(LogTemp, Log, TEXT("InitUnitStartUpData"));
                     UE_LOG(LogTemp, Log, TEXT("HP : %f"), CharacterAttributeSet->GetHealth());
 
-                    SideTag = StartUpData->SideTag;
+                    TeamTag = StartUpData->TeamTag;
 
                     //유닛 서브시스템을 이용한 태그별 팀 설정
                     if (UUnitSubsystem* Subsystem = GetWorld()->GetSubsystem<UUnitSubsystem>())
                     {
-                        Subsystem->RegisterUnit(this, SideTag);
+                        Subsystem->RegisterUnit(this, TeamTag);
                     }
 
                     //데이터 삽입이 끝나면 델리게이트를 브로드캐스트해서 블랙보드가 값을 받기 시작함
@@ -224,7 +214,7 @@ void AUnitCharacter::DeactivateUnit()
     if (UUnitSubsystem* Subsystem = GetWorld()->GetSubsystem<UUnitSubsystem>())
     {
         //유닛 서브시스템에서 정한 팀을 해제함 
-        Subsystem->UnregisterUnit(this, SideTag);
+        Subsystem->UnregisterUnit(this, TeamTag);
     }
 
     // 2. 물리/이동 초기화

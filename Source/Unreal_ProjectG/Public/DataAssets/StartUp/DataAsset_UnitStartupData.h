@@ -25,7 +25,7 @@ public:
     FGameplayTag ElementTag;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Info")
-    FGameplayTag SideTag;
+    FGameplayTag TeamTag;
 
     UPROPERTY(EditAnywhere, Category = "Stats")
     UBranchDataAsset* BranchData;
