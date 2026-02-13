@@ -68,12 +68,9 @@ void AHeroCharacter::SpawnCharacter()
 
 void AHeroCharacter::OnHealthUpdate(const FOnAttributeChangeData& Data)
 {
-    if (Data.Attribute == CharacterAttributeSet->GetHealthAttribute())
+    if (OnHeroHpChanged.IsBound())
     {
-        if (OnHeroHpChanged.IsBound())
-        {
-            OnHeroHpChanged.Broadcast(Data.NewValue);
-        }
+        OnHeroHpChanged.Broadcast(Data.NewValue);
     }
 }
 
@@ -130,10 +127,6 @@ void AHeroCharacter::BeginPlay()
         {
             PGAbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(GA_Die, 1, 0, this));
         }
-    }
-    if (OnHeroInitialize.IsBound())
-    {
-        OnHeroInitialize.Broadcast();
     }
 }
 

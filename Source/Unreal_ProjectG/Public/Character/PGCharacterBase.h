@@ -30,13 +30,16 @@ public:
     // 컴뱂 인터페이스 구현
     virtual UPawnCombatComponent* GetPawnCombatComponent() const override;
 
+    virtual void OnDie() {};
+
+    virtual void OnHealthUpdate(const struct FOnAttributeChangeData& Data);
+
     FORCEINLINE UPGAbilitySystemComponent* GetPGAbilitySystemComponent() const { return PGAbilitySystemComponent; }
     FORCEINLINE UPGCharacterAttributeSet* GetHeroAttributeSet() const { return CharacterAttributeSet; }
     FORCEINLINE FGameplayTag GetTeamTag() { return TeamTag; }
 protected:
     virtual void PossessedBy(AController* NewController) override;
 
-    virtual void OnDie() {};
 protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AbilitySystem")
     TObjectPtr<UPGAbilitySystemComponent> PGAbilitySystemComponent;

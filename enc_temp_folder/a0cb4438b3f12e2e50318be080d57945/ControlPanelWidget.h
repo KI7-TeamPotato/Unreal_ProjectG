@@ -9,7 +9,6 @@
 class UImage;
 class UBarWidget;
 class UActiveSkillWidget;
-class AHeroCharacter;
 
 /**
  * 
@@ -23,8 +22,7 @@ public:
     // 외부(캐릭터)에서 조이스틱 값을 가져갈 함수
     FVector2D GetJoystickVector() const { return JoystickVector; }
 
-    UFUNCTION()
-    void InitHero();
+    void InitHero(float CurrentHP, float MaxHP, float CurrentCost, float MaxCost);
     void InitBase();
 
     UFUNCTION()
@@ -44,8 +42,6 @@ protected:
 
 
 protected:
-    TObjectPtr<AHeroCharacter> HeroCharacter = nullptr;
-
     // 조이스틱 레버
     UPROPERTY(meta = (BindWidget))
     TObjectPtr<UImage> JoyStick;

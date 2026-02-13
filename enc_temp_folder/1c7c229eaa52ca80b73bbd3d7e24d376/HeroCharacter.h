@@ -8,7 +8,6 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPlayerDied);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHeroHpChanged, float, CurrentHealth);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHeroInitialize);
 
 class UHeroCombatComponent;
 
@@ -57,7 +56,6 @@ public:
     FOnPlayerDied OnPlayerDied;
 
     FOnHeroHpChanged OnHeroHpChanged;
-    FOnHeroInitialize OnHeroInitialize;
 
 protected:
     //컴포넌트

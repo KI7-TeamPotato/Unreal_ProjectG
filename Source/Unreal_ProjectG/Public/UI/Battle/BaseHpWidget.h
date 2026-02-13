@@ -4,37 +4,34 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "BarWidget.generated.h"
+#include "BaseHpWidget.generated.h"
 
-class UTextBlock;
 class UProgressBar;
+class UTextBlock;
 
 /**
  * 
  */
 UCLASS()
-class UNREAL_PROJECTG_API UBarWidget : public UUserWidget
+class UNREAL_PROJECTG_API UBaseHpWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
 public:
     UFUNCTION(BlueprintCallable)
-    void InitProgressBar(FLinearColor InColor, FText InName, float InMax);
+    void InitHPBar(float InCurrent, float InMax);
 
-    void UpdateCurrent(float InCurrent);
+    void UpdateCurrentHP(float InCurrent);
 	
 protected:
     UPROPERTY(meta = (BindWidget))
-    TObjectPtr<UProgressBar> StatusBar = nullptr;
+    TObjectPtr<UProgressBar> HPBar = nullptr;
 
     UPROPERTY(meta = (BindWidget))
-    TObjectPtr<UTextBlock> StatusName = nullptr;
+    TObjectPtr<UTextBlock> CurrentHP = nullptr;
 
     UPROPERTY(meta = (BindWidget))
-    TObjectPtr<UTextBlock> Current = nullptr;
-
-    UPROPERTY(meta = (BindWidget))
-    TObjectPtr<UTextBlock> Max = nullptr;
+    TObjectPtr<UTextBlock> MaxHP = nullptr;
 
 private:
     float MaxValue = 1.0f;

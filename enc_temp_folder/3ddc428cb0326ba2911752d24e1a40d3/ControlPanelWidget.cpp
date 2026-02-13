@@ -11,15 +11,15 @@
 #include "AbilitySystem/PGCharacterAttributeSet.h"
 #include "Components/Combat/PawnCombatComponent.h"
 
+void UControlPanelWidget::InitHero(float CurrentHP, float MaxHP, float CurrentCost, float MaxCost)
+{
+    HPBar->InitProgressBar(FLinearColor::Red, FText::FromString(TEXT("Hero HP")), CurrentHP, MaxHP);
+    CostBar->InitProgressBar(FLinearColor::Blue, FText::FromString(TEXT("Cost")), CurrentCost, MaxCost);
+}
+
 void UControlPanelWidget::UpdateHP(float InValue)
 {
     HPBar->UpdateCurrent(InValue);
-}
-
-void UControlPanelWidget::InitHero()
-{
-    UPGCharacterAttributeSet* AS = HeroCharacter->GetHeroAttributeSet();
-    HPBar->InitProgressBar(FLinearColor::Red, FText::FromString(TEXT("Hero HP")), AS->GetMaxHealth());
 }
 
 void UControlPanelWidget::UpdateCost(float InValue)
@@ -38,14 +38,13 @@ void UControlPanelWidget::NativeConstruct()
         // 조이스틱 설정
         Controller->SetJoystickWidget(this);
 
-        HeroCharacter = Cast<AHeroCharacter>(Controller->GetPawn());
-        if (HeroCharacter)
+        AHeroCharacter* Hero = Cast<AHeroCharacter>(Controller->GetPawn());
+        if (Hero)
         {
-            HeroCharacter->OnHeroInitialize.AddDynamic(this, &UControlPanelWidget::InitHero);
-            HeroCharacter->OnHeroHpChanged.AddDynamic(this, &UControlPanelWidget::UpdateHP);
+            Hero->OnHeroHpChanged.AddDynamic(this, &UControlPanelWidget::UpdateHP);
 
             // 영웅 무기 스킬 어빌리티 설정
-            TArray<FGameplayAbilitySpecHandle> SpecHandleArray = HeroCharacter->GetPawnCombatComponent()->GetSkillAbilitySpecHandles();
+            TArray<FGameplayAbilitySpecHandle> SpecHandleArray = Hero->GetPawnCombatComponent()->GetSkillAbilitySpecHandles();
             if (!SpecHandleArray.IsEmpty())
             {
                 //UE_LOG(LogTemp, Log, TEXT("스펙 핸들 가져옴"));
