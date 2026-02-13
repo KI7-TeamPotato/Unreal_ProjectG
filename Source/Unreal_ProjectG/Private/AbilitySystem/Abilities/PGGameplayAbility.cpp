@@ -49,7 +49,8 @@ FActiveGameplayEffectHandle UPGGameplayAbility::NativeApplyEffectSpecHandleToTar
     // TargetActor의 AbilitySystemComponent 가져오기
     UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
 
-    check(TargetASC && InSpecHandle.IsValid());
+    checkf(TargetASC, TEXT("TargetActor의 AbilitySystemComponent가 없습니다. TargetActor : %s"), *GetNameSafe(TargetActor));
+    checkf(InSpecHandle.IsValid(), TEXT("InSpecHandle가 유효하지 않습니다. TargetActor : %s"), *GetNameSafe(TargetActor));
 
     return GetPGAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectSpecToTarget(
         *InSpecHandle.Data, TargetASC);

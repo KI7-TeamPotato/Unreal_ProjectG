@@ -4,8 +4,12 @@
 #include "AbilitySystem/Abilities/Player/HeroAbility_BaseMeleeAttack.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
+#include "Components/Combat/HeroCombatComponent.h"
 #include "PGGameplayTags.h"
 #include "GameplayCueFunctionLibrary.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "Types/PGEnumTypes.h"
+#include "TimerManager.h"
 
 UHeroAbility_BaseMeleeAttack::UHeroAbility_BaseMeleeAttack()
 {
@@ -15,10 +19,12 @@ UHeroAbility_BaseMeleeAttack::UHeroAbility_BaseMeleeAttack()
 
 void UHeroAbility_BaseMeleeAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
-    checkf(!MeleeAttackMontages.IsEmpty(), TEXT("MeleeAttackMontages 배열이 비어있습니다!"));
+    if (CachedWeaponStaticMesh == nullptr)
+    {
+        CachedWeaponStaticMesh = GetHeroCombatComponentFromActorInfo()->CachedWeaponMeshComponent.Get();
+    }
 
-    // 초기화
-    CurrentHitTargets = 0;
+    checkf(!MeleeAttackMontages.IsEmpty(), TEXT("MeleeAttackMontages 배열이 비어있습니다!"));
 
     // 애니메이션 몽타주 재생
     UAnimMontage* SelectedMontage = MeleeAttackMontages[FMath::RandRange(0, MeleeAttackMontages.Num() - 1)];
@@ -35,47 +41,124 @@ void UHeroAbility_BaseMeleeAttack::ActivateAbility(const FGameplayAbilitySpecHan
         MeleeMontageTask->ReadyForActivation();
     }
 
-
     // 게임플레이 이벤트 대기 태스크 생성
-    UAbilityTask_WaitGameplayEvent* MeleeHitEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, PGGameplayTags::Shared_Event_MeleeHit);
+    UAbilityTask_WaitGameplayEvent* MeleeHitEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, PGGameplayTags::Shared_Event_AttackTraceToggle);
 
     // 이벤트 수신 핸들러 바인딩
-    MeleeHitEventTask->EventReceived.AddUniqueDynamic(this, &UHeroAbility_BaseMeleeAttack::HandleApplyDamage);
+    MeleeHitEventTask->EventReceived.AddUniqueDynamic(this, &UHeroAbility_BaseMeleeAttack::ToggleWeaponTrace);
     MeleeHitEventTask->ReadyForActivation();
 }
 
 void UHeroAbility_BaseMeleeAttack::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
+    GetWorld()->GetTimerManager().ClearTimer(WeaponTraceTimerHandle);
+    WeaponTraceTimerHandle.Invalidate();
+    ResetHitData();
     Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
 
 
 
-// 상대방에게 콜리전이 오버랩될때, 이벤트 트리거에 의해 실행되는 데미지 적용 함수
-void UHeroAbility_BaseMeleeAttack::HandleApplyDamage(FGameplayEventData InEventData)
+void UHeroAbility_BaseMeleeAttack::ToggleWeaponTrace(FGameplayEventData InEventDtata)
 {
-    //// 게임플레이 큐 실행
-    //UGameplayCueFunctionLibrary::ExecuteGameplayCueOnActor(GetAvatarActorFromActorInfo(), MeleeAttackCueTag, FGameplayCueParameters());
+    if (!CachedWeaponStaticMesh) return;
 
-    // 최대 타겟 수에 도달했는지 확인
-    if(CurrentHitTargets >= MaxHitTargets)
+    EPGToggleType ToggleType = static_cast<EPGToggleType>(static_cast<int32>(InEventDtata.EventMagnitude));
+
+    if (ToggleType == EPGToggleType::On)
+    {
+        ResetHitData();
+        GetWorld()->GetTimerManager().SetTimer(
+            WeaponTraceTimerHandle,
+            this,
+            &UHeroAbility_BaseMeleeAttack::PerformWeaponTrace,
+            WeaponTraceInterval,
+            true
+        );
+    }
+    else
+    {
+        ResetHitData();
+        GetWorld()->GetTimerManager().ClearTimer(WeaponTraceTimerHandle);
+        WeaponTraceTimerHandle.Invalidate();
+    }
+}
+
+// 트레이스를 수행하여 히튼한 액터들을 찾는 함수
+void UHeroAbility_BaseMeleeAttack::PerformWeaponTrace()
+{
+    // 트레이스를 켜서 액터를 감지하여 overrapedActor에 추가
+    FVector StartLocation = CachedWeaponStaticMesh->GetSocketLocation(TEXT("WeaponTraceStart"));
+    FVector EndLocation = CachedWeaponStaticMesh->GetSocketLocation(TEXT("WeaponTraceEnd"));
+    ETraceTypeQuery TraceChannel = UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel1); //DefaultEngine.ini에서 선언된 AttackTrace 채널
+    TArray<FHitResult> OutHits;
+
+    UKismetSystemLibrary::SphereTraceMulti(
+        this,
+        StartLocation,
+        EndLocation,
+        WeaponTraceSphereRadius,
+        TraceChannel,
+        false,
+        TArray<AActor*>(),
+        bEnableTraceDebug ? EDrawDebugTrace::ForDuration : EDrawDebugTrace::None,
+        OutHits,
+        true,
+        FLinearColor::Red, FLinearColor::Green, TraceDebugDuration
+    );
+
+    // 히트된 액터들 처리
+    if (OutHits.Num() > 0)
+    {
+        for (FHitResult& OutHit : OutHits)
+        {
+            AActor* HitActor = OutHit.GetActor();
+            if (HitActor && HitActor != GetAvatarActorFromActorInfo())
+            {
+                HandleApplyDamage(HitActor);
+            }
+        }
+    }
+}
+
+// 상대방에게 콜리전이 오버랩될때, 이벤트 트리거에 의해 실행되는 데미지 적용 함수
+void UHeroAbility_BaseMeleeAttack::HandleApplyDamage(AActor* InTargetActor)
+{   
+    //// 이미 히트된 액터는 무시
+    if (HitActors.Contains(InTargetActor))
     {
         return;
     }
+    
+    if(CurrentHitTargets >= MaxHitTargets)
+    {
+        // 최대 타겟 수에 도달했으므로 트레이스 타이머 종료
+        GetWorld()->GetTimerManager().ClearTimer(WeaponTraceTimerHandle);
+        WeaponTraceTimerHandle.Invalidate();
+        return;
+    }
 
-    // 타겟 액터 가져오기
-    AActor* TargetActor = const_cast<AActor*>(InEventData.Target.Get());
-    UE_LOG(LogTemp, Warning, TEXT("Target Actor : %s"), *InEventData.Target->GetName());
+    UE_LOG(LogTemp, Warning, TEXT("Target Actor : %s"), *GetNameSafe(InTargetActor));
+    
+    //// 게임플레이 큐 실행
+    //UGameplayCueFunctionLibrary::ExecuteGameplayCueOnActor(GetAvatarActorFromActorInfo(), MeleeAttackCueTag, FGameplayCueParameters());
 
     //// TODO : 스킬의 데미지 Multiflier를 변수화
     float SkillMultiplierValue = MeleeAttackSkillMultiplier.GetValueAtLevel(GetAbilityLevel());
     FGameplayEffectSpecHandle EffectSpecHandle = MakeHeroDamageEffectSpecHandle(MeleeAttackDamageEffectClass, SkillMultiplierValue);
     
-    NativeApplyEffectSpecHandleToTarget(TargetActor, EffectSpecHandle);
+    NativeApplyEffectSpecHandleToTarget(InTargetActor, EffectSpecHandle);
     CurrentHitTargets++;
+    HitActors.Add(InTargetActor);
 }
 
 void UHeroAbility_BaseMeleeAttack::OnMontageFinished()
 {
     EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, false, false);
+}
+
+void UHeroAbility_BaseMeleeAttack::ResetHitData()
+{
+    HitActors.Empty();
+    CurrentHitTargets = 0;
 }

@@ -32,17 +32,29 @@ protected:
     TSubclassOf<UGameplayEffect> MeleeAttackDamageEffectClass;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ability|Melee Attack")
-    TArray<TObjectPtr<UAnimMontage>> MeleeAttackMontages;
+    FGameplayTag MeleeAttackCueTag;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ability|Melee Attack")
-    FGameplayTag MeleeAttackCueTag;
+    TArray<TObjectPtr<UAnimMontage>> MeleeAttackMontages;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability|Melee Attack")
     FScalableFloat MeleeAttackSkillMultiplier;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability|Melee Attack")
-    float MeleeAttackRange = 200.f;
+    float MeleeAttackDamageRadius = 100.f;
+
+
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability|Debug")
+    bool bEnableTraceDebug = false;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability|Debug")
+    float TraceDebugDuration = 0.1f;
+
+
+    //UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability|Melee Attack")
+    //float MeleeAttackRange = 200.f;
 
 private:
-    TWeakObjectPtr<AActor> CachedTargetActor;
+    TArray<TWeakObjectPtr<AActor>> CachedTargetActors;
 };
