@@ -131,6 +131,11 @@ void AUnitCharacter::InitUnitStartUpData()
 
                         AttackMarginKey = AttackRangeKey * 0.7f;
                     }
+
+                    if (StartUpData->EnemyBase)
+                    {
+                        TargetActor = StartUpData->EnemyBase;
+                    }
                     UE_LOG(LogTemp, Log, TEXT("InitUnitStartUpData"));
                     UE_LOG(LogTemp, Log, TEXT("HP : %f"), CharacterAttributeSet->GetHealth());
 
