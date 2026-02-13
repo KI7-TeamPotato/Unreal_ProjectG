@@ -31,7 +31,7 @@ public:
     virtual UPawnCombatComponent* GetPawnCombatComponent() const override;
 
     FORCEINLINE UPGAbilitySystemComponent* GetPGAbilitySystemComponent() const { return PGAbilitySystemComponent; }
-    FORCEINLINE UPGCharacterAttributeSet* GetHeroAttributeSet() const { return HeroAttributeSet; }
+    FORCEINLINE UPGCharacterAttributeSet* GetHeroAttributeSet() const { return CharacterAttributeSet; }
     FORCEINLINE FGameplayTag GetTeamTag() { return TeamTag; }
 protected:
     virtual void PossessedBy(AController* NewController) override;
