@@ -39,6 +39,14 @@ namespace PGGameplayTags
     UNREAL_PROJECTG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_SetByCaller_MaxHealthMultiplier);
     UNREAL_PROJECTG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shared_SetByCaller_AttackPowerMultiplier);
 
+
+    //유닛 상태(State) 태그
+    UE_DECLARE_GAMEPLAY_TAG_EXTERN(Unit_State_Idle);
+    UE_DECLARE_GAMEPLAY_TAG_EXTERN(Unit_State_Combat);
+    UE_DECLARE_GAMEPLAY_TAG_EXTERN(Unit_State_Move);
+    UE_DECLARE_GAMEPLAY_TAG_EXTERN(Unit_State_Dead);
+
+
     //유닛 등급 태그
     UE_DECLARE_GAMEPLAY_TAG_EXTERN(Unit_Tier_Normal);
     UE_DECLARE_GAMEPLAY_TAG_EXTERN(Unit_Tier_Rare);
@@ -58,4 +66,5 @@ namespace PGGameplayTags
     //아군 적군 구분 태그
     UE_DECLARE_GAMEPLAY_TAG_EXTERN(Unit_Side_Ally);
     UE_DECLARE_GAMEPLAY_TAG_EXTERN(Unit_Side_Foe);
+
 }

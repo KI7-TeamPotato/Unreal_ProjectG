@@ -13,7 +13,7 @@ APGCharacterBase::APGCharacterBase()
     GetMesh()->SetReceivesDecals(false);
 
     PGAbilitySystemComponent = CreateDefaultSubobject<UPGAbilitySystemComponent>(TEXT("PGAbilitySystemComponent"));
-    HeroAttributeSet = CreateDefaultSubobject<UPGCharacterAttributeSet>(TEXT("HeroAttributeSet"));
+    CharacterAttributeSet = CreateDefaultSubobject<UPGCharacterAttributeSet>(TEXT("CharacterAttributeSet"));
 }
 
 UAbilitySystemComponent* APGCharacterBase::GetAbilitySystemComponent() const

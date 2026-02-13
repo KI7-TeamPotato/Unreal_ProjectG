@@ -54,5 +54,13 @@ namespace PGGameplayTags
     //유닛 진영 태그
     UE_DEFINE_GAMEPLAY_TAG(Unit_Side_Ally, "Unit.Side.Ally");
     UE_DEFINE_GAMEPLAY_TAG(Unit_Side_Foe, "Unit.Side.Foe");
+
+    //유닛 상태(State) 태그
+    UE_DEFINE_GAMEPLAY_TAG(Unit_State_Idle, "Unit.State.Idle");
+    UE_DEFINE_GAMEPLAY_TAG(Unit_State_Combat, "Unit.State.Combat");
+    UE_DEFINE_GAMEPLAY_TAG(Unit_State_Move, "Unit.State.Move");
+    UE_DEFINE_GAMEPLAY_TAG(Unit_State_Dead, "Unit.State.Dead");
+
+
 }
 

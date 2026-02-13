@@ -36,3 +36,13 @@ enum class ETeamType : uint8
     Enemy       UMETA(DisplayName = "Enemy Unit"),  // 적군
     Neutral     UMETA(DisplayName = "Neutral")      // 중립 (오브젝트 등)
 };
+
+//유닛 상태를 나타내는 열거형
+UENUM(BlueprintType)
+enum class EUnitState : uint8
+{
+    Idle        UMETA(DisplayName = "Idle"),
+    Combat      UMETA(DisplayName = "Combat"),
+    Move        UMETA(DisplayName = "Move"),
+    Dead        UMETA(DisplayName = "Dead")
+};

@@ -42,7 +42,7 @@ protected:
     TObjectPtr<UPGAbilitySystemComponent> PGAbilitySystemComponent;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AbilitySystem")
-    TObjectPtr<UPGCharacterAttributeSet> HeroAttributeSet;
+    TObjectPtr<UPGCharacterAttributeSet> CharacterAttributeSet;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CharacterData", meta = (AllowPrivateAccess = "true"))
     TSoftObjectPtr<UDataAsset_StartupDataBase> CharacterStartupData;
