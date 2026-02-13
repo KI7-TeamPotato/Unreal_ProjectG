@@ -5,6 +5,7 @@
 #include "Components/Image.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Character/Hero/HeroCharacter.h"
+#include "Character/HeroController.h"
 #include "UI/Battle/BarWidget.h"
 #include "UI/Battle/ActiveSkillWidget.h"
 #include "AbilitySystem/PGCharacterAttributeSet.h"
@@ -30,23 +31,26 @@ void UControlPanelWidget::NativeConstruct()
 {
     Super::NativeConstruct();
 
-    AHeroCharacter* Hero = Cast<AHeroCharacter>(GetOwningPlayerPawn());
-    if (Hero)
+    AHeroController* Controller = Cast<AHeroController>(GetOwningPlayer());
+    if (Controller)
     {
-        UE_LOG(LogTemp, Log, TEXT("영웅 확인 완료"));
-        // 영웅 조이스틱 컨트롤러 설정
-        Hero->SetJoystickWidget(this);
+        Controller->SetJoystickWidget(this);
 
-        // 영웅 어트리뷰트 셋 설정
-        UPGCharacterAttributeSet* AttributeSet = Hero->GetHeroAttributeSet();
-        InitBar(AttributeSet->GetHealth(), AttributeSet->GetMaxHealth(), AttributeSet->GetCost(), AttributeSet->GetMaxCost());
-
-        // 영웅 무기 스킬 어빌리티 설정
-        TArray<FGameplayAbilitySpecHandle> SpecHandleArray = Hero->GetPawnCombatComponent()->GetSkillAbilitySpecHandles();
-        if (!SpecHandleArray.IsEmpty())
+        AHeroCharacter* Hero = Cast<AHeroCharacter>(Controller->GetPawn());
+        if (Hero)
         {
-            UE_LOG(LogTemp, Log, TEXT("스펙 핸들 가져옴"));
-            WeaponSkill->SetAbilitySpecHandle(SpecHandleArray[0]);
+            //UE_LOG(LogTemp, Log, TEXT("영웅 확인 완료"));
+            // 영웅 어트리뷰트 셋 설정
+            UPGCharacterAttributeSet* AttributeSet = Hero->GetHeroAttributeSet();
+            InitBar(AttributeSet->GetHealth(), AttributeSet->GetMaxHealth(), AttributeSet->GetCost(), AttributeSet->GetMaxCost());
+
+            // 영웅 무기 스킬 어빌리티 설정
+            TArray<FGameplayAbilitySpecHandle> SpecHandleArray = Hero->GetPawnCombatComponent()->GetSkillAbilitySpecHandles();
+            if (!SpecHandleArray.IsEmpty())
+            {
+                //UE_LOG(LogTemp, Log, TEXT("스펙 핸들 가져옴"));
+                WeaponSkill->SetAbilitySpecHandle(SpecHandleArray[0]);
+            }
         }
     }
 }

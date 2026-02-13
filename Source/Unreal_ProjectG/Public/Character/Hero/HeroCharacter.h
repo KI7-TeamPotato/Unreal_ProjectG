@@ -31,9 +31,6 @@ public:
 
     void MakeHeroDead();
 
-
-    void SetJoystickWidget(class UControlPanelWidget* InWidget) { JoystickWidget = InWidget; }
-
     FORCEINLINE UHeroCombatComponent* GetHeroCombatComponent() const { return HeroCombatComponent; }
     FORCEINLINE UStaticMeshComponent* GetWeaponStaticMesh() const { return WeaponStaticMesh; }
 
@@ -88,10 +85,6 @@ protected:
     TObjectPtr<UAnimMontage> Attack_Bow = nullptr;
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation")
     TObjectPtr<UAnimMontage> Attack_Magic = nullptr;
-
-    // 조이스틱
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
-    TObjectPtr<class UControlPanelWidget> JoystickWidget = nullptr;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
     TObjectPtr<class UPGCharacterAttributeSet> ResourceAttribute = nullptr;
