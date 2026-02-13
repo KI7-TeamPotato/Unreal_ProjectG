@@ -8,6 +8,7 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Character/Unit/UnitCharacter.h"
 #include "PGFunctionLibrary.h"
+#include "GameplayCueFunctionLibrary.h"
 
 UHeroAbility_AOEAttack::UHeroAbility_AOEAttack()
 {
@@ -51,6 +52,11 @@ void UHeroAbility_AOEAttack::OnHitLocationReady(FVector InHitLocation)
 
 void UHeroAbility_AOEAttack::OnApplyAOEDamage(FGameplayEventData EventData)
 {
+    FGameplayCueParameters GameplayCueParameters;
+    GameplayCueParameters.Location = CachedHitLocation;
+    UGameplayCueFunctionLibrary::ExecuteGameplayCueOnActor(GetAvatarActorFromActorInfo(), AOEImpactCueTag, GameplayCueParameters);
+
+
     // 무시할 액터 설정
     TArray<AActor*> IgnoredActors;
     IgnoredActors.Add(GetAvatarActorFromActorInfo());
