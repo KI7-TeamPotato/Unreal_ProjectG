@@ -13,7 +13,7 @@ APGCharacterBase::APGCharacterBase()
     GetMesh()->SetReceivesDecals(false);
 
     PGAbilitySystemComponent = CreateDefaultSubobject<UPGAbilitySystemComponent>(TEXT("PGAbilitySystemComponent"));
-    HeroAttributeSet = CreateDefaultSubobject<UPGCharacterAttributeSet>(TEXT("HeroAttributeSet"));
+    CharacterAttributeSet = CreateDefaultSubobject<UPGCharacterAttributeSet>(TEXT("CharacterAttributeSet"));
 }
 
 UAbilitySystemComponent* APGCharacterBase::GetAbilitySystemComponent() const
@@ -25,6 +25,14 @@ UAbilitySystemComponent* APGCharacterBase::GetAbilitySystemComponent() const
 UPawnCombatComponent* APGCharacterBase::GetPawnCombatComponent() const
 {
     return nullptr;
+}
+
+void APGCharacterBase::GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const
+{
+    if(TeamTag.IsValid())
+    {
+        TagContainer.AddTag(TeamTag);
+    }
 }
 
 void APGCharacterBase::PossessedBy(AController* NewController)
