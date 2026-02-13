@@ -93,8 +93,6 @@ private:
 
     float AttackMarginKey = 0.0f;
 
-    FGameplayTag SideTag;
-
     bool IsActive;
 
     TObjectPtr<UBehaviorTree> SubBTAssetKey = nullptr;

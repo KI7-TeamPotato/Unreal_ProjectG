@@ -61,9 +61,9 @@ void AUnitCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 void AUnitCharacter::GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const
 {
-    if (SideTag.IsValid())
+    if (TeamTag.IsValid())
     {
-        TagContainer.AddTag(SideTag);
+        TagContainer.AddTag(TeamTag);
     }
 }
 
@@ -128,12 +128,12 @@ void AUnitCharacter::InitUnitStartUpData()
                     UE_LOG(LogTemp, Log, TEXT("InitUnitStartUpData"));
                     UE_LOG(LogTemp, Log, TEXT("HP : %f"), CharacterAttributeSet->GetHealth());
 
-                    SideTag = StartUpData->SideTag;
+                    TeamTag = StartUpData->SideTag;
 
                     //유닛 서브시스템을 이용한 태그별 팀 설정
                     if (UUnitSubsystem* Subsystem = GetWorld()->GetSubsystem<UUnitSubsystem>())
                     {
-                        Subsystem->RegisterUnit(this, SideTag);
+                        Subsystem->RegisterUnit(this, TeamTag);
                     }
 
                     //데이터 삽입이 끝나면 델리게이트를 브로드캐스트해서 블랙보드가 값을 받기 시작함
@@ -205,7 +205,6 @@ void AUnitCharacter::ActivateUnit()
     // 3. 움직임 초기화
     GetCharacterMovement()->SetMovementMode(MOVE_Walking);
 
-    // 4. (필요 시) AI 컨트롤러 재빙의
     if (Controller == nullptr && AIControllerClass)
     {
         SpawnDefaultController();
@@ -218,13 +217,12 @@ void AUnitCharacter::DeactivateUnit()
     if (GetController())
     {
         GetController()->StopMovement();
-        GetController()->UnPossess(); // 컨트롤러 연결 해제 (선택사항, 성능상 재사용 추천)
     }
 
     if (UUnitSubsystem* Subsystem = GetWorld()->GetSubsystem<UUnitSubsystem>())
     {
         //유닛 서브시스템에서 정한 팀을 해제함 
-        Subsystem->UnregisterUnit(this, SideTag);
+        Subsystem->UnregisterUnit(this, TeamTag);
     }
 
     // 2. 물리/이동 초기화
