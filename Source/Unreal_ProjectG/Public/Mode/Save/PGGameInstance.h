@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
+#include "Character/Unit/UnitCharacter.h"
 #include "PGGameInstance.generated.h"
 
 class UPGSaveGame;

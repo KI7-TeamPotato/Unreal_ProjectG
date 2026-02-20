@@ -1,6 +1,7 @@
 
 #include "Components/Spawner/UnitSpawnComponent.h" // 경로 주의
 #include "Character/Unit/SubSystem/UnitSpawnSubsystem.h"
+#include "Character/Unit/UnitCharacter.h"
 #include "Kismet/KismetMathLibrary.h"
 
 UUnitSpawnComponent::UUnitSpawnComponent()
