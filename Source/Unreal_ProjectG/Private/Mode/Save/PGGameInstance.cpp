@@ -4,11 +4,23 @@
 #include "DataAssets/Items/DataAsset_WeaponData.h"
 #include "DataAssets/UI/UnitUIDataAsset.h"
 
+//------- 구현 방식 ----------
 //세이브 및 인스턴스 구현 방식: UI 버튼 클릭 이벤트 함수 내부 어딘가
 //if (UPGGameInstance* GI = Cast<UPGGameInstance>(GetGameInstance()))
 //{
 //    GI->CurrentWeapon = SelectedWeapon; // 1. 바꾼 무기 적용
 //    GI->SaveGameData();                 // 2. 즉시 디스크에 자동 저장!
+//}
+
+// PGBaseGameMode.cpp 의 OnGameOver 함수 내부
+//if (bIsPlayerVictory)
+//{
+//    // ... 별점 계산 및 골드 지급 로직 ...
+//
+//    if (UPGGameInstance* GI = Cast<UPGGameInstance>(GetGameInstance()))
+//    {
+//        GI->SaveGameData(); // 획득한 골드와 진행도를 자동 저장!
+//    }
 //}
 
 void UPGGameInstance::Init()
