@@ -27,6 +27,12 @@ public:
     UPROPERTY(VisibleAnywhere, Category = "Equipment")
     FSoftObjectPath EquippedWeaponPath;
 
+    UPROPERTY(VisibleAnywhere, Category = "Equipment")
+    FSoftObjectPath EquippedArmorPath;
+
+    UPROPERTY(VisibleAnywhere, Category = "Equipment")
+    FSoftObjectPath EquippedAccessoryPath;
+
     // 장착 중인 유닛(최대 5개) 데이터 에셋의 경로들
     UPROPERTY(VisibleAnywhere, Category = "Equipment")
     TArray<FSoftObjectPath> EquippedUnitPaths;

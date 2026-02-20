@@ -31,6 +31,12 @@ public:
     TSoftObjectPtr<UDataAsset_WeaponData> CurrentWeapon;
 
     UPROPERTY(BlueprintReadWrite, Category = "Equipment")
+    TSoftObjectPtr<UDataAsset_WeaponData> CurrentArmor;
+
+    UPROPERTY(BlueprintReadWrite, Category = "Equipment")
+    TSoftObjectPtr<UDataAsset_WeaponData> CurrentAccessory;
+
+    UPROPERTY(BlueprintReadWrite, Category = "Equipment")
     TArray<TSoftObjectPtr<UUnitUIDataAsset>> CurrentUnits;
 
 private:
