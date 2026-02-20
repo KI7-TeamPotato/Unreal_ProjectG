@@ -20,8 +20,15 @@ public:
     UPROPERTY(VisibleAnywhere, Category = "Basic")
     FString PlayerName;
 
+    //재화 관련
     UPROPERTY(VisibleAnywhere, Category = "Basic")
     int32 PlayerGold;
+
+    UPROPERTY(VisibleAnywhere, Category = "Basic")
+    int32 PlayerRuby;
+
+    UPROPERTY(VisibleAnywhere, Category = "Basic")
+    int32 PlayerPiece;
 
     // 장착 중인 무기 데이터 에셋의 경로 (SoftObjectPath)
     UPROPERTY(VisibleAnywhere, Category = "Equipment")

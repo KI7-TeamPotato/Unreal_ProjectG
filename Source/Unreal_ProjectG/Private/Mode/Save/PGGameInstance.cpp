@@ -45,9 +45,15 @@ void UPGGameInstance::LoadGameData()
     }
 
     // 디스크 데이터(Path) -> 런타임 데이터(SoftPtr) 로드
+    //장비
     CurrentWeapon = TSoftObjectPtr<UDataAsset_WeaponData>(CachedSaveData->EquippedWeaponPath);
     CurrentArmor = TSoftObjectPtr<UDataAsset_ArmorData>(CachedSaveData->EquippedArmorPath);
     CurrentAccessory = TSoftObjectPtr<UDataAsset_AccessoryData>(CachedSaveData->EquippedAccessoryPath);
+
+    //재화
+    CurrentPlayerGold = CachedSaveData->PlayerGold;
+    CurrentPlayerRuby = CachedSaveData->PlayerRuby;
+    CurrentPlayerPiece = CachedSaveData->PlayerPiece;
 
     CurrentUnits.Empty();
     for (const FSoftObjectPath& Path : CachedSaveData->EquippedUnitPaths)
@@ -61,9 +67,15 @@ void UPGGameInstance::SaveGameData()
     if (!CachedSaveData) return;
 
     // 런타임 데이터(SoftPtr) -> 디스크 데이터(Path) 저장
+    // 게임 중 변동된 장비를 세이브 파일에 덮어쓰기
     CachedSaveData->EquippedWeaponPath = CurrentWeapon.ToSoftObjectPath();
     CachedSaveData->EquippedArmorPath = CurrentArmor.ToSoftObjectPath();
     CachedSaveData->EquippedAccessoryPath = CurrentAccessory.ToSoftObjectPath();
+
+    // 게임 중 변동된 재화를 세이브 파일에 덮어쓰기
+    CachedSaveData->PlayerGold = CurrentPlayerGold;
+    CachedSaveData->PlayerRuby = CurrentPlayerRuby;
+    CachedSaveData->PlayerPiece = CurrentPlayerPiece;
 
     CachedSaveData->EquippedUnitPaths.Empty();
     for (const auto& UnitPtr : CurrentUnits)

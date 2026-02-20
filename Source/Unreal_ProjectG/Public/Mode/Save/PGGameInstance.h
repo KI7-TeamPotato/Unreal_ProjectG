@@ -42,6 +42,16 @@ public:
     UPROPERTY(BlueprintReadWrite, Category = "Equipment")
     TArray<TSoftObjectPtr<UUnitUIDataAsset>> CurrentUnits;
 
+    //소지 재화
+    UPROPERTY(BlueprintReadWrite, Category = "Player Info")
+    int32 CurrentPlayerGold;
+
+    UPROPERTY(BlueprintReadWrite, Category = "Player Info")
+    int32 CurrentPlayerRuby;
+
+    UPROPERTY(BlueprintReadWrite, Category = "Player Info")
+    int32 CurrentPlayerPiece;
+
 private:
     UPROPERTY()
     TObjectPtr<UPGSaveGame> CachedSaveData;
