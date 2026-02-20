@@ -10,6 +10,8 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Types/PGEnumTypes.h"
 #include "TimerManager.h"
+#include "Abilities/Tasks/AbilityTask_WaitDelay.h"
+#include "PGFunctionLibrary.h"
 
 UHeroAbility_BaseMeleeAttack::UHeroAbility_BaseMeleeAttack()
 {
@@ -19,6 +21,12 @@ UHeroAbility_BaseMeleeAttack::UHeroAbility_BaseMeleeAttack()
 
 void UHeroAbility_BaseMeleeAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
+    if (!CommitAbility(Handle, ActorInfo, ActivationInfo))
+    {
+        EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
+        return;
+    }
+
     if (CachedWeaponStaticMesh == nullptr)
     {
         CachedWeaponStaticMesh = GetHeroCombatComponentFromActorInfo()->CachedWeaponMeshComponent.Get();
@@ -47,6 +55,8 @@ void UHeroAbility_BaseMeleeAttack::ActivateAbility(const FGameplayAbilitySpecHan
     // 이벤트 수신 핸들러 바인딩
     MeleeHitEventTask->EventReceived.AddUniqueDynamic(this, &UHeroAbility_BaseMeleeAttack::ToggleWeaponTrace);
     MeleeHitEventTask->ReadyForActivation();
+
+    UE_LOG(LogTemp, Log, TEXT("Hero Attack"));
 }
 
 void UHeroAbility_BaseMeleeAttack::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
@@ -59,11 +69,11 @@ void UHeroAbility_BaseMeleeAttack::EndAbility(const FGameplayAbilitySpecHandle H
 
 
 
-void UHeroAbility_BaseMeleeAttack::ToggleWeaponTrace(FGameplayEventData InEventDtatab)
+void UHeroAbility_BaseMeleeAttack::ToggleWeaponTrace(FGameplayEventData InEventDtata)
 {
     if (!CachedWeaponStaticMesh) return;
 
-    EPGToggleType ToggleType = static_cast<EPGToggleType>(static_cast<int32>(InEventDtatab.EventMagnitude));
+    EPGToggleType ToggleType = static_cast<EPGToggleType>(static_cast<int32>(InEventDtata.EventMagnitude));
 
     if (ToggleType == EPGToggleType::On)
     {
@@ -93,12 +103,11 @@ void UHeroAbility_BaseMeleeAttack::PerformWeaponTrace()
     ETraceTypeQuery TraceChannel = UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel1); //DefaultEngine.ini에서 선언된 AttackTrace 채널
     TArray<FHitResult> OutHits;
 
-    UKismetSystemLibrary::BoxTraceMulti(
+    UKismetSystemLibrary::SphereTraceMulti(
         this,
         StartLocation,
         EndLocation,
-        WeaponTraceBoxExtent,
-        FRotator::ZeroRotator,
+        WeaponTraceSphereRadius,
         TraceChannel,
         false,
         TArray<AActor*>(),
@@ -108,12 +117,17 @@ void UHeroAbility_BaseMeleeAttack::PerformWeaponTrace()
         FLinearColor::Red, FLinearColor::Green, TraceDebugDuration
     );
 
+
+    if (OutHits.Num() <= 0)
+        return;
+
     // 히트된 액터들 처리
-    if (OutHits.Num() > 0)
+    for (FHitResult& OutHit : OutHits)
     {
-        for (FHitResult& OutHit : OutHits)
+        AActor* HitActor = OutHit.GetActor();
+        
+        if (UPGFunctionLibrary::IsTargetCharacterIsHostile(GetAvatarActorFromActorInfo(), HitActor))
         {
-            AActor* HitActor = OutHit.GetActor();
             if (HitActor && HitActor != GetAvatarActorFromActorInfo())
             {
                 HandleApplyDamage(HitActor);
@@ -139,7 +153,7 @@ void UHeroAbility_BaseMeleeAttack::HandleApplyDamage(AActor* InTargetActor)
         return;
     }
 
-    UE_LOG(LogTemp, Warning, TEXT("Target Actor : %s"), *InTargetActor->GetName());
+    UE_LOG(LogTemp, Warning, TEXT("Target Actor : %s"), *GetNameSafe(InTargetActor));
     
     //// 게임플레이 큐 실행
     //UGameplayCueFunctionLibrary::ExecuteGameplayCueOnActor(GetAvatarActorFromActorInfo(), MeleeAttackCueTag, FGameplayCueParameters());

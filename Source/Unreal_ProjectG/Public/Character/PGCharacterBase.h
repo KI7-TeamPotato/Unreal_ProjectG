@@ -6,7 +6,9 @@
 #include "GameFramework/Character.h"
 #include "AbilitySystemInterface.h"
 #include "Interfaces/PawnCombatInterface.h"
+#include "GameplayTagContainer.h"
 #include "Types/PGEnumTypes.h"
+#include "GameplayTagAssetInterface.h"
 #include "PGCharacterBase.generated.h"
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCharacterDiedDelegate, ABaseCharacter*, DeadCharacter);
 
@@ -16,7 +18,7 @@ class UDataAsset_StartupDataBase;
 
 
 UCLASS()
-class UNREAL_PROJECTG_API APGCharacterBase : public ACharacter, public IAbilitySystemInterface, public IPawnCombatInterface
+class UNREAL_PROJECTG_API APGCharacterBase : public ACharacter, public IAbilitySystemInterface, public IPawnCombatInterface, public IGameplayTagAssetInterface
 {
 	GENERATED_BODY()
 
@@ -29,13 +31,17 @@ public:
     // 컴뱂 인터페이스 구현
     virtual UPawnCombatComponent* GetPawnCombatComponent() const override;
 
-    FORCEINLINE UPGAbilitySystemComponent* GetPGAbilitySystemComponent() const { return PGAbilitySystemComponent; }
-    FORCEINLINE UPGCharacterAttributeSet* GetHeroAttributeSet() const { return CharacterAttributeSet; }
+    // 게임 태그 에셋 인터페이스 구현
+    virtual void GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const override;
+    
+    virtual void OnDie() {};
 
+    FORCEINLINE UPGAbilitySystemComponent* GetPGAbilitySystemComponent() const { return PGAbilitySystemComponent; }
+    FORCEINLINE UPGCharacterAttributeSet* GetPGCharacterAttributeSet() const { return CharacterAttributeSet; }
+    FORCEINLINE FGameplayTag GetTeamTag() { return TeamTag; }
 protected:
     virtual void PossessedBy(AController* NewController) override;
 
-    virtual void OnDie() {};
 protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AbilitySystem")
     TObjectPtr<UPGAbilitySystemComponent> PGAbilitySystemComponent;
@@ -49,4 +55,6 @@ protected:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
     ETeamType TeamID; // Player, Ally, Enemy 구분
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
+    FGameplayTag TeamTag;
 };

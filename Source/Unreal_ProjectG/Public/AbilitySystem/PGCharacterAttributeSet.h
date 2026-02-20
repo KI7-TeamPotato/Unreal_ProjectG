@@ -20,6 +20,7 @@ public:
     UPGCharacterAttributeSet();
 
     virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
+    //virtual bool PreGameplayEffectExecute(struct FGameplayEffectModCallbackData& Data) override;
     virtual void PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data) override;
 
 public:
@@ -46,4 +47,8 @@ public:
     UPROPERTY(BlueprintReadOnly, Category = "Attribute")
     FGameplayAttributeData AttackSpeed;
     ATTRIBUTE_ACCESSORS(UPGCharacterAttributeSet, AttackSpeed)
+
+    UPROPERTY(BlueprintReadOnly, Category = "Attribute")
+    FGameplayAttributeData MoveSpeed;
+    ATTRIBUTE_ACCESSORS(UPGCharacterAttributeSet, MoveSpeed)
 };
