@@ -8,6 +8,8 @@
 
 class UPGSaveGame;
 class UDataAsset_WeaponData;
+class UDataAsset_ArmorData;
+class UDataAsset_AccessoryData;
 class UUnitUIDataAsset;
 
 UCLASS()
@@ -31,10 +33,10 @@ public:
     TSoftObjectPtr<UDataAsset_WeaponData> CurrentWeapon;
 
     UPROPERTY(BlueprintReadWrite, Category = "Equipment")
-    TSoftObjectPtr<UDataAsset_WeaponData> CurrentArmor;
+    TSoftObjectPtr<UDataAsset_ArmorData> CurrentArmor;
 
     UPROPERTY(BlueprintReadWrite, Category = "Equipment")
-    TSoftObjectPtr<UDataAsset_WeaponData> CurrentAccessory;
+    TSoftObjectPtr<UDataAsset_AccessoryData> CurrentAccessory;
 
     UPROPERTY(BlueprintReadWrite, Category = "Equipment")
     TArray<TSoftObjectPtr<UUnitUIDataAsset>> CurrentUnits;

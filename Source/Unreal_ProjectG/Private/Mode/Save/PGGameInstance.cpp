@@ -4,6 +4,13 @@
 #include "DataAssets/Items/DataAsset_WeaponData.h"
 #include "DataAssets/UI/UnitUIDataAsset.h"
 
+//세이브 및 인스턴스 구현 방식: UI 버튼 클릭 이벤트 함수 내부 어딘가
+//if (UPGGameInstance* GI = Cast<UPGGameInstance>(GetGameInstance()))
+//{
+//    GI->CurrentWeapon = SelectedWeapon; // 1. 바꾼 무기 적용
+//    GI->SaveGameData();                 // 2. 즉시 디스크에 자동 저장!
+//}
+
 void UPGGameInstance::Init()
 {
     Super::Init();
@@ -24,6 +31,8 @@ void UPGGameInstance::LoadGameData()
 
     // 디스크 데이터(Path) -> 런타임 데이터(SoftPtr) 로드
     CurrentWeapon = TSoftObjectPtr<UDataAsset_WeaponData>(CachedSaveData->EquippedWeaponPath);
+    CurrentArmor = TSoftObjectPtr<UDataAsset_ArmorData>(CachedSaveData->EquippedArmorPath);
+    CurrentAccessory = TSoftObjectPtr<UDataAsset_AccessoryData>(CachedSaveData->EquippedAccessoryPath);
 
     CurrentUnits.Empty();
     for (const FSoftObjectPath& Path : CachedSaveData->EquippedUnitPaths)
@@ -38,6 +47,8 @@ void UPGGameInstance::SaveGameData()
 
     // 런타임 데이터(SoftPtr) -> 디스크 데이터(Path) 저장
     CachedSaveData->EquippedWeaponPath = CurrentWeapon.ToSoftObjectPath();
+    CachedSaveData->EquippedArmorPath = CurrentArmor.ToSoftObjectPath();
+    CachedSaveData->EquippedAccessoryPath = CurrentAccessory.ToSoftObjectPath();
 
     CachedSaveData->EquippedUnitPaths.Empty();
     for (const auto& UnitPtr : CurrentUnits)
