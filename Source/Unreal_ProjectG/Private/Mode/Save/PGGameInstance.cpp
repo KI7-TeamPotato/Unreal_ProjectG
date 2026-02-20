@@ -2,6 +2,8 @@
 #include "Mode/Save/PGSaveGame.h"
 #include "Kismet/GameplayStatics.h"
 #include "DataAssets/Items/DataAsset_WeaponData.h"
+#include "DataAssets/Items/DataAsset_ArmorData.h"
+#include "DataAssets/Items/DataAsset_AccessoryData.h"
 #include "DataAssets/UI/UnitUIDataAsset.h"
 
 //------- 구현 방식 ----------
