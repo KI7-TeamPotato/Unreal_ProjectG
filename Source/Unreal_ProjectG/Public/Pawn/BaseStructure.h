@@ -45,34 +45,34 @@ public:
     TSubclassOf<class UGameplayEffect> InitStatEffect;
 
 protected:
-    // --- [4] 타워 공격 시스템 ---
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Attack")
-    TObjectPtr<class USphereComponent> AttackRangeSphere; // 사거리 감지용 구체
+    //// --- [4] 타워 공격 시스템 ---
+    //UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Attack")
+    //TObjectPtr<class USphereComponent> AttackRangeSphere; // 사거리 감지용 구체
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack")
-    float AttackRate = 1.0f; // 공격 속도 (초당 1회)
+    //UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack")
+    //float AttackRate = 1.0f; // 공격 속도 (초당 1회)
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack")
-    TSubclassOf<class UGameplayEffect> AttackDamageEffect; // 적에게 입힐 데미지 GE
+    //UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack")
+    //TSubclassOf<class UGameplayEffect> AttackDamageEffect; // 적에게 입힐 데미지 GE
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack")
-    FGameplayTagContainer TargetTags; // 공격할 대상의 태그 (예: 아군 기지는 'Team.Enemy' 태그를 공격)
+    //UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack")
+    //FGameplayTagContainer TargetTags; // 공격할 대상의 태그 (예: 아군 기지는 'Team.Enemy' 태그를 공격)
 
-    // 사거리 내에 들어온 타겟 목록
-    UPROPERTY()
-    TArray<AActor*> TargetList;
+    //// 사거리 내에 들어온 타겟 목록
+    //UPROPERTY()
+    //TArray<AActor*> TargetList;
 
-    FTimerHandle AttackTimerHandle;
+    //FTimerHandle AttackTimerHandle;
 
     // 오버랩(감지) 이벤트 함수
-    UFUNCTION()
-    void OnAttackRangeBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+    //UFUNCTION()
+    //void OnAttackRangeBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-    UFUNCTION()
-    void OnAttackRangeEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+    //UFUNCTION()
+    //void OnAttackRangeEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
-    // 실제 공격 실행 함수
-    void ProcessAttack();
+    //// 실제 공격 실행 함수
+    //void ProcessAttack();
 
 public:
    

@@ -3,22 +3,18 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AbilitySystem/Abilities/PGHeroGameplayAbility.h"
-#include "HeroAbility_BaseProjectileAttack.generated.h"
+#include "AbilitySystem/Abilities/PGUnitGameplayAbility.h"
+#include "UnitAbility_SpawnProjectile.generated.h"
 
 class APGProjectileBase;
 /**
  * 
  */
 UCLASS()
-class UNREAL_PROJECTG_API UHeroAbility_BaseProjectileAttack : public UPGHeroGameplayAbility
+class UNREAL_PROJECTG_API UUnitAbility_SpawnProjectile : public UPGUnitGameplayAbility
 {
 	GENERATED_BODY()
-
-public:
-    UHeroAbility_BaseProjectileAttack();
-
-    virtual void OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) override;
+	
     virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
     virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 
@@ -35,7 +31,7 @@ protected:
     TSubclassOf<UGameplayEffect> ProjectileAttackDamageEffectClass;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ability|Projectile Attack")
-    TObjectPtr<UAnimMontage> ProjectileAttackMontage;
+    TArray<TObjectPtr<UAnimMontage>> ProjectileAttackMontages;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability|Projectile Attack")
     FScalableFloat ProjectileAttackSkillMultiplier;
@@ -43,7 +39,4 @@ protected:
     // 프로젝타일 클래스
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability|Projectile Attack")
     TSubclassOf<APGProjectileBase> SpawnedProjectileClass;
-
-private:
-    TObjectPtr<UStaticMeshComponent> CachedWeaponStaticMesh;
 };
