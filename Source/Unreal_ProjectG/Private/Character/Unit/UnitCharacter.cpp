@@ -106,7 +106,7 @@ void AUnitCharacter::InitUnitStartUpData()
                 {
                     if (PGAbilitySystemComponent)
                     {
-                        LoadedData->GiveToAbilitySystemComponent(PGAbilitySystemComponent);
+                        LoadedData->GiveToAbilitySystemComponent(PGAbilitySystemComponent, UnitLevel);
                     }
                     UDataAsset_UnitStartupData* StartUpData = Cast<UDataAsset_UnitStartupData>(LoadedData);
 
@@ -137,6 +137,14 @@ void AUnitCharacter::InitUnitStartUpData()
                         SubBTAssetKey = StartUpData->BranchData->SubBTAsset;
 
                         AttackMarginKey = AttackRangeKey * 0.7f;
+<<<<<<< Updated upstream
+=======
+
+                        if (StartUpData->BranchData->BranchTag.IsValid())
+                        {
+                            BranchTag = StartUpData->BranchData->BranchTag;
+                        }
+>>>>>>> Stashed changes
                     }
                     UE_LOG(LogTemp, Log, TEXT("InitUnitStartUpData"));
                     if (CharacterAttributeSet)

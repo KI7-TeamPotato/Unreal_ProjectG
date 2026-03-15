@@ -32,6 +32,7 @@ public:
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Visual")
     TSubclassOf<UAnimInstance> AnimBlueprint;
+<<<<<<< Updated upstream
 
     //UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Visual")
     //UAnimMontage* AttackMontage;
@@ -45,4 +46,6 @@ public:
 
     //UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats")
     //float MoveSpeed = 300.0f;
+=======
+>>>>>>> Stashed changes
 };

@@ -71,7 +71,13 @@ void URangeCheck::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
         AActor* Enemy = EnemyPtr.Get();
         if (!Enemy) continue;
 
+<<<<<<< Updated upstream
         float DistSq = FVector::DistSquared(MyLocation, Enemy->GetActorLocation());
+=======
+        //float DistSq = FVector::DistSquared(MyLocation, Enemy->GetActorLocation());
+
+        float DistSq = FVector::DistSquaredXY(MyLocation, Enemy->GetActorLocation());
+>>>>>>> Stashed changes
 
         if (DistSq <= MinDistSq)
         {

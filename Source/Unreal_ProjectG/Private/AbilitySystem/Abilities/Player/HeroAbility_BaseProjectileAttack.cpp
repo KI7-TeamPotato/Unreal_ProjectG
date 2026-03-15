@@ -7,6 +7,7 @@
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "PGGameplayTags.h"
 #include "Items/PGProjectileBase.h"
+<<<<<<< Updated upstream
 
 #include "DataAssets/Ability/AbilityConfig.h"
 
@@ -15,6 +16,11 @@ UHeroAbility_BaseProjectileAttack::UHeroAbility_BaseProjectileAttack()
     // 기본 설정
     InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
 }
+=======
+#include "DataAssets/Ability/DataAsset_SkillData.h"
+#include "Character/Hero/HeroCharacter.h"
+#include "Components/Combat/HeroCombatComponent.h"
+>>>>>>> Stashed changes
 
 void UHeroAbility_BaseProjectileAttack::OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec)
 {

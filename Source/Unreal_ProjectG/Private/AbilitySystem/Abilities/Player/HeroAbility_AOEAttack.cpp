@@ -9,12 +9,50 @@
 #include "Character/Unit/UnitCharacter.h"
 #include "PGFunctionLibrary.h"
 #include "GameplayCueFunctionLibrary.h"
+<<<<<<< Updated upstream
+=======
+#include "AbilitySystemBlueprintLibrary.h"
+#include "DataAssets/Ability/DataAsset_SkillData.h"
+>>>>>>> Stashed changes
 
 UHeroAbility_AOEAttack::UHeroAbility_AOEAttack()
 {
     InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
 }
 
+<<<<<<< Updated upstream
+=======
+void UHeroAbility_AOEAttack::OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec)
+{
+    Super::OnGiveAbility(ActorInfo, Spec);
+
+    UDataAsset_SkillData* DataAsset = Cast<UDataAsset_SkillData>(GetCurrentAbilitySpec()->SourceObject.Get());
+    if (DataAsset)
+    {
+        const FAbilityEntry& SelectedAbilityEntry = DataAsset->GetGivenAbilityEntryForASC(GetAbilitySystemComponentFromActorInfo());
+        const FHeroCastingAOEAbilityConfig* Config = SelectedAbilityEntry.AbilityConfig.GetPtr<FHeroCastingAOEAbilityConfig>();
+        if (Config)
+        {
+            AOEAttackConfig = *Config;
+        }
+    }
+
+    //==============================================
+    // FHeroCastingAOEAbilityConfig의 SoftPtr 로드
+    AOEAttackConfig.CastingMontage.LoadSynchronous();
+    //==============================================
+}
+
+//void UHeroAbility_AOEAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
+//{
+//    if (!CommitAbility(Handle, ActorInfo, ActivationInfo))
+//    {
+//        EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
+//        return;
+//    }
+//}
+
+>>>>>>> Stashed changes
 void UHeroAbility_AOEAttack::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
     HitActors.Empty();
@@ -26,6 +64,11 @@ void UHeroAbility_AOEAttack::OnHitLocationReady(FVector InHitLocation)
 {
     CachedHitLocation = InHitLocation;
 
+<<<<<<< Updated upstream
+=======
+    UAnimMontage* AOEAttackMontage = AOEAttackConfig.CastingMontage.Get();
+
+>>>>>>> Stashed changes
     // 애니메이션 몽타주 재생
     UAbilityTask_PlayMontageAndWait* AOEMontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, NAME_None, AOEAttackMontage);
 
@@ -54,7 +97,11 @@ void UHeroAbility_AOEAttack::OnApplyAOEDamage(FGameplayEventData EventData)
 {
     FGameplayCueParameters GameplayCueParameters;
     GameplayCueParameters.Location = CachedHitLocation;
+<<<<<<< Updated upstream
     UGameplayCueFunctionLibrary::ExecuteGameplayCueOnActor(GetAvatarActorFromActorInfo(), AOEImpactCueTag, GameplayCueParameters);
+=======
+    UGameplayCueFunctionLibrary::ExecuteGameplayCueOnActor(GetAvatarActorFromActorInfo(), AOEAttackConfig.ImpactCueTag, GameplayCueParameters);
+>>>>>>> Stashed changes
 
 
     // 무시할 액터 설정
@@ -64,13 +111,18 @@ void UHeroAbility_AOEAttack::OnApplyAOEDamage(FGameplayEventData EventData)
     UKismetSystemLibrary::SphereOverlapActors(
         this,
         CachedHitLocation,
+<<<<<<< Updated upstream
         AOEAttackRadius,
+=======
+        AOEAttackConfig.AOEAttackRadius,
+>>>>>>> Stashed changes
         TArray<TEnumAsByte<EObjectTypeQuery>>{ EObjectTypeQuery::ObjectTypeQuery3 }, // Pawn 객체 타입
         AUnitCharacter::StaticClass(),
         IgnoredActors,
         HitActors
     );
 
+<<<<<<< Updated upstream
     float SkillMultiplierValue = AOEAttackSkillMultiplier.GetValueAtLevel(GetAbilityLevel());
     FGameplayEffectSpecHandle EffectSpecHandle = MakeHeroDamageEffectSpecHandle(AOEAttackDamageEffectClass, SkillMultiplierValue);
 
@@ -79,6 +131,17 @@ void UHeroAbility_AOEAttack::OnApplyAOEDamage(FGameplayEventData EventData)
         if (UPGFunctionLibrary::IsTargetCharacterIsHostile(GetAvatarActorFromActorInfo(), HitActor))
         {
             NativeApplyEffectSpecHandleToTarget(HitActor, EffectSpecHandle);
+=======
+    float SkillMultiplierValue = AOEAttackConfig.SkillMultiplier.GetValueAtLevel(GetAbilityLevel());
+    FGameplayEffectSpecHandle EffectSpecHandle = MakeHeroDamageEffectSpecHandle(AOEAttackConfig.DamageEffectClass.Get(), SkillMultiplierValue);
+
+    for (AActor* HitActor : HitActors)
+    {
+        if (UPGFunctionLibrary::IsTargetCharacterHostile(GetAvatarActorFromActorInfo(), HitActor))
+        {
+            NativeApplyEffectSpecHandleToTarget(HitActor, EffectSpecHandle);
+            UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(HitActor, PGGameplayTags::Shared_Event_HitReact, FGameplayEventData());
+>>>>>>> Stashed changes
         }
     }
 }

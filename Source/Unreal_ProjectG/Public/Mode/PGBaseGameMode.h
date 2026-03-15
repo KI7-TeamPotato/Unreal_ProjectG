@@ -60,7 +60,13 @@ protected:
     bool bIsGameOver = false;
     float GameStartTime = 0.0f;
 
+<<<<<<< Updated upstream
     //  UI 출력 이벤트
     UFUNCTION(BlueprintImplementableEvent, Category = "GameRule")
     void BP_ShowResultUI(bool bIsVictory, int32 StarCount);
 };
+=======
+    // 체력 달성도 확인용 아군 기지
+    TObjectPtr<ABaseStructure> AllyBase;
+};
+>>>>>>> Stashed changes

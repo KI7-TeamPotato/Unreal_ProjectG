@@ -29,6 +29,10 @@ void APGBaseGameMode::BeginPlay()
         ABaseStructure* Base = Cast<ABaseStructure>(Actor);
         if (Base)
         {
+            if (Base->GetTeamTag().MatchesTag(FGameplayTag::RequestGameplayTag(FName("Unit.Side.Ally"))))
+            {
+                AllyBase = Base;
+            }
             // 기지가 파괴되면 OnGameOver 함수가 실행되도록 연결
             Base->OnBaseDestroyed.AddDynamic(this, &APGBaseGameMode::OnGameOver);
         }
@@ -76,8 +80,23 @@ void APGBaseGameMode::OnGameOver(ETeamType DefeatedTeam)
     if (bIsGameOver) return; // 이미 종료된 게임이면 무시
     bIsGameOver = true;
 
+<<<<<<< Updated upstream
     bool bIsPlayerVictory = false;
     int32 FinalStarCount = 0;
+=======
+    FBattleResultData Result;
+
+    Result.bIsVictory = false;
+    Result.StarCount = 0;
+    Result.TotalPlayTime = GetCurrentPlayTime();
+    Result.TotalSpentCost = SpentCost;
+
+    if (AllyBase)
+    {
+        UPGCharacterAttributeSet* BaseAttribute = AllyBase->GetPGCharacterAttributeSet();
+        Result.RemainingHealthPercent = (BaseAttribute->GetHealth() / BaseAttribute->GetMaxHealth()) * 100.0f;
+    }
+>>>>>>> Stashed changes
 
     // 파괴된 팀이 'Enemy'라면 -> 플레이어 승리
     if (DefeatedTeam == ETeamType::Enemy)

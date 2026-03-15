@@ -5,6 +5,13 @@
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
 #include "DataAssets/UI/UnitUIDataAsset.h"
+<<<<<<< Updated upstream
+=======
+#include "Character/Hero/HeroCharacter.h"
+#include "Pawn/BaseStructure.h"
+#include "Kismet/GameplayStatics.h"
+#include "Mode/Save/PGGameInstance.h"
+>>>>>>> Stashed changes
 
 void UUnitSlotWidget::InitializeSlot(UUnitUIDataAsset* InDataAsset)
 {
@@ -61,6 +68,39 @@ void UUnitSlotWidget::OnUnitButtonClicked()
     // 유닛 스폰
     GetWorld()->SpawnActor<AUnitCharacter>(UnitData->UnitClass, SpawnLocation, SpawnRotation, SpawnParams);
 
+<<<<<<< Updated upstream
     UE_LOG(LogTemp, Log, TEXT("Spawned Unit: %s"), *UnitData->UnitClass->GetName());
+=======
+        // 유닛 인스턴스 생성
+        AUnitCharacter* NewUnit = GetWorld()->SpawnActorDeferred<AUnitCharacter>(
+            UnitData->UnitClass,
+            FTransform(SpawnRotation, RandomLocation),
+            nullptr, nullptr,
+            ESpawnActorCollisionHandlingMethod::AlwaysSpawn
+        );
+
+        if (NewUnit)
+        {
+            int32 TargetID = UnitData->UnitID;
+            int32 TargetLevel = 1;
+            UPGGameInstance* GI = Cast<UPGGameInstance>(GetGameInstance());
+          
+            if (FUnitSaveData* FoundData = GI->UnitLevelMap.Find(TargetID))
+            {
+                // 유닛이 해금된 상태인지 확인 후 레벨 적용
+                if (FoundData->bIsUnlocked)
+                {
+                    TargetLevel = FoundData->Level;
+                }
+            }
+            NewUnit->UnitLevel = TargetLevel;
+
+            // 인스턴스를 바탕으로 유닛 스폰
+            NewUnit->FinishSpawning(FTransform(SpawnRotation, RandomLocation));
+
+            UE_LOG(LogTemp, Log, TEXT("Spawned Unit: %d with Level: %d"), UnitData->UnitID, TargetLevel);
+        }
+    }
+>>>>>>> Stashed changes
 }
 

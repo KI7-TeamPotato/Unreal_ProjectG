@@ -53,9 +53,56 @@ void USharedAbility_BuffAura::OnAuraEndOverlap(UPrimitiveComponent* OverlappedCo
 {
     if (ActiveBuffsOnTargets.Contains(OtherActor))
     {
+<<<<<<< Updated upstream
         FActiveGameplayEffectHandle& EffectHandle = ActiveBuffsOnTargets[OtherActor];
         NativeRemoveActiveGameplayEffectFromTarget(OtherActor, EffectHandle);
         ActiveBuffsOnTargets.Remove(OtherActor);
+=======
+        if (TArray<FActiveGameplayEffectHandle>* Handles = ActiveBuffsOnTargets.Find(Key))
+        {
+            for(const FActiveGameplayEffectHandle& EffectHandle : *Handles)
+            {
+                NativeRemoveActiveGameplayEffectFromTarget(OtherActor, EffectHandle);
+            }
+            ActiveBuffsOnTargets.Remove(Key);
+        }
+    }
+}
+
+void USharedAbility_BuffAura::BuildCachedBuffEffectSpecs()
+{
+    CachedNumericBuffSpecs.Empty();
+    CachedStatusBuffSpecs.Empty();
+
+    //수치형 버프
+    for (const FNumericBuffEffectConfig& Buff : BuffAuraConfig.NumericBuffs)
+    {
+        if (Buff.EffectClass)
+        {
+            FGameplayEffectSpecHandle SpecHandle = MakeOutgoingGameplayEffectSpec(Buff.EffectClass.Get(), GetAbilityLevel());
+            
+            // 버프 효과의 magnitude를 설정
+            if (SpecHandle.IsValid())
+            {
+                const float Multiplier = Buff.SkillMultiplier.GetValueAtLevel(GetAbilityLevel());
+                const float BaseAmount = Buff.BaseBuffAmount.GetValueAtLevel(GetAbilityLevel());
+
+                SpecHandle.Data->SetSetByCallerMagnitude(PGGameplayTags::Shared_SetByCaller_DamageMultiplier, Multiplier);
+                SpecHandle.Data->SetSetByCallerMagnitude(PGGameplayTags::Shared_SetByCaller_BaseBuffAmount, BaseAmount);
+            }
+            CachedNumericBuffSpecs.Add(SpecHandle);
+        }
+    }
+
+    // 상태형 버프
+    for (const TSubclassOf<UGameplayEffect>& EffectClass : BuffAuraConfig.StatusEffectClasses)
+    {
+        if (EffectClass)
+        {
+            FGameplayEffectSpecHandle SpecHandle = MakeOutgoingGameplayEffectSpec(EffectClass.Get(), GetAbilityLevel());
+            CachedStatusBuffSpecs.Add(SpecHandle);
+        }
+>>>>>>> Stashed changes
     }
 }
 

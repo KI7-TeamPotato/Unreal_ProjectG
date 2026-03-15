@@ -4,7 +4,15 @@
 #include "AbilitySystem/Abilities/PGGameplayAbility.h"
 #include "AbilitySystem/PGAbilitySystemComponent.h"
 #include "AbilitySystemBlueprintLibrary.h"
+<<<<<<< Updated upstream
 #include "Components/Combat/PawnCombatComponent.h"
+=======
+
+UPGGameplayAbility::UPGGameplayAbility()
+{
+    InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
+}
+>>>>>>> Stashed changes
 
 void UPGGameplayAbility::OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec)
 {
