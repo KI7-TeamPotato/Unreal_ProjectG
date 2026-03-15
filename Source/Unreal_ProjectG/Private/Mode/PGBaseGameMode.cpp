@@ -29,10 +29,6 @@ void APGBaseGameMode::BeginPlay()
         ABaseStructure* Base = Cast<ABaseStructure>(Actor);
         if (Base)
         {
-            if (Base->GetTeamTag().MatchesTag(FGameplayTag::RequestGameplayTag(FName("Unit.Side.Ally"))))
-            {
-                AllyBase = Base;
-            }
             // 기지가 파괴되면 OnGameOver 함수가 실행되도록 연결
             Base->OnBaseDestroyed.AddDynamic(this, &APGBaseGameMode::OnGameOver);
         }
@@ -88,6 +84,7 @@ void APGBaseGameMode::OnGameOver(ETeamType DefeatedTeam)
 
     Result.bIsVictory = false;
     Result.StarCount = 0;
+<<<<<<< HEAD
     Result.TotalPlayTime = GetCurrentPlayTime();
     Result.TotalSpentCost = SpentCost;
 
@@ -97,6 +94,8 @@ void APGBaseGameMode::OnGameOver(ETeamType DefeatedTeam)
         Result.RemainingHealthPercent = (BaseAttribute->GetHealth() / BaseAttribute->GetMaxHealth()) * 100.0f;
     }
 >>>>>>> Stashed changes
+=======
+>>>>>>> e72f839c (UnitData,PGSaveGame,PGGameInstance 도감 관련 코드 수정 및 추가/PGUnitCollectionSubsystem  구성)
 
     // 파괴된 팀이 'Enemy'라면 -> 플레이어 승리
     if (DefeatedTeam == ETeamType::Enemy)

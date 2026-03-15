@@ -6,9 +6,16 @@
 #include "PGGameplayTags.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Character/Unit/UnitCharacter.h"
+<<<<<<< HEAD
 
 // 만약 UUnitSupporterAbilityConfig 같은 데이터 에셋을 만든다면 Include 추가
 // #include "DataAssets/Ability/AbilityConfig.h" 
+=======
+#include "DataAssets/Ability/DataAsset_SkillData.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraSystem.h"
+
+>>>>>>> e72f839c (UnitData,PGSaveGame,PGGameInstance 도감 관련 코드 수정 및 추가/PGUnitCollectionSubsystem  구성)
 
 UUnitAbility_Supporter::UUnitAbility_Supporter()
 {
@@ -19,6 +26,7 @@ void UUnitAbility_Supporter::OnGiveAbility(const FGameplayAbilityActorInfo* Acto
 {
     Super::OnGiveAbility(ActorInfo, Spec);
 
+<<<<<<< HEAD
     // 다른 스킬들처럼 AbilityConfig 구조를 사용하신다면 여기서 할당
     // if (UUnitSupporterConfig* Data = Cast<UUnitSupporterConfig>(Spec.SourceObject.Get()))
     // {
@@ -27,14 +35,32 @@ void UUnitAbility_Supporter::OnGiveAbility(const FGameplayAbilityActorInfo* Acto
     //     JangpanActorClass = Data->SpawnedActorClass;
     //     SupportRadius = Data->AOERadius;
     // }
+=======
+    UDataAsset_SkillData* DataAsset = Cast<UDataAsset_SkillData>(GetCurrentAbilitySpec()->SourceObject.Get());
+    if (DataAsset)
+    {
+        const FUnitBuffAuraAbilityConfig* Config = DataAsset->AbilityEntry.AbilityConfig.GetPtr<FUnitBuffAuraAbilityConfig>();
+        if (Config)
+        {
+            UnitBuffConfig = *Config;
+        }
+    }
+>>>>>>> e72f839c (UnitData,PGSaveGame,PGGameInstance 도감 관련 코드 수정 및 추가/PGUnitCollectionSubsystem  구성)
 }
 
 void UUnitAbility_Supporter::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
     //checkf(SupportMontage, TEXT("SupportMontage가 비어있습니다!"));
+<<<<<<< HEAD
 
     // 1. 몽타주 재생 (캐스팅 동작)
     UAbilityTask_PlayMontageAndWait* MontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, NAME_None, SupportMontage);
+=======
+    UAnimMontage* MeleeAttackMontage = UnitBuffConfig.SupportMontage.Get();
+
+    // 1. 몽타주 재생 (캐스팅 동작)
+    UAbilityTask_PlayMontageAndWait* MontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, NAME_None, MeleeAttackMontage);
+>>>>>>> e72f839c (UnitData,PGSaveGame,PGGameInstance 도감 관련 코드 수정 및 추가/PGUnitCollectionSubsystem  구성)
     if (MontageTask)
     {
         MontageTask->OnCompleted.AddUniqueDynamic(this, &UUnitAbility_Supporter::OnMontageFinished);
@@ -44,7 +70,16 @@ void UUnitAbility_Supporter::ActivateAbility(const FGameplayAbilitySpecHandle Ha
     }
 
     // 2. 애니메이션 노티파이 대기 (지팡이를 내리찍거나 손을 뻗을 때 장판 생성)
+<<<<<<< HEAD
     UAbilityTask_WaitGameplayEvent* EventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, PGGameplayTags::Shared_Event_SupportExecute);
+=======
+    UAbilityTask_WaitGameplayEvent* EventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(
+        this,
+        PGGameplayTags::Unit_Ability_Buff,
+        nullptr,
+        true
+    );
+>>>>>>> e72f839c (UnitData,PGSaveGame,PGGameInstance 도감 관련 코드 수정 및 추가/PGUnitCollectionSubsystem  구성)
     if (EventTask)
     {
         EventTask->EventReceived.AddUniqueDynamic(this, &UUnitAbility_Supporter::HandleSupportEffect);
@@ -66,6 +101,7 @@ void UUnitAbility_Supporter::HandleSupportEffect(FGameplayEventData InEventData)
     FVector SpawnLocation = AvatarActor->GetActorLocation();
     FRotator SpawnRotation = AvatarActor->GetActorForwardVector().Rotation();
 
+<<<<<<< HEAD
     // --- [1] 시각적 장판 액터 스폰 ---
     if (JangpanActorClass)
     {
@@ -93,22 +129,71 @@ void UUnitAbility_Supporter::HandleSupportEffect(FGameplayEventData InEventData)
 
     UKismetSystemLibrary::SphereOverlapActors(
         this, SpawnLocation, SupportRadius,
+=======
+    TArray<AActor*> OverlapActors;
+    TArray<AActor*> IgnoredActors;
+
+    IgnoredActors.Add(AvatarActor);
+
+    UKismetSystemLibrary::SphereOverlapActors(
+        this, SpawnLocation, UnitBuffConfig.SupportRadius,
+>>>>>>> e72f839c (UnitData,PGSaveGame,PGGameInstance 도감 관련 코드 수정 및 추가/PGUnitCollectionSubsystem  구성)
         TArray<TEnumAsByte<EObjectTypeQuery>>{ EObjectTypeQuery::ObjectTypeQuery3 }, // Pawn
         AUnitCharacter::StaticClass(), IgnoredActors, OverlapActors
     );
 
+<<<<<<< HEAD
     float MultiplierValue = SupportSkillMultiplier.GetValueAtLevel(GetAbilityLevel());
     FGameplayEffectSpecHandle EffectSpecHandle = MakeOutgoingEffectSpecToTarget(SupportEffectClass, MultiplierValue);
+=======
+    float MultiplierValue = UnitBuffConfig.SupportSkillMultiplier.GetValueAtLevel(GetAbilityLevel());
+    FGameplayEffectSpecHandle EffectSpecHandle = MakeOutgoingEffectSpecToTarget(UnitBuffConfig.SupportEffectClass, MultiplierValue);
+
+    if (EffectSpecHandle.IsValid())
+    {
+        FGameplayTag BaseBuffTag = FGameplayTag::RequestGameplayTag(FName("Shared.SetByCaller.BaseBuffAmount"));
+        EffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(BaseBuffTag, MultiplierValue);
+    }
+
+    UNiagaraSystem* LoadedBuffEffect = nullptr;
+    if (UnitBuffConfig.BuffEffect.IsValid() || UnitBuffConfig.BuffEffect.IsPending())
+    {
+        LoadedBuffEffect = UnitBuffConfig.BuffEffect.LoadSynchronous();
+    }
+>>>>>>> e72f839c (UnitData,PGSaveGame,PGGameInstance 도감 관련 코드 수정 및 추가/PGUnitCollectionSubsystem  구성)
 
     for (AActor* TargetActor : OverlapActors)
     {
         if (AUnitCharacter* TargetUnit = Cast<AUnitCharacter>(TargetActor))
         {
+<<<<<<< HEAD
             //  아군 판별 로직 (예: 팀 태그 비교)
             // if (TargetUnit->GetTeamTag() == Cast<AUnitCharacter>(AvatarActor)->GetTeamTag())
 
             NativeApplyEffectSpecHandleToTarget(TargetActor, EffectSpecHandle);
             UE_LOG(LogTemp, Log, TEXT("지원가 장판 효과 적용됨: %s"), *TargetActor->GetName());
+=======
+            if (TargetUnit->GetTeamTag() == Cast<AUnitCharacter>(AvatarActor)->GetTeamTag())
+            {
+
+                NativeApplyEffectSpecHandleToTarget(TargetActor, EffectSpecHandle);
+                UE_LOG(LogTemp, Log, TEXT("장판"));
+
+                // 대상의 루트 컴포넌트에 나이아가라 이펙트 부착 및 재생
+                if (LoadedBuffEffect)
+                {
+                    UNiagaraFunctionLibrary::SpawnSystemAttached(
+                        LoadedBuffEffect,
+                        TargetUnit->GetRootComponent(),
+                        NAME_None,
+                        FVector::ZeroVector,
+                        FRotator::ZeroRotator,
+                        EAttachLocation::SnapToTarget,
+                        true
+                    );
+                }
+            }
+>>>>>>> e72f839c (UnitData,PGSaveGame,PGGameInstance 도감 관련 코드 수정 및 추가/PGUnitCollectionSubsystem  구성)
         }
     }
 }

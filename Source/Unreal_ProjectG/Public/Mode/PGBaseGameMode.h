@@ -59,6 +59,7 @@ protected:
     // 상태 및 시간 저장용 변수
     bool bIsGameOver = false;
     float GameStartTime = 0.0f;
+<<<<<<< HEAD
 
 <<<<<<< Updated upstream
     //  UI 출력 이벤트
@@ -70,3 +71,6 @@ protected:
     TObjectPtr<ABaseStructure> AllyBase;
 };
 >>>>>>> Stashed changes
+=======
+};
+>>>>>>> e72f839c (UnitData,PGSaveGame,PGGameInstance 도감 관련 코드 수정 및 추가/PGUnitCollectionSubsystem  구성)

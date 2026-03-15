@@ -22,7 +22,7 @@ namespace PGGameplayTags
 
     // 유닛 어빌리티 태그
     UE_DEFINE_GAMEPLAY_TAG(Unit_Ability_MagicCharge, "Unit.Ability.MagicCharge");
-    UE_DEFINE_GAMEPLAY_TAG(Unit_Ability_ActivateSheild, "Unit.Ability.ActivateSheild");
+    UE_DEFINE_GAMEPLAY_TAG(Unit_Ability_Buff, "Unit.Ability.Buff");
     UE_DEFINE_GAMEPLAY_TAG(Unit_Ability_BasicAttack, "Unit.Ability.BasicAttack");
 
     // 이벤트 태그
@@ -33,16 +33,24 @@ namespace PGGameplayTags
 <<<<<<< Updated upstream
 =======
     UE_DEFINE_GAMEPLAY_TAG(Shared_Event_HitReact, "Shared.Event.HitReact");
+<<<<<<< HEAD
 >>>>>>> Stashed changes
+=======
+    UE_DEFINE_GAMEPLAY_TAG(Shared_Event_SupportExecute, "Shared.Event.SupportExecute");
+>>>>>>> e72f839c (UnitData,PGSaveGame,PGGameInstance 도감 관련 코드 수정 및 추가/PGUnitCollectionSubsystem  구성)
 
     // SetByCaller 태그
-    UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_DamageMultiplier, "Shared.SetByCaller.DamageMultiplier");
+    UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_SkillMultiplier, "Shared.SetByCaller.SkillMultiplier");
     UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_MaxHealthMultiplier, "Shared.SetByCaller.MaxHealthMultiplier");
     UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_AttackPowerMultiplier, "Shared.SetByCaller.AttackPowerMultiplier");
 <<<<<<< Updated upstream
 =======
     UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_BaseBuffAmount, "Shared.SetByCaller.BaseBuffAmount");
+<<<<<<< HEAD
 >>>>>>> Stashed changes
+=======
+    UE_DEFINE_GAMEPLAY_TAG(Shared_SetByCaller_EffectDuration, "Shared.SetByCaller.EffectDuration");
+>>>>>>> e72f839c (UnitData,PGSaveGame,PGGameInstance 도감 관련 코드 수정 및 추가/PGUnitCollectionSubsystem  구성)
 
 
     //유닛 등급 태그

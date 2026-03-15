@@ -6,11 +6,21 @@
 #include "AbilitySystem/Abilities/PGUnitGameplayAbility.h"
 #include "UnitAbility_Supporter.generated.h"
 
+<<<<<<< HEAD
 UCLASS()
 class UNREAL_PROJECTG_API UUnitAbility_Supporter : public UPGUnitGameplayAbility
 {
     GENERATED_BODY()
 
+=======
+/**
+ * 
+ */
+UCLASS()
+class UNREAL_PROJECTG_API UUnitAbility_Supporter : public UPGUnitGameplayAbility
+{
+	GENERATED_BODY()
+>>>>>>> e72f839c (UnitData,PGSaveGame,PGGameInstance 도감 관련 코드 수정 및 추가/PGUnitCollectionSubsystem  구성)
 public:
     UUnitAbility_Supporter();
 
@@ -28,6 +38,7 @@ protected:
     void OnMontageFinished();
 
 protected:
+<<<<<<< HEAD
     // 장판 반경 내 아군에게 부여할 힐/버프 이펙트 (GE)
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability|Support")
     TSubclassOf<UGameplayEffect> SupportEffectClass;
@@ -52,3 +63,9 @@ protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability|Support")
     bool bAttachToUnit = false;
 };
+=======
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ability|Support")
+
+    FUnitBuffAuraAbilityConfig UnitBuffConfig;
+};
+>>>>>>> e72f839c (UnitData,PGSaveGame,PGGameInstance 도감 관련 코드 수정 및 추가/PGUnitCollectionSubsystem  구성)

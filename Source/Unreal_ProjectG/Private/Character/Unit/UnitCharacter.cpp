@@ -106,7 +106,7 @@ void AUnitCharacter::InitUnitStartUpData()
                 {
                     if (PGAbilitySystemComponent)
                     {
-                        LoadedData->GiveToAbilitySystemComponent(PGAbilitySystemComponent, UnitLevel);
+                        LoadedData->GiveToAbilitySystemComponent(PGAbilitySystemComponent);
                     }
                     UDataAsset_UnitStartupData* StartUpData = Cast<UDataAsset_UnitStartupData>(LoadedData);
 
@@ -136,9 +136,13 @@ void AUnitCharacter::InitUnitStartUpData()
 
                         SubBTAssetKey = StartUpData->BranchData->SubBTAsset;
 
+<<<<<<< HEAD
                         AttackMarginKey = AttackRangeKey * 0.7f;
 <<<<<<< Updated upstream
 =======
+=======
+                        AttackMarginKey = AttackRangeKey * 0.85f;
+>>>>>>> e72f839c (UnitData,PGSaveGame,PGGameInstance 도감 관련 코드 수정 및 추가/PGUnitCollectionSubsystem  구성)
 
                         if (StartUpData->BranchData->BranchTag.IsValid())
                         {

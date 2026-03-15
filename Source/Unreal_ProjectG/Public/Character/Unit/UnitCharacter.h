@@ -77,9 +77,6 @@ public:
     TObjectPtr<AActor> TargetActor = nullptr;
             
 
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-    int32 UnitLevel = 1;
-
 protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
     TObjectPtr<UUnitCombatComponent> UnitCombatComponent;

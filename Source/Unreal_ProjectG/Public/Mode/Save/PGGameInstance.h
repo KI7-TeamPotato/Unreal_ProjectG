@@ -13,18 +13,6 @@ class UDataAsset_ArmorData;
 class UDataAsset_AccessoryData;
 class UUnitUIDataAsset;
 
-USTRUCT(BlueprintType)
-struct FUnitSaveData
-{
-    GENERATED_BODY()
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    int32 Level = 1;        // 유닛 레벨
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    bool bIsUnlocked = false; // 보유 여부
-};
-
 UCLASS()
 class UNREAL_PROJECTG_API UPGGameInstance : public UGameInstance
 {
@@ -39,13 +27,6 @@ public:
 
     UFUNCTION(BlueprintCallable, Category = "SaveGame")
     void LoadGameData();
-
-protected:
-    UFUNCTION(BlueprintCallable, Category = "SaveData")
-    void InitializeUnitMap();
-
-public:
-    FUnitSaveData GetUnitSaveData(int32 UnitID);
 
     // --- [런타임 장착 데이터] ---
     // 로비 UI에서 이 변수들을 수정하고, 전투 맵에서 이 변수들을 읽어 적용
@@ -76,6 +57,7 @@ public:
     //스테이지
     UPROPERTY(BlueprintReadWrite, Category = "Player Info")
     int32 CurrentStageIndex = 0;
+<<<<<<< HEAD
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SaveData")
     TMap<int32, FUnitSaveData> UnitLevelMap;
@@ -85,6 +67,8 @@ protected:
     TObjectPtr<UDataTable> UnitDataTable;
 
 >>>>>>> Stashed changes
+=======
+>>>>>>> e72f839c (UnitData,PGSaveGame,PGGameInstance 도감 관련 코드 수정 및 추가/PGUnitCollectionSubsystem  구성)
 private:
     UPROPERTY()
     TObjectPtr<UPGSaveGame> CachedSaveData;

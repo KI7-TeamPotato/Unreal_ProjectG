@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/SaveGame.h"
-#include "Mode/Save/PGGameInstance.h"
 #include "PGSaveGame.generated.h"
 
 /**
@@ -47,7 +46,13 @@ public:
 <<<<<<< Updated upstream
 =======
 
+<<<<<<< HEAD
     UPROPERTY()
     TMap<int32, FUnitSaveData> UnitLevelMap;
 >>>>>>> Stashed changes
+=======
+    //[추가: 도감 데이터] 
+    UPROPERTY(VisibleAnywhere, Category = "Collection")
+    TArray<FSoftObjectPath> OwnedUnitPaths; // 획득하여 보유 중인 모든 유닛 목록
+>>>>>>> e72f839c (UnitData,PGSaveGame,PGGameInstance 도감 관련 코드 수정 및 추가/PGUnitCollectionSubsystem  구성)
 };
