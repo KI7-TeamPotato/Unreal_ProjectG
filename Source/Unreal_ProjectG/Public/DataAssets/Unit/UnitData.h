@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
 #include "GameplayTagContainer.h"
-#include "Types/PGStructTypes.h"
 #include "UnitData.generated.h"
 
 /**
@@ -35,6 +34,7 @@ public:
 <<<<<<< HEAD
 <<<<<<< Updated upstream
 
+<<<<<<< Updated upstream
     //UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Visual")
     //UAnimMontage* AttackMontage;
 
@@ -60,4 +60,7 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Unit|Reward")
     int32 DuplicateRewardAmount = 10;
 >>>>>>> e72f839c (UnitData,PGSaveGame,PGGameInstance 도감 관련 코드 수정 및 추가/PGUnitCollectionSubsystem  구성)
+=======
+  
+>>>>>>> Stashed changes
 };

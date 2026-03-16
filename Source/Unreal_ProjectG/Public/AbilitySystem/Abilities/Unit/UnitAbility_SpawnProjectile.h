@@ -6,7 +6,6 @@
 #include "AbilitySystem/Abilities/PGUnitGameplayAbility.h"
 #include "UnitAbility_SpawnProjectile.generated.h"
 
-class APGProjectileBase;
 /**
  * 
  */
@@ -27,10 +26,8 @@ protected:
     void OnMontageFinished();
 
 protected:
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability|Projectile Attack")
-    TSubclassOf<UGameplayEffect> ProjectileAttackDamageEffectClass;
-
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ability|Projectile Attack")
+<<<<<<< Updated upstream
     TArray<TObjectPtr<UAnimMontage>> ProjectileAttackMontages;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability|Projectile Attack")
@@ -39,4 +36,7 @@ protected:
     // 프로젝타일 클래스
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability|Projectile Attack")
     TSubclassOf<APGProjectileBase> SpawnedProjectileClass;
+=======
+    FUnitSpawnProjectileAbilityConfig UnitSpawnProjectileConfig;
+>>>>>>> Stashed changes
 };

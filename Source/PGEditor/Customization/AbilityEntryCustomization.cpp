@@ -1,14 +1,14 @@
 #include "AbilityEntryCustomization.h"
 #include "DetailWidgetRow.h"
 #include "IDetailChildrenBuilder.h"
-#include "Types/PGStructTypes.h"
-#include "DataAssets/Ability/AbilityConfig.h"
+#include "Types/AbilityConfig.h"
 #include "ClassViewerModule.h"
 #include "PropertyCustomizationHelpers.h"
 
 // 어빌리티 클래스 헤더
 #include "AbilitySystem/Abilities/Player/HeroAbility_BaseMeleeAttack.h"
 #include "AbilitySystem/Abilities/Player/HeroAbility_BaseProjectileAttack.h"
+<<<<<<< Updated upstream
 <<<<<<< HEAD
 <<<<<<< Updated upstream
 =======
@@ -18,13 +18,20 @@
 >>>>>>> e72f839c (UnitData,PGSaveGame,PGGameInstance 도감 관련 코드 수정 및 추가/PGUnitCollectionSubsystem  구성)
 #include "AbilitySystem/Abilities/Player/HeroAbility_SpawnPet.h"
 >>>>>>> Stashed changes
+=======
+#include "AbilitySystem/Abilities/Player/HeroAbility_AOEBase.h"
+#include "AbilitySystem/Abilities/Player/HeroAbility_SpawnPet.h"
+>>>>>>> Stashed changes
 #include "AbilitySystem/Abilities/Unit/UnitAbility_BaseMeleeAttack.h"
 #include "AbilitySystem/Abilities/Unit/UnitAbility_SpawnProjectile.h"
+#include "AbilitySystem/Abilities/Unit/UnitAbility_SpawnActor.h"
+#include "AbilitySystem/Abilities/Shared/SharedAbility_BuffAura.h"
 
 // 어빌리티 클래스 -> Config 클래스 매핑 테이블
 // 새 어빌리티 혹은 Config 추가 시 이곳에 추가
-static TMap<UClass*, UClass*> GetAbilityToConfigMap()
+static TMap<UClass*, UScriptStruct*> GetAbilityToConfigMap()
 {
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
     TMap<UClass*, UClass*> Map;
     Map.Add(UHeroAbility_BaseMeleeAttack::StaticClass(), UMeleeAttackAbilityConfig::StaticClass());
@@ -32,6 +39,8 @@ static TMap<UClass*, UClass*> GetAbilityToConfigMap()
     Map.Add(UUnitAbility_BaseMeleeAttack::StaticClass(), UUnitMeleeAttackAbilityConfig::StaticClass());
     Map.Add(UUnitAbility_SpawnProjectile::StaticClass(), USpawnProjectileAbilityConfig::StaticClass());
 =======
+=======
+>>>>>>> Stashed changes
     TMap<UClass*, UScriptStruct*> Map;
 
     // UClass*는 StaticClass()로, UScriptStruct*는 StaticStruct()로 매핑
@@ -44,6 +53,9 @@ static TMap<UClass*, UClass*> GetAbilityToConfigMap()
     Map.Add(UUnitAbility_SpawnProjectile::StaticClass(), FUnitSpawnProjectileAbilityConfig::StaticStruct());
     Map.Add(UUnitAbility_SpawnActor::StaticClass(), FUnitSpawnActorAbilityConfig::StaticStruct());
     Map.Add(USharedAbility_BuffAura::StaticClass(), FSharedBuffAuraAbilityConfig::StaticStruct());
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 
     return Map;
@@ -65,6 +77,9 @@ void FAbilityEntryCustomization::CustomizeHeader(TSharedRef<IPropertyHandle> Pro
 // 자식 부분 커스터마이징
 void FAbilityEntryCustomization::CustomizeChildren(TSharedRef<IPropertyHandle> PropertyHandle, IDetailChildrenBuilder& ChildBuilder, IPropertyTypeCustomizationUtils& Utils)
 {
+    // 초기화 플래그 On
+    bIsInitializing = true;
+
     // 패널 업데이트용 Utils 저장
     PropertyUtilities = Utils.GetPropertyUtilities();
 
@@ -74,9 +89,10 @@ void FAbilityEntryCustomization::CustomizeChildren(TSharedRef<IPropertyHandle> P
     AbilityConfigHandle = PropertyHandle->GetChildHandle(
         GET_MEMBER_NAME_CHECKED(FAbilityEntry, AbilityConfig));
 
-    // 진입점에서 현재 AbilityClass에 맞는 Config 클래스 필터링
-    UpdateConfigClassFilter();
+    // 현재 AbilityClass를 캐싱
+    CachedAbilityClass = GetCurrentAbilityClass();
 
+<<<<<<< Updated upstream
     UObject* AbilityClassObj = nullptr;
     AbilityClassHandle->GetValue(AbilityClassObj);
     if (AbilityClassObj && PropertyUtilities.IsValid() && !bIsRefreshing)
@@ -88,15 +104,16 @@ void FAbilityEntryCustomization::CustomizeChildren(TSharedRef<IPropertyHandle> P
     {
         bIsRefreshing = false;
     }
+=======
+    // 진입점에서 현재 AbilityClass에 맞는 Config 클래스 필터링
+    UpdateConfigStructFilter();
+>>>>>>> Stashed changes
 
     // AbilityClass 변경 감지 -> Config 초기화
      AbilityClassHandle->SetOnPropertyValueChanged(
         FSimpleDelegate::CreateSP(this, &FAbilityEntryCustomization::OnAbilityClassChanged)); // Create SP는 SharedFromThis 기반이라 객체가 소멸되면 자동으로 델리게이트 실행을 멈춤
     //AbilityClassHandle->SetOnPropertyValueChanged(
         //FSimpleDelegate::CreateRaw(this, &FAbilityEntryCustomization::OnAbilityClassChanged));
-
-    //// 어빌리티 클래스는 항상 표시
-    //ChildBuilder.AddProperty(AbilityClassHandle.ToSharedRef());
 
     TSharedPtr<FBlueprintOnlyAbilityClassFilter> ClassFilter 
         = MakeShared<FBlueprintOnlyAbilityClassFilter>();
@@ -134,28 +151,24 @@ void FAbilityEntryCustomization::CustomizeChildren(TSharedRef<IPropertyHandle> P
         .Visibility(TAttribute<EVisibility>::Create(
             TAttribute<EVisibility>::FGetter::CreateSP(
                 this, &FAbilityEntryCustomization::GetConfigVisibility))); // AbilityClass에 맞는 Config가 있을 때만 표시
+
+    // 초기화 플래그 Off
+    bIsInitializing = false;
 }
 
-void FAbilityEntryCustomization::UpdateConfigClassFilter()
+void FAbilityEntryCustomization::UpdateConfigStructFilter()
 {
     if (!AbilityConfigHandle.IsValid() || !AbilityConfigHandle->IsValidHandle()) return;
 
     FProperty* ConfigProperty = AbilityConfigHandle->GetProperty();
     if (!ConfigProperty) return;
 
-    if (AbilityClassHandle.IsValid())
-    {
-        UObject* AbilityClassObj = nullptr;
-        AbilityClassHandle->GetValue(AbilityClassObj);
-        if (!AbilityClassObj) return; //null이면 기존 필터 덮어쓰기 방지
-    }
+    // 현재 선택된 어빌리티 클래스에 맞는 Config 구조체가 아니면 AbilityConfig 필터링
+    UScriptStruct* RequiredStruct = GetRequiredConfigStruct();
+    if (!RequiredStruct) return;
 
-    UClass* RequiredClass = GetRequiredConfigClass(); // 못 찾으면 UAbilityConfig 반환
-
-    UE_LOG(LogTemp, Warning, TEXT("Required Config Class: %s"), *RequiredClass->GetName());
-
-    // AllowedClasses 메타데이터를 동적으로 변경하여 에디터 클래스 피커가 이 값을 참조
-    ConfigProperty->SetMetaData(TEXT("AllowedClasses"), *RequiredClass->GetPathName());
+    // ConfigProperty에 BaseStruct 메타데이터 설정 -> DetailsView에서 이 메타데이터를 읽어서 필터링
+    ConfigProperty->SetMetaData(TEXT("BaseStruct"), *RequiredStruct->GetPathName());
 }
 
 void FAbilityEntryCustomization::OnAbilityClassChanged()
@@ -164,70 +177,57 @@ void FAbilityEntryCustomization::OnAbilityClassChanged()
     if (!AbilityConfigHandle.IsValid() || !AbilityConfigHandle->IsValidHandle()) return;
     if (!AbilityClassHandle.IsValid() || !AbilityClassHandle->IsValidHandle()) return;
 
-    UpdateConfigClassFilter();
+    // 초기화 중이면 로직 실행하지 않음
+    if (bIsInitializing) return;
 
-    UObject* CurrentAbilityConfig = nullptr;
-    AbilityConfigHandle->GetValue(CurrentAbilityConfig);
+    // 실제 클래스가 변경 되었는지를 확인
+    const UClass* NewClass = GetCurrentAbilityClass();
+    if (NewClass == CachedAbilityClass) return;
+    // 실제 클래스가 변경되었으므로 캐싱된 클래스 업데이트
+    CachedAbilityClass = NewClass;
 
-    if (CurrentAbilityConfig)
-    {
-        //새로 선택된 어빌리티 클래스에 매핑되는 Config 클래스 찾기
-        UClass* RequiredConfigClass = GetRequiredConfigClass();
+    UpdateConfigStructFilter();
 
-        // Config 타입이 맞지 않으면 Config 초기화
-        if (RequiredConfigClass && !CurrentAbilityConfig->IsA(RequiredConfigClass))
+    // FInstancedStruct로 SetValueFromFormmatedString("None")으로 초기화
+    TSharedPtr<IPropertyHandle> LocalHandle = AbilityConfigHandle; // 람다 캡처용 로컬 변수
+    GEditor->GetTimerManager()->SetTimerForNextTick([LocalHandle]()
         {
-            TSharedPtr<IPropertyHandle> LocalHandle = AbilityConfigHandle; // 람다 캡처용 로컬 변수
-            GEditor->GetTimerManager()->SetTimerForNextTick([LocalHandle]()
+            if(LocalHandle.IsValid() && LocalHandle->IsValidHandle())
             {
-                if (LocalHandle.IsValid())
-                {
-                    //AbilityConfigHandle->SetValue((UObject*)nullptr);
-                    LocalHandle->SetValueFromFormattedString(TEXT("None"));
-                }
-            });
-        }
-    }
-    else
+                LocalHandle->SetValueFromFormattedString(TEXT("None"));
+            }
+        });
+
+    // 패널 새로고침
+    if (PropertyUtilities.IsValid())
     {
-        // 디테일 패널 업데이트
-        TSharedPtr<IPropertyUtilities> LocalUtils = PropertyUtilities;
-        GEditor->GetTimerManager()->SetTimerForNextTick([LocalUtils]()
-            {
-                if (LocalUtils.IsValid())
-                {
-                    LocalUtils->RequestRefresh();
-                }
-            });
+        PropertyUtilities->RequestForceRefresh();
     }
 }
 
-UClass* FAbilityEntryCustomization::GetRequiredConfigClass() const
+UScriptStruct* FAbilityEntryCustomization::GetRequiredConfigStruct() const
 {
-    if (!AbilityClassHandle.IsValid()) return UAbilityConfig::StaticClass();
+    if (!AbilityClassHandle.IsValid() || !AbilityClassHandle->IsValidHandle()) return FAbilityConfig::StaticStruct();
 
     //현재 선택된 AbilityClass 가져오기
     UObject* AbilityClassObj = nullptr;
     AbilityClassHandle->GetValue(AbilityClassObj);
     UClass* AbilityClass = Cast<UClass>(AbilityClassObj);
 
-    if (!AbilityClass) return UAbilityConfig::StaticClass();
+    if (!AbilityClass) return FAbilityConfig::StaticStruct();
 
     // 매핑 테이블에서 Config 클래스 찾기
-    const TMap<UClass*, UClass*> AbilityToConfigMap = GetAbilityToConfigMap();
+    const TMap<UClass*, UScriptStruct*> AbilityToConfigMap = GetAbilityToConfigMap();
 
     // 정확한 클래스 또는 부모 클래스 기준으로 검색
     for(const auto& Pair : AbilityToConfigMap)
     {
-        if (AbilityClass == Pair.Key)
-        {
-            return Pair.Value;
-        }
+        if (AbilityClass == Pair.Key) return Pair.Value;
     }
 
     // 더 깊은 부모 클래스를 우선 매칭
     UClass* BestMatchKey = nullptr;
-    UClass* BestMatchValue = nullptr;
+    UScriptStruct* BestMatchValue = nullptr;
     for(const auto& Pair : AbilityToConfigMap)
     {
         if (AbilityClass->IsChildOf(Pair.Key))
@@ -240,7 +240,7 @@ UClass* FAbilityEntryCustomization::GetRequiredConfigClass() const
         }
     }
 
-    return BestMatchValue ? BestMatchValue : UAbilityConfig::StaticClass();
+    return BestMatchValue ? BestMatchValue : FAbilityConfig::StaticStruct();
 }
 
 EVisibility FAbilityEntryCustomization::GetConfigVisibility() const
@@ -271,3 +271,4 @@ void FAbilityEntryCustomization::OnAbilityClassSelected(const UClass* NewClass)
     AbilityClassHandle->SetValueFromFormattedString(
         NewClass ? NewClass->GetPathName() : TEXT("None"));
 }
+

@@ -19,6 +19,12 @@ class UNREAL_PROJECTG_API UBattleUIWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
+public:
+    UFUNCTION(BlueprintCallable)
+    void ShowGameResult(const FBattleResultData& ResultData);
+
+    UControlPanelWidget* GetControlPanel() { return ControlPanel; }
+
 protected:
     virtual void NativeConstruct() override;
 
@@ -39,6 +45,11 @@ protected:
     // 자동 버튼
     UPROPERTY(meta = (BindWidget))
     TObjectPtr<UButton> AutoButton;
+<<<<<<< Updated upstream
+=======
+    UPROPERTY(meta = (BindWidget))
+    TObjectPtr<UImage> AutoActiveEffect;
+>>>>>>> Stashed changes
 
     // 배속 버튼
     UPROPERTY(meta = (BindWidget))
@@ -56,6 +67,16 @@ protected:
 
     UPROPERTY(Transient, meta = (BindWidgetAnimation))
     TObjectPtr<UWidgetAnimation> ControlPanelMoveAnim;
+
+    // 위젯 애니메이션
+    UPROPERTY(BlueprintReadWrite, Transient, meta = (BindWidgetAnim))
+    UWidgetAnimation* ControlPanelSlide;
+
+    UPROPERTY(BlueprintReadWrite, Transient, meta = (BindWidgetAnim))
+    UWidgetAnimation* ResultVictoryScale;
+
+    UPROPERTY(BlueprintReadWrite, Transient, meta = (BindWidgetAnim))
+    UWidgetAnimation* ResultFailScale;
 
 private:
     // 현재 배속 단계 (0: 1배, 1: 1.5배, 2: 2배)

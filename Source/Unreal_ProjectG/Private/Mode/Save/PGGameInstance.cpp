@@ -1,11 +1,10 @@
 #include "Mode/Save/PGGameInstance.h"
 #include "Mode/Save/PGUnitCollectionSubsystem.h"
 #include "Mode/Save/PGSaveGame.h"
+#include "Mode/Save/PGUnitCollectionSubsystem.h"
 #include "Kismet/GameplayStatics.h"
-#include "DataAssets/Items/DataAsset_WeaponData.h"
-#include "DataAssets/Items/DataAsset_ArmorData.h"
-#include "DataAssets/Items/DataAsset_AccessoryData.h"
 #include "DataAssets/UI/UnitUIDataAsset.h"
+<<<<<<< Updated upstream
 <<<<<<< HEAD
 <<<<<<< Updated upstream
 =======
@@ -16,6 +15,10 @@
 #include "DataAssets/UI/EquipUIDataAsset.h"
 #include "UI/Battle/BattleHUD.h"
 >>>>>>> e72f839c (UnitData,PGSaveGame,PGGameInstance 도감 관련 코드 수정 및 추가/PGUnitCollectionSubsystem  구성)
+=======
+#include "DataAssets/UI/EquipUIDataAsset.h"
+#include "UI/Battle/BattleHUD.h"
+>>>>>>> Stashed changes
 
 
 //------- 구현 방식 ----------
@@ -59,12 +62,13 @@ void UPGGameInstance::LoadGameData()
 
     // 디스크 데이터(Path) -> 런타임 데이터(SoftPtr) 로드
     //장비
-    CurrentWeapon = TSoftObjectPtr<UDataAsset_WeaponData>(CachedSaveData->EquippedWeaponPath);
-    CurrentArmor = TSoftObjectPtr<UDataAsset_ArmorData>(CachedSaveData->EquippedArmorPath);
-    CurrentAccessory = TSoftObjectPtr<UDataAsset_AccessoryData>(CachedSaveData->EquippedAccessoryPath);
+    CurrentWeapon = TSoftObjectPtr<UEquipUIDataAsset>(CachedSaveData->EquippedWeaponPath);
+    CurrentArmor = TSoftObjectPtr<UEquipUIDataAsset>(CachedSaveData->EquippedArmorPath);
+    CurrentAccessory = TSoftObjectPtr<UEquipUIDataAsset>(CachedSaveData->EquippedAccessoryPath);
 
     //재화
     CurrentPlayerGold = CachedSaveData->PlayerGold;
+<<<<<<< Updated upstream
     CurrentPlayerRuby = CachedSaveData->PlayerRuby;
     CurrentPlayerPiece = CachedSaveData->PlayerPiece;
 =======
@@ -82,6 +86,10 @@ void UPGGameInstance::LoadGameData()
 
     //재화
     CurrentPlayerGold = CachedSaveData->PlayerGold;
+    CurrentPlayerGem = CachedSaveData->PlayerGem;
+    CurrentPlayerUnlock = CachedSaveData->PlayerUnlock;
+>>>>>>> Stashed changes
+=======
     CurrentPlayerGem = CachedSaveData->PlayerGem;
     CurrentPlayerUnlock = CachedSaveData->PlayerUnlock;
 >>>>>>> Stashed changes
@@ -125,6 +133,33 @@ void UPGGameInstance::LoadGameData()
         }
 >>>>>>> Stashed changes
     }
+
+    if (CachedSaveData)
+    {
+        // 디스크 데이터(Path) -> 런타임 데이터(SoftPtr) 로드
+        //장비
+        CurrentWeapon = TSoftObjectPtr<UEquipUIDataAsset>(CachedSaveData->EquippedWeaponPath);
+        CurrentArmor = TSoftObjectPtr<UEquipUIDataAsset>(CachedSaveData->EquippedArmorPath);
+        CurrentAccessory = TSoftObjectPtr<UEquipUIDataAsset>(CachedSaveData->EquippedAccessoryPath);
+
+        //재화
+        CurrentPlayerGold = CachedSaveData->PlayerGold;
+        CurrentPlayerGem = CachedSaveData->PlayerGem;
+        CurrentPlayerUnlock = CachedSaveData->PlayerUnlock; // 조각 재화 로드
+
+        // 기존 방식의 CurrentUnits 배열 복구 (UI 등에서 직접 참조하는 경우를 위함)
+        CurrentUnits.Empty();
+        for (const FSoftObjectPath& Path : CachedSaveData->EquippedUnitPaths)
+        {
+            CurrentUnits.Add(TSoftObjectPtr<UUnitUIDataAsset>(Path));
+        }
+
+        // [추가] 서브시스템에 세이브 데이터 전달하여 도감/파티 상태 복구
+        if (UPGUnitCollectionSubsystem* CollectionSubsystem = GetSubsystem<UPGUnitCollectionSubsystem>())
+        {
+            CollectionSubsystem->LoadFromSaveGame(CachedSaveData);
+        }
+    }
 }
 
 void UPGGameInstance::SaveGameData()
@@ -139,8 +174,8 @@ void UPGGameInstance::SaveGameData()
 
     // 게임 중 변동된 재화를 세이브 파일에 덮어쓰기
     CachedSaveData->PlayerGold = CurrentPlayerGold;
-    CachedSaveData->PlayerRuby = CurrentPlayerRuby;
-    CachedSaveData->PlayerPiece = CurrentPlayerPiece;
+    CachedSaveData->PlayerGem = CurrentPlayerGem;
+    CachedSaveData->PlayerUnlock = CurrentPlayerUnlock;
 
     CachedSaveData->EquippedUnitPaths.Empty();
     for (const auto& UnitPtr : CurrentUnits)
@@ -148,12 +183,20 @@ void UPGGameInstance::SaveGameData()
         CachedSaveData->EquippedUnitPaths.Add(UnitPtr.ToSoftObjectPath());
     }
 
+<<<<<<< Updated upstream
     //[추가] 서브시스템의 최신 도감상태를 CachedSaveData에 덮어씌움
     if (UUnitCollectionSubsystem* CollectionSubsystem = GetSubsystem<UUnitCollectionSubsystem>())
+=======
+    //[추가] 도감 저장 서브시스템의 최신 도감(보유 유닛) 상태를 저장
+    if (UPGUnitCollectionSubsystem* CollectionSubsystem = GetSubsystem<UPGUnitCollectionSubsystem>())
+>>>>>>> Stashed changes
     {
         CollectionSubsystem->SaveToSaveGame(CachedSaveData);
     }
 
+<<<<<<< Updated upstream
     // 4. 디스크에 최종 저장
+=======
+>>>>>>> Stashed changes
     UGameplayStatics::SaveGameToSlot(CachedSaveData, SaveSlotName, 0);
 }

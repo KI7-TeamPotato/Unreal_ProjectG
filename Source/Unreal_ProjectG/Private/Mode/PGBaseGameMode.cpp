@@ -1,10 +1,19 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 #include "Mode/PGBaseGameMode.h"
 #include "Kismet/GameplayStatics.h"
 #include "Pawn/BaseStructure.h"
 #include "GameFramework/PlayerController.h"
+<<<<<<< Updated upstream
+=======
+#include "Mode/Save/PGGameInstance.h"
+#include "AbilitySystem/PGCharacterAttributeSet.h"
+#include "UI/Battle/BattleHUD.h"
+>>>>>>> Stashed changes
 
 APGBaseGameMode::APGBaseGameMode()
 {   
@@ -15,12 +24,21 @@ APGBaseGameMode::APGBaseGameMode()
 
 void APGBaseGameMode::BeginPlay()
 {
+<<<<<<< Updated upstream
     Super::BeginPlay(); 
 
     // 1. 게임 시작 시간 기록
     GameStartTime = GetWorld()->GetTimeSeconds();
 
     // 2. 맵에 배치된 모든 기지(BaseStructure)를 찾아서 파괴 이벤트 연결
+=======
+    Super::BeginPlay();
+
+    // --- [2] 게임 시작 시간 기록 ---
+    GameStartTime = GetWorld()->GetTimeSeconds();
+
+    // --- [3] 맵에 배치된 모든 기지(BaseStructure)를 찾아서 파괴 이벤트 연결 ---
+>>>>>>> Stashed changes
     TArray<AActor*> FoundBases;
     UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABaseStructure::StaticClass(), FoundBases);
 
@@ -35,6 +53,7 @@ void APGBaseGameMode::BeginPlay()
     }
 }
 
+<<<<<<< Updated upstream
 //// --- 인구수 제한 로직 ---
 //bool APGBaseGameMode::CanSpawnUnit(ETeamType Team)
 //{
@@ -62,6 +81,13 @@ void APGBaseGameMode::BeginPlay()
 //    if (Team == ETeamType::Ally) CurrentAllyCount = FMath::Max(0, CurrentAllyCount - 1);
 //    else if (Team == ETeamType::Enemy) CurrentEnemyCount = FMath::Max(0, CurrentEnemyCount - 1);
 //}
+=======
+void APGBaseGameMode::ShowStageResult(const FBattleResultData& ResultData)
+{
+    ABattleHUD* HUD = Cast<ABattleHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
+    HUD->OnGameOver(ResultData);
+}
+>>>>>>> Stashed changes
 
 // --- 시간 및 등급 관리 ---
 float APGBaseGameMode::GetCurrentPlayTime() const
@@ -77,13 +103,17 @@ void APGBaseGameMode::OnGameOver(ETeamType DefeatedTeam)
     bIsGameOver = true;
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     bool bIsPlayerVictory = false;
     int32 FinalStarCount = 0;
 =======
+=======
+>>>>>>> Stashed changes
     FBattleResultData Result;
 
     Result.bIsVictory = false;
     Result.StarCount = 0;
+<<<<<<< Updated upstream
 <<<<<<< HEAD
     Result.TotalPlayTime = GetCurrentPlayTime();
     Result.TotalSpentCost = SpentCost;
@@ -96,11 +126,17 @@ void APGBaseGameMode::OnGameOver(ETeamType DefeatedTeam)
 >>>>>>> Stashed changes
 =======
 >>>>>>> e72f839c (UnitData,PGSaveGame,PGGameInstance 도감 관련 코드 수정 및 추가/PGUnitCollectionSubsystem  구성)
+=======
+>>>>>>> Stashed changes
 
     // 파괴된 팀이 'Enemy'라면 -> 플레이어 승리
     if (DefeatedTeam == ETeamType::Enemy)
     {
+<<<<<<< Updated upstream
         bIsPlayerVictory = true;
+=======
+        Result.bIsVictory = true;
+>>>>>>> Stashed changes
 
         // 클리어 시간 체크
         float PlayTime = GetCurrentPlayTime();
@@ -108,6 +144,7 @@ void APGBaseGameMode::OnGameOver(ETeamType DefeatedTeam)
 
         if (PlayTime <= ClearTimeLimit_3Stars)
         {
+<<<<<<< Updated upstream
             FinalStarCount = 3; // 3성 (빠른 클리어)
         }
         else if (PlayTime <= ClearTimeLimit_2Stars)
@@ -135,5 +172,29 @@ void APGBaseGameMode::OnGameOver(ETeamType DefeatedTeam)
     {
         PC->SetCinematicMode(true, false, false, true, true); // 조작 차단
         PC->bShowMouseCursor = true; // 마우스 커서 보이기
+=======
+            Result.StarCount = 3; // 3성 (빠른 클리어)
+        }
+        else if (PlayTime <= ClearTimeLimit_2Stars)
+        {
+            Result.StarCount = 2; // 2성 (보통)
+        }
+        else
+        {
+            Result.StarCount = 1; // 1성 (턱걸이)
+        }
+
+        UE_LOG(LogTemp, Warning, TEXT("클리어 등급: %d 성"), Result.StarCount);
+
+        // 여기서 GameInstance를 불러와서 클리어 보상(골드 등)을 저장(Save)하는 로직을 추가 가능
     }
+    else // 플레이어 기지 파괴 -> 패배
+    {
+        Result.bIsVictory = false;
+        Result.StarCount = 0; // 패배 시 별 없음
+        UE_LOG(LogTemp, Warning, TEXT("Game Over... Player Base Destroyed."));
+>>>>>>> Stashed changes
+    }
+
+    ShowStageResult(Result);
 }

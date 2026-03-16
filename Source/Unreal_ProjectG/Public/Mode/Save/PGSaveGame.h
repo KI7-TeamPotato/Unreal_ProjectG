@@ -25,10 +25,10 @@ public:
     int32 PlayerGold;
 
     UPROPERTY(VisibleAnywhere, Category = "Basic")
-    int32 PlayerRuby;
+    int32 PlayerGem;
 
     UPROPERTY(VisibleAnywhere, Category = "Basic")
-    int32 PlayerPiece;
+    int32 PlayerUnlock;
 
     // 장착 중인 무기 데이터 에셋의 경로 (SoftObjectPath)
     UPROPERTY(VisibleAnywhere, Category = "Equipment")
@@ -44,6 +44,7 @@ public:
     UPROPERTY(VisibleAnywhere, Category = "Equipment")
     TArray<FSoftObjectPath> EquippedUnitPaths;
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
 
 <<<<<<< HEAD
@@ -55,4 +56,11 @@ public:
     UPROPERTY(VisibleAnywhere, Category = "Collection")
     TArray<FSoftObjectPath> OwnedUnitPaths; // 획득하여 보유 중인 모든 유닛 목록
 >>>>>>> e72f839c (UnitData,PGSaveGame,PGGameInstance 도감 관련 코드 수정 및 추가/PGUnitCollectionSubsystem  구성)
+=======
+
+    // --- [도감 데이터] ---
+    // [추가] 해금(보유)한 모든 유닛 목록
+    UPROPERTY(VisibleAnywhere, Category = "Collection")
+    TArray<FSoftObjectPath> OwnedUnitPaths;
+>>>>>>> Stashed changes
 };

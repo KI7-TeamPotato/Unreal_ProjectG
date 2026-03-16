@@ -22,11 +22,6 @@ UAbilitySystemComponent* APGCharacterBase::GetAbilitySystemComponent() const
     return GetPGAbilitySystemComponent();
 }
 
-UPawnCombatComponent* APGCharacterBase::GetPawnCombatComponent() const
-{
-    return nullptr;
-}
-
 void APGCharacterBase::GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const
 {
     if(TeamTag.IsValid())

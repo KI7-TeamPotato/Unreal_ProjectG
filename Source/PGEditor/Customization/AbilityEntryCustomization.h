@@ -69,10 +69,10 @@ private:
     void OnAbilityClassChanged();
 
     // 어빌리티 클래스에 맞는 Config만 나오도록 하는 필터 함수
-    void UpdateConfigClassFilter();
+    void UpdateConfigStructFilter();
 
     // 현재 선택된 어빌리티 클래스에 맞는 Config만 나오도록 하는 함수
-    UClass* GetRequiredConfigClass() const;
+    UScriptStruct* GetRequiredConfigStruct() const;
 
     // Config 가시성 반환
     EVisibility GetConfigVisibility() const;
@@ -90,5 +90,9 @@ private:
     // 패널 업데이트를 위해 Utils 저장
     TSharedPtr<IPropertyUtilities> PropertyUtilities;
 
-    //bool bIsRefreshing = false;
+    // 방어코드 : 이전에 선택된 클래스 경로를 저장하여 실제 변경 여부를 판단
+    const UClass* CachedAbilityClass;
+
+    // 방어코드 : 초기화 중에는 OnAbilityClassChanged의 로직을 실행하지 않도록 하는 플래그
+    bool bIsInitializing = false;
 };

@@ -4,7 +4,13 @@
 #include "PGEditor.h"
 #include "PropertyEditorModule.h"
 #include "Customization/AbilityEntryCustomization.h"
+<<<<<<< Updated upstream
 #include "Types/PGStructTypes.h"
+=======
+#include "Customization/AttributeModEntryCustomization.h"
+#include "Types/PGGasTypes.h"
+#include "Types/AbilityConfig.h"
+>>>>>>> Stashed changes
 
 IMPLEMENT_MODULE(FPGEditorModule, PGEditor)
 
@@ -21,6 +27,15 @@ void FPGEditorModule::StartupModule()
         FOnGetPropertyTypeCustomizationInstance::CreateStatic(
             &FAbilityEntryCustomization::MakeInstance));
 
+<<<<<<< Updated upstream
+=======
+    // FAttributeModEntry 커스터마이저 등록
+    PropertyModule.RegisterCustomPropertyTypeLayout(
+        FPGAttributeModifierEntry::StaticStruct()->GetFName(), //Struct의 FName을 가져와서 등록
+        FOnGetPropertyTypeCustomizationInstance::CreateStatic(
+            &FAttributeModEntryCustomization::MakeInstance));
+
+>>>>>>> Stashed changes
     PropertyModule.NotifyCustomizationModuleChanged();
 }
 
@@ -34,5 +49,12 @@ void FPGEditorModule::ShutdownModule()
         // FAbilityEntry 커스터마이저 등록 해제
         PropertyModule.UnregisterCustomPropertyTypeLayout(
             FAbilityEntry::StaticStruct()->GetFName());
+<<<<<<< Updated upstream
+=======
+        
+        // FAttributeModEntry 커스터마이저 등록 해제
+        PropertyModule.UnregisterCustomPropertyTypeLayout(
+            FPGAttributeModifierEntry::StaticStruct()->GetFName());
+>>>>>>> Stashed changes
     }
 }

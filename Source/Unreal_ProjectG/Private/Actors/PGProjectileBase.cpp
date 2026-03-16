@@ -4,6 +4,13 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Abilities/GameplayAbilityTypes.h"
 #include "PGFunctionLibrary.h"
+<<<<<<< Updated upstream
+=======
+#include "PGGameplayTags.h"
+#include "AbilitySystemBlueprintLibrary.h"
+#include "NiagaraFunctionLibrary.h"
+#include "Kismet/GameplayStatics.h"
+>>>>>>> Stashed changes
 
 APGProjectileBase::APGProjectileBase()
 {
@@ -85,12 +92,7 @@ void APGProjectileBase::OnProjectileBeginOverlap(UPrimitiveComponent* Overlapped
     {
         return;
     }
-    //if(OtherActor == GetInstigator())
-    //{
-    //    return;
-    //}
-
-     UE_LOG(LogTemp, Log, TEXT("Overlap With %s"), *OtherActor->GetName());
+     //UE_LOG(LogTemp, Log, TEXT("Overlap With %s"), *OtherActor->GetName());
 
     APawn* OverlappedPawn = Cast<APawn>(OtherActor);
     if (OverlappedPawn)
@@ -102,6 +104,15 @@ void APGProjectileBase::OnProjectileBeginOverlap(UPrimitiveComponent* Overlapped
         HandleApplyProjectileDamage(OverlappedPawn, Data);
     }
 
+    // 이펙트와 사운드가 유효하다면 재생
+    if(ProjectileImpactVFX.IsValid())
+    {
+        UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ProjectileImpactVFX.Get(), GetActorLocation(), GetActorRotation());
+    }
+    if(ProjectileImpactSFX.IsValid())
+    {
+        UGameplayStatics::PlaySoundAtLocation(GetWorld(), ProjectileImpactSFX.Get(), GetActorLocation());
+    }
     Destroy();
 }
 

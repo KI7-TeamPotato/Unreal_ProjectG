@@ -8,10 +8,9 @@
 #include "PGGameInstance.generated.h"
 
 class UPGSaveGame;
-class UDataAsset_WeaponData;
-class UDataAsset_ArmorData;
-class UDataAsset_AccessoryData;
 class UUnitUIDataAsset;
+class UEquipUIDataAsset;
+class AHeroCharacter;
 
 UCLASS()
 class UNREAL_PROJECTG_API UPGGameInstance : public UGameInstance
@@ -31,26 +30,36 @@ public:
     // --- [런타임 장착 데이터] ---
     // 로비 UI에서 이 변수들을 수정하고, 전투 맵에서 이 변수들을 읽어 적용
     UPROPERTY(BlueprintReadWrite, Category = "Equipment")
-    TSoftObjectPtr<UDataAsset_WeaponData> CurrentWeapon;
+    TSoftObjectPtr<UEquipUIDataAsset> CurrentWeapon;
 
     UPROPERTY(BlueprintReadWrite, Category = "Equipment")
-    TSoftObjectPtr<UDataAsset_ArmorData> CurrentArmor;
+    TSoftObjectPtr<UEquipUIDataAsset> CurrentArmor;
 
     UPROPERTY(BlueprintReadWrite, Category = "Equipment")
-    TSoftObjectPtr<UDataAsset_AccessoryData> CurrentAccessory;
+    TSoftObjectPtr<UEquipUIDataAsset> CurrentAccessory;
 
     UPROPERTY(BlueprintReadWrite, Category = "Equipment")
     TArray<TSoftObjectPtr<UUnitUIDataAsset>> CurrentUnits;
 
+<<<<<<< Updated upstream
+=======
+    UPROPERTY(BlueprintReadWrite, Category = "Equipment")
+    FGameplayTag CurrentSetTag = FGameplayTag::EmptyTag;
+
+    //로비에서 선택한 스테이지 번호(게임 모드에 전달할 목적)
+    UPROPERTY(BlueprintReadWrite, Category = "Stage")
+    int32 SelectedStageNum = 1;
+
+>>>>>>> Stashed changes
     //소지 재화
     UPROPERTY(BlueprintReadWrite, Category = "Player Info")
     int32 CurrentPlayerGold;
 
     UPROPERTY(BlueprintReadWrite, Category = "Player Info")
-    int32 CurrentPlayerRuby;
+    int32 CurrentPlayerGem;
 
     UPROPERTY(BlueprintReadWrite, Category = "Player Info")
-    int32 CurrentPlayerPiece;
+    int32 CurrentPlayerUnlock;
 
 <<<<<<< Updated upstream
 =======

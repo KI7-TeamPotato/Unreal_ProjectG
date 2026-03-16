@@ -4,6 +4,7 @@
 #include "AbilitySystem/Abilities/PGGameplayAbility.h"
 #include "AbilitySystem/PGAbilitySystemComponent.h"
 #include "AbilitySystemBlueprintLibrary.h"
+<<<<<<< Updated upstream
 <<<<<<< HEAD
 <<<<<<< Updated upstream
 #include "Components/Combat/PawnCombatComponent.h"
@@ -11,6 +12,9 @@
 =======
 #include "PGGameplayTags.h"
 >>>>>>> e72f839c (UnitData,PGSaveGame,PGGameInstance 도감 관련 코드 수정 및 추가/PGUnitCollectionSubsystem  구성)
+=======
+#include "PGGameplayTags.h"
+>>>>>>> Stashed changes
 
 UPGGameplayAbility::UPGGameplayAbility()
 {
@@ -46,11 +50,6 @@ void UPGGameplayAbility::EndAbility(const FGameplayAbilitySpecHandle Handle, con
     }
 }
 
-UPawnCombatComponent* UPGGameplayAbility::GetPawnCombatComponent() const
-{
-    return GetAvatarActorFromActorInfo()->FindComponentByClass<UPawnCombatComponent>();
-}
-
 UPGAbilitySystemComponent* UPGGameplayAbility::GetPGAbilitySystemComponentFromActorInfo() const
 {
     return Cast<UPGAbilitySystemComponent>(GetAbilitySystemComponentFromActorInfo());
@@ -67,8 +66,6 @@ FActiveGameplayEffectHandle UPGGameplayAbility::NativeApplyEffectSpecHandleToTar
     return GetPGAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectSpecToTarget(
         *InSpecHandle.Data, TargetASC);
 }
-
-
 
 FActiveGameplayEffectHandle UPGGameplayAbility::BP_ApplyEffectSpecHandleToTarget(AActor* TargetActor, const FGameplayEffectSpecHandle& InSpecHandle, EPGSuccessType& OutSuccessType)
 {

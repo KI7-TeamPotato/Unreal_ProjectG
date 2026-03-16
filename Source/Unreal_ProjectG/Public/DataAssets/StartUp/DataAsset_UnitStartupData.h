@@ -5,11 +5,12 @@
 #include "CoreMinimal.h"
 #include "DataAssets/StartUp/DataAsset_StartupDataBase.h"
 #include "GameplayTagContainer.h"
-#include "Types/PGStructTypes.h"
 #include "DataAsset_UnitStartupData.generated.h"
 
 class UBranchDataAsset;
 class UPGUnitGameplayAbility;
+class UDataAsset_SkillData;
+class UAnimMontage;
 
 /**
  * 
@@ -32,6 +33,7 @@ public:
     UPROPERTY(EditAnywhere, Category = "Stats")
     UBranchDataAsset* BranchData;
 
+<<<<<<< Updated upstream
     // --- [2] 외형 ---
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Visual")
     USkeletalMesh* SkeletalMesh;
@@ -40,6 +42,14 @@ public:
     TSubclassOf<UAnimInstance> AnimBlueprint;
 
 private:
+=======
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animations")
+    UAnimMontage* DeadMontage;
+
+    // 유닛만이 가지고 있는 어빌리티
+>>>>>>> Stashed changes
     UPROPERTY(EditDefaultsOnly, Category = "StartupData")
-    TArray<FAbilityEntry> UnitCombatAbilityEntries;
+    TArray<UDataAsset_SkillData*> UnitCombatAbilityEntries;
+
+
 };

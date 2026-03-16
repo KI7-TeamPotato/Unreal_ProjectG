@@ -6,11 +6,36 @@
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Character/Hero/HeroCharacter.h"
 #include "Character/HeroController.h"
+#include "Components/Equipment/EquipmentsStorageComponent.h"
+#include "AbilitySystem/PGCharacterAttributeSet.h"
 #include "UI/Battle/BarWidget.h"
 #include "UI/Battle/ActiveSkillWidget.h"
-#include "AbilitySystem/PGCharacterAttributeSet.h"
 #include "Interfaces/JoysticInput.h"
+<<<<<<< Updated upstream
 #include "Components/Combat/PawnCombatComponent.h"
+=======
+#include "Kismet/GameplayStatics.h"
+#include "Pawn/BaseStructure.h"
+#include "Mode/Save/PGGameInstance.h"
+#include "DataAssets/UI/EquipUIDataAsset.h"
+
+void UControlPanelWidget::SetAbilitySpecHandle()
+{
+    UPGGameInstance* GI = Cast<UPGGameInstance>(GetGameInstance());
+    TArray<FGameplayAbilitySpecHandle> SpecHandleArray = HeroCharacter->GetEquipmentsStorageComponent()->GetSkillAbilitySpecHandles();
+    if (!SpecHandleArray.IsEmpty())
+    {
+        //UE_LOG(LogTemp, Log, TEXT("스펙 핸들 가져옴"));
+        if(SpecHandleArray[0].IsValid())WeaponSkill1->SetAbilitySpecHandle(SpecHandleArray[1]);
+        //if(SpecHandleArray[1].IsValid())WeaponSkill2->SetAbilitySpecHandle(SpecHandleArray[2]);
+        if (GI->CurrentWeapon)
+        {
+            WeaponSkill1->SetSkillIcon(GI->CurrentWeapon->SkillImage1);
+            WeaponSkill2->SetSkillIcon(GI->CurrentWeapon->SkillImage2);
+        }
+    }
+}
+>>>>>>> Stashed changes
 
 void UControlPanelWidget::UpdateHeroHP(float InValue)
 {
@@ -39,17 +64,6 @@ void UControlPanelWidget::UpdateBaseHP(FGameplayTag TeamTag, float InValue)
 
 void UControlPanelWidget::UpdateBaseMaxHP(FGameplayTag TeamTag, float InValue)
 {
-}
-
-void UControlPanelWidget::SetAbilitySpecHandle()
-{
-    // 영웅 무기 스킬 어빌리티 설정
-    TArray<FGameplayAbilitySpecHandle> SpecHandleArray = HeroCharacter->GetPawnCombatComponent()->GetSkillAbilitySpecHandles();
-    if (!SpecHandleArray.IsEmpty())
-    {
-        UE_LOG(LogTemp, Log, TEXT("스펙 핸들 가져옴"));
-        WeaponSkill->SetAbilitySpecHandle(SpecHandleArray[0]);
-    }
 }
 
 void UControlPanelWidget::NativeConstruct()
@@ -181,3 +195,44 @@ FReply UControlPanelWidget::NativeOnMouseButtonUp(const FGeometry& InGeometry, c
     }
     return FReply::Unhandled();
 }
+<<<<<<< Updated upstream
+=======
+
+void UControlPanelWidget::BindHero()
+{
+    if (HeroCharacter)
+    {
+        HeroCharacter->OnHeroHpChanged.AddDynamic(this, &UControlPanelWidget::UpdateHeroHP);
+        HeroCharacter->OnHeroMaxHpChanged.AddDynamic(this, &UControlPanelWidget::UpdateMaxHeroHP);
+        HeroCharacter->OnHeroCostChanged.AddDynamic(this, &UControlPanelWidget::UpdateCost);
+        HeroCharacter->OnHeroMaxCostChanged.AddDynamic(this, &UControlPanelWidget::UpdateMaxCost);
+
+        UEquipmentsStorageComponent* EquipComp = HeroCharacter->GetEquipmentsStorageComponent();
+        if (EquipComp)
+        {
+            EquipComp->OnWeaponAbilitiesActivate.AddDynamic(this, &UControlPanelWidget::SetAbilitySpecHandle);
+        }
+    }
+}
+
+void UControlPanelWidget::BindBase()
+{
+    TArray<AActor*> FoundBases;
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABaseStructure::StaticClass(), FoundBases);
+
+    for (AActor* BaseActor : FoundBases)
+    {
+        ABaseStructure* Base = Cast<ABaseStructure>(BaseActor);
+        if (Base)
+        {
+            // 기지의 델리게이트에 UI 업데이트 함수 연결
+            Base->OnBaseHpChanged.AddDynamic(this, &UControlPanelWidget::UpdateBaseHP);
+            Base->OnBaseMaxHpChanged.AddDynamic(this, &UControlPanelWidget::UpdateBaseMaxHP);
+
+            // 초기 값 설정을 위해 수동으로 한 번 호출
+            UpdateBaseHP(Base->GetTeamTag(), Base->GetPGCharacterAttributeSet()->GetHealth());
+            UpdateBaseMaxHP(Base->GetTeamTag(), Base->GetPGCharacterAttributeSet()->GetMaxHealth());
+        }
+    }
+}
+>>>>>>> Stashed changes

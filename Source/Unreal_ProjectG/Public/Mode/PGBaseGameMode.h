@@ -7,9 +7,38 @@
 #include "Types/PGEnumTypes.h"
 #include "PGBaseGameMode.generated.h"
 
+<<<<<<< Updated upstream
 /**
  * 
  */
+=======
+class ABaseStructure;
+
+/**
+ *
+ */
+USTRUCT(BlueprintType)
+struct FBattleResultData
+{
+    GENERATED_BODY()
+
+    UPROPERTY(BlueprintReadOnly, Category = "Result")
+    bool bIsVictory = false;
+
+    UPROPERTY(BlueprintReadOnly, Category = "Result")
+    int32 StarCount = 0;
+
+    UPROPERTY(BlueprintReadOnly, Category = "Result")
+    float TotalPlayTime = 0.0f;
+
+    UPROPERTY(BlueprintReadOnly, Category = "Result")
+    float RemainingHealthPercent = 0.0f;
+
+    UPROPERTY(BlueprintReadOnly, Category = "Result")
+    float TotalSpentCost = 0;
+};
+
+>>>>>>> Stashed changes
 UCLASS()
 class UNREAL_PROJECTG_API APGBaseGameMode : public AGameModeBase
 {
@@ -43,6 +72,12 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GameRule|Grade")
     float ClearTimeLimit_2Stars = 180.0f;
 
+<<<<<<< Updated upstream
+=======
+    UPROPERTY(BlueprintReadWrite, Category = "Battle")
+    int32 SpentCost = 0;
+
+>>>>>>> Stashed changes
     // 현재 플레이 시간(초)을 반환하는 함수 (UI 표시용)
     UFUNCTION(BlueprintPure, Category = "GameRule|Time")
     float GetCurrentPlayTime() const;
@@ -50,6 +85,13 @@ public:
 protected:
     virtual void BeginPlay() override;
 
+<<<<<<< Updated upstream
+=======
+    //  UI 출력 이벤트
+    UFUNCTION(BlueprintCallable, Category = "GameRule")
+    void ShowStageResult(const FBattleResultData& ResultData);
+
+>>>>>>> Stashed changes
 public:
     //기지 파괴 시 호출될 게임오버 함수
     UFUNCTION()
@@ -59,6 +101,7 @@ protected:
     // 상태 및 시간 저장용 변수
     bool bIsGameOver = false;
     float GameStartTime = 0.0f;
+<<<<<<< Updated upstream
 <<<<<<< HEAD
 
 <<<<<<< Updated upstream
@@ -74,3 +117,6 @@ protected:
 =======
 };
 >>>>>>> e72f839c (UnitData,PGSaveGame,PGGameInstance 도감 관련 코드 수정 및 추가/PGUnitCollectionSubsystem  구성)
+=======
+};
+>>>>>>> Stashed changes

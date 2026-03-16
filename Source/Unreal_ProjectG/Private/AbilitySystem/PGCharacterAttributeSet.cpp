@@ -33,6 +33,16 @@ void UPGCharacterAttributeSet::PreAttributeChange(const FGameplayAttribute& Attr
     {
         NewValue = FMath::Clamp(NewValue, 0.0f, GetMaxCost());
     }
+<<<<<<< Updated upstream
+=======
+
+    if(Attribute == GetDamageTakenAttribute() || Attribute == GetHealReceivedAttribute())
+    {
+        // Meta Attribute는 실제 Attribute의 값에 반영한 뒤 바로 0으로 초기화 한다.
+        NewValue = FMath::Max(0.0f, NewValue);
+    }
+}
+>>>>>>> Stashed changes
 
     if(Attribute == GetDamageTakenAttribute() || Attribute == GetHealReceivedAttribute())
     {

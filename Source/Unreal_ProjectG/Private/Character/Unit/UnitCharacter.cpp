@@ -4,7 +4,11 @@
 #include "Character/Unit/UnitCharacter.h"
 #include "Character/Unit/SubSystem/UnitSubsystem.h"
 #include "Character/Unit/SubSystem/UnitSpawnSubsystem.h"
+<<<<<<< Updated upstream
 #include "Components/Combat/UnitCombatComponent.h"
+=======
+#include "Components/CapsuleComponent.h"
+>>>>>>> Stashed changes
 #include "Engine/AssetManager.h"
 #include "DataAssets/StartUp/DataAsset_UnitStartupData.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -16,6 +20,7 @@
 #include "AbilitySystem/PGCharacterAttributeSet.h"
 #include "DataAssets/Unit/BranchDataAsset.h"
 #include "AbilitySystem/PGAbilitySystemComponent.h"
+#include "Components/Visual/CharacterVisualEffectComponent.h"
 
 AUnitCharacter::AUnitCharacter()
 {
@@ -24,22 +29,40 @@ AUnitCharacter::AUnitCharacter()
 
     AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
-    UnitCombatComponent = CreateDefaultSubobject<UUnitCombatComponent>(TEXT("UnitCombatComponent"));
-
     UCharacterMovementComponent* MovementComponent = GetCharacterMovement();
     if (MovementComponent)
     {
         //크라우드 우회를 사용하기 때문에 RVO는 꺼야함, 기본적으로 꺼져있지만 혹시 몰라서 생성자에서 다시 끄기
         MovementComponent->bUseRVOAvoidance = false;
     }
+<<<<<<< Updated upstream
+=======
+
+    if (UCapsuleComponent* Capsule = GetCapsuleComponent())
+    {
+        Capsule->SetRelativeScale3D(FVector(0.5f, 0.5f, 0.5f));
+    }
+
+    if (USkeletalMeshComponent* CharacterMesh = GetMesh())
+    {
+        CharacterMesh->SetRelativeScale3D(FVector(2.5f, 2.5f, 2.5f));
+
+        CharacterMesh->SetRelativeRotation(FRotator(0.0f, -90.0f, 0.0f));
+        CharacterMesh->SetRelativeLocation(FVector(0.0f, 0.0f, -90.0f)); 
+    }
+
+    WeaponMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponMesh"));
+
+    if (WeaponMesh)
+    {
+        WeaponMesh->SetupAttachment(GetMesh(), TEXT("Weapon_R"));
+        WeaponMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+        WeaponMesh->SetCollisionProfileName(TEXT("NoCollision"));
+    }
+
+    UnitVisualEffectComponent = CreateDefaultSubobject<UCharacterVisualEffectComponent>(TEXT("UnitVisualEffectComponent"));
+>>>>>>> Stashed changes
 }
-
-UPawnCombatComponent* AUnitCharacter::GetPawnCombatComponent() const
-{
-    return UnitCombatComponent;
-}
-
-
 
 void AUnitCharacter::BeginPlay()
 {
@@ -60,6 +83,30 @@ void AUnitCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 void AUnitCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
     Super::SetupPlayerInputComponent(PlayerInputComponent);
+}
+
+void AUnitCharacter::SetAOEHighlightEnabled_Implementation(bool bEnabled)
+{
+    if(UnitVisualEffectComponent)
+    {
+        UnitVisualEffectComponent->SetAOEHighlightEnabled(bEnabled);
+    }
+}
+
+void AUnitCharacter::SetHitReactEnabled_Implementation(bool bEnabled)
+{
+    if(UnitVisualEffectComponent)
+    {
+        UnitVisualEffectComponent->SetHitReactEnabled(bEnabled);
+    }
+}
+
+void AUnitCharacter::ResetVisualEffectState_Implementation()
+{
+    if (UnitVisualEffectComponent)
+    {
+        UnitVisualEffectComponent->ResetVisualEffectState();
+    }
 }
 
 void AUnitCharacter::PossessedBy(AController* NewController)
@@ -136,6 +183,7 @@ void AUnitCharacter::InitUnitStartUpData()
 
                         SubBTAssetKey = StartUpData->BranchData->SubBTAsset;
 
+<<<<<<< Updated upstream
 <<<<<<< HEAD
                         AttackMarginKey = AttackRangeKey * 0.7f;
 <<<<<<< Updated upstream
@@ -143,11 +191,17 @@ void AUnitCharacter::InitUnitStartUpData()
 =======
                         AttackMarginKey = AttackRangeKey * 0.85f;
 >>>>>>> e72f839c (UnitData,PGSaveGame,PGGameInstance 도감 관련 코드 수정 및 추가/PGUnitCollectionSubsystem  구성)
+=======
+                        AttackMarginKey = AttackRangeKey * 0.85f;
+>>>>>>> Stashed changes
 
                         if (StartUpData->BranchData->BranchTag.IsValid())
                         {
                             BranchTag = StartUpData->BranchData->BranchTag;
                         }
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
                     }
                     UE_LOG(LogTemp, Log, TEXT("InitUnitStartUpData"));
@@ -159,7 +213,26 @@ void AUnitCharacter::InitUnitStartUpData()
                     {
                         UE_LOG(LogTemp, Error, TEXT("[%s] AttributeSet이 없습니다! 블루프린트를 확인하세요."), *GetName());
                     }
+<<<<<<< Updated upstream
                     TeamTag = StartUpData->TeamTag;
+=======
+
+                    if (StartUpData->TeamTag.IsValid())
+                    {
+                        TeamTag = StartUpData->TeamTag;
+                    }
+>>>>>>> Stashed changes
+
+                    if (StartUpData->ElementTag.IsValid())
+                    {
+                        ElementTag = StartUpData->ElementTag;
+                    }
+
+
+                    if (StartUpData->DeadMontage)
+                    {
+                        UnitDeadMontage = StartUpData->DeadMontage;
+                    }
 
                     //유닛 서브시스템을 이용한 태그별 팀 설정
                     if (UUnitSubsystem* Subsystem = GetWorld()->GetSubsystem<UUnitSubsystem>())
@@ -215,7 +288,21 @@ void AUnitCharacter::OnDie()
 {
     if (UUnitSpawnSubsystem* SpawnSubsystem = GetWorld()->GetSubsystem<UUnitSpawnSubsystem>())
     {
-        SpawnSubsystem->OnUnitDied(this);
+        UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+        if (AnimInstance && UnitDeadMontage)
+        {
+            float Duration = AnimInstance->Montage_Play(UnitDeadMontage)-0.2f;
+
+            FTimerHandle TimerHandle;
+            GetWorldTimerManager().SetTimer(TimerHandle, [SpawnSubsystem, this]()
+                {
+                    SpawnSubsystem->OnUnitDied(this);
+                }, Duration, false);
+        }
+        else
+        {
+            SpawnSubsystem->OnUnitDied(this);
+        }
     }
     else
     {

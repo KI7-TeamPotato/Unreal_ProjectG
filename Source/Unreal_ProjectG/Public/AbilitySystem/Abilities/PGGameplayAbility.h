@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Abilities/GameplayAbility.h"
 #include "Types/PGEnumTypes.h"
+#include "Types/AbilityConfig.h"
 #include "PGGameplayAbility.generated.h"
 
 class UPGAbilitySystemComponent;
@@ -29,9 +30,13 @@ protected:
     virtual void OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) override;
     virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 
+<<<<<<< Updated upstream
     UFUNCTION(BlueprintPure, Category = "PGGameplayAbility")
     UPawnCombatComponent* GetPawnCombatComponent() const;
 
+=======
+    // ActorInfo에서 PGAbilitySystemComponent을 가져오는 헬퍼 함수
+>>>>>>> Stashed changes
     UFUNCTION(BlueprintPure, Category = "PGGameplayAbility")
     UPGAbilitySystemComponent* GetPGAbilitySystemComponentFromActorInfo() const;
 
@@ -44,11 +49,15 @@ protected:
     // 타깃 액터에게 게임플레이 이펙트를 제거하는 네이티브 함수
     void NativeRemoveActiveGameplayEffectFromTarget(AActor* TargetActor, const FActiveGameplayEffectHandle& EffectHandle);
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
 
 <<<<<<< HEAD
 >>>>>>> Stashed changes
 =======
+=======
+
+>>>>>>> Stashed changes
     // Duration 기반의 버프 스펙핸들 생성(수치형 버프에 사용)
     UFUNCTION(BlueprintPure)
     FGameplayEffectSpecHandle MakeDurationBuffEffectSpecHandle(TSubclassOf<UGameplayEffect> EffectClass, float SkillMultiplier, float BaseBuffAmount, float Duration);
@@ -57,7 +66,10 @@ protected:
     UFUNCTION(BlueprintPure)
     FGameplayEffectSpecHandle MakeDurationStatusEffectSpecHandle(TSubclassOf<UGameplayEffect> EffectClass, float Duration);
 
+<<<<<<< Updated upstream
 >>>>>>> e72f839c (UnitData,PGSaveGame,PGGameInstance 도감 관련 코드 수정 및 추가/PGUnitCollectionSubsystem  구성)
+=======
+>>>>>>> Stashed changes
 protected:
     UPROPERTY(EditDefaultsOnly, Category = "PGGameplayAbility")
     EPGAbilityActivationPolicy AbilityActivationPolicy = EPGAbilityActivationPolicy::OnTriggered;

@@ -5,11 +5,11 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "AbilitySystemInterface.h"
-#include "Interfaces/PawnCombatInterface.h"
 #include "GameplayTagContainer.h"
 #include "Types/PGEnumTypes.h"
 #include "GameplayTagAssetInterface.h"
 #include "PGCharacterBase.generated.h"
+
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCharacterDiedDelegate, ABaseCharacter*, DeadCharacter);
 
 class UPGCharacterAttributeSet;
@@ -18,7 +18,7 @@ class UDataAsset_StartupDataBase;
 
 
 UCLASS()
-class UNREAL_PROJECTG_API APGCharacterBase : public ACharacter, public IAbilitySystemInterface, public IPawnCombatInterface, public IGameplayTagAssetInterface
+class UNREAL_PROJECTG_API APGCharacterBase : public ACharacter, public IAbilitySystemInterface, public IGameplayTagAssetInterface
 {
 	GENERATED_BODY()
 
@@ -28,9 +28,12 @@ public:
     // 어빌리티 시스템 인터페이스 구현
     virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
+<<<<<<< Updated upstream
     // 컴뱂 인터페이스 구현
     virtual UPawnCombatComponent* GetPawnCombatComponent() const override;
 
+=======
+>>>>>>> Stashed changes
     // 게임 태그 에셋 인터페이스 구현
     virtual void GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const override;
     
@@ -38,7 +41,16 @@ public:
 
     FORCEINLINE UPGAbilitySystemComponent* GetPGAbilitySystemComponent() const { return PGAbilitySystemComponent; }
     FORCEINLINE UPGCharacterAttributeSet* GetPGCharacterAttributeSet() const { return CharacterAttributeSet; }
+<<<<<<< Updated upstream
     FORCEINLINE FGameplayTag GetTeamTag() { return TeamTag; }
+=======
+
+    UFUNCTION(BlueprintCallable)
+    FORCEINLINE FGameplayTag GetBranchTag(){ return BranchTag; }
+
+    UFUNCTION(BlueprintCallable)
+    FORCEINLINE FGameplayTag GetElementTag() { return ElementTag; }
+>>>>>>> Stashed changes
 protected:
     virtual void PossessedBy(AController* NewController) override;
 
@@ -57,4 +69,13 @@ protected:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
     FGameplayTag TeamTag;
+<<<<<<< Updated upstream
+=======
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
+    FGameplayTag BranchTag;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
+    FGameplayTag ElementTag;
+>>>>>>> Stashed changes
 };

@@ -5,14 +5,30 @@
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
 #include "Kismet/GameplayStatics.h"
+<<<<<<< Updated upstream
+=======
+#include "Mode/PGBaseGameMode.h"
+#include "Character/Hero/HeroCharacter.h"
+>>>>>>> Stashed changes
 
 void UBattleUIWidget::NativeConstruct()
 {
     Super::NativeConstruct();
 
+<<<<<<< Updated upstream
     if (PlaySpeedButton && AutoButton)
     {
         PlaySpeedButton->OnClicked.AddDynamic(this, &UBattleUIWidget::OnSpeedButtonClicked);
+=======
+    PGGameMode = Cast<APGBaseGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+
+    if (PlaySpeedButton)
+    {
+        PlaySpeedButton->OnClicked.AddDynamic(this, &UBattleUIWidget::OnSpeedButtonClicked);
+    }
+    if (AutoButton)
+    {
+>>>>>>> Stashed changes
         AutoButton->OnClicked.AddDynamic(this, &UBattleUIWidget::OnAutoButtonClicked);
     }
 
@@ -61,6 +77,7 @@ void UBattleUIWidget::OnSpeedButtonClicked()
 
 void UBattleUIWidget::OnAutoButtonClicked()
 {
+<<<<<<< Updated upstream
     bIsAuto = !bIsAuto;
     if (bIsAuto)
     {
@@ -71,3 +88,36 @@ void UBattleUIWidget::OnAutoButtonClicked()
         PlayAnimation(ControlPanelMoveAnim, 0.0f, 1, EUMGSequencePlayMode::Reverse);
     }
 }
+=======
+    PlayAnimation(ControlPanelSlide, 0.0f, 1);
+    if (ResultData.bIsVictory)
+    {
+        ResultVictory->ShowResult(ResultData);
+        ResultVictory->SetVisibility(ESlateVisibility::Visible);
+        PlayAnimation(ResultVictoryScale);
+    }
+    else
+    {
+        ResultFail->SetVisibility(ESlateVisibility::Visible);
+        PlayAnimation(ResultFailScale);
+    }
+}
+
+void UBattleUIWidget::OnAutoButtonClicked()
+{
+    AHeroCharacter* Hero = Cast<AHeroCharacter>(GetOwningPlayerPawn());
+    bIsAuto = !bIsAuto;
+    if (bIsAuto)
+    {
+        Hero->ChangeCombatMode(EHeroCombatMode::Auto);
+        PlayAnimation(ControlPanelSlide, 0.0f, 1);
+        AutoActiveEffect->SetVisibility(ESlateVisibility::HitTestInvisible);
+    }
+    else
+    {
+        Hero->ChangeCombatMode(EHeroCombatMode::Manual);
+        PlayAnimation(ControlPanelSlide, 0.0f, 1, EUMGSequencePlayMode::Reverse);
+        AutoActiveEffect->SetVisibility(ESlateVisibility::Hidden);
+    }
+}
+>>>>>>> Stashed changes

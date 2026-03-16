@@ -7,6 +7,7 @@
 #include "DataAsset_AccessoryData.generated.h"
 
 class UPGGameplayAbility;
+class UDataAsset_SkillData;
 /**
  * 
  */
@@ -16,8 +17,18 @@ class UNREAL_PROJECTG_API UDataAsset_AccessoryData : public UPrimaryDataAsset
 	GENERATED_BODY()
 
 public:
+<<<<<<< Updated upstream
     FORCEINLINE const TSubclassOf<UPGGameplayAbility>& GetGrantedAbility() const { return AbilityToGrant; }
 protected:
+=======
+    //FORCEINLINE const TSubclassOf<UPGGameplayAbility>& GetGrantedAbility() const { return AbilityToGrant; }
+
+public:
+    // 세트 구분을 위한 태그
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (Categories = "Set"))
+    FGameplayTag SetTag;
+
+>>>>>>> Stashed changes
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability")
-    TSubclassOf<UPGGameplayAbility> AbilityToGrant;
+    TSoftObjectPtr<UDataAsset_SkillData> AccessoryAbilityData;
 };

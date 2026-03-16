@@ -4,7 +4,6 @@
 #include "AbilitySystem/Abilities/Player/HeroAbility_BaseMeleeAttack.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
-#include "Components/Combat/HeroCombatComponent.h"
 #include "PGGameplayTags.h"
 #include "GameplayCueFunctionLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -12,6 +11,7 @@
 #include "TimerManager.h"
 #include "Abilities/Tasks/AbilityTask_WaitDelay.h"
 #include "PGFunctionLibrary.h"
+<<<<<<< Updated upstream
 #include "DataAssets/Ability/AbilityConfig.h"
 
 UHeroAbility_BaseMeleeAttack::UHeroAbility_BaseMeleeAttack()
@@ -19,21 +19,39 @@ UHeroAbility_BaseMeleeAttack::UHeroAbility_BaseMeleeAttack()
     // 기본 설정
     InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
 }
+=======
+#include "AbilitySystemBlueprintLibrary.h"
+#include "DataAssets/Ability/DataAsset_SkillData.h"
+#include "Character/Hero/HeroCharacter.h"
+>>>>>>> Stashed changes
 
 void UHeroAbility_BaseMeleeAttack::OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec)
 {
     Super::OnGiveAbility(ActorInfo, Spec);
 
-    UMeleeAttackAbilityConfig* Data = Cast<UMeleeAttackAbilityConfig>(GetCurrentAbilitySpec()->SourceObject.Get());
-    if (Data)
+    UDataAsset_SkillData* DataAsset = Cast<UDataAsset_SkillData>(GetCurrentAbilitySpec()->SourceObject.Get());
+    if (DataAsset)
     {
-        MeleeAttackMontage = Data->AbilityMontage;
-        MeleeAttackSkillMultiplier = Data->DamageMultiplier;
+        const FAbilityEntry& SelectedAbilityEntry = DataAsset->GetGivenAbilityEntryForASC(GetAbilitySystemComponentFromActorInfo());
+        const FHeroMeleeAttackAbilityConfig* Config = SelectedAbilityEntry.AbilityConfig.GetPtr<FHeroMeleeAttackAbilityConfig>();
+        if (Config)
+        {
+            MeleeAttackConfig = *Config;
+        }
     }
 }
 
 void UHeroAbility_BaseMeleeAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
+    //==============================================
+    // FHeroMeleeAttackAbilityConfig의 SoftPtr 로드
+    //MeleeAttackConfig.DamageEffectClass.LoadSynchronous();
+    for (TSoftObjectPtr<UAnimMontage>& Montage : MeleeAttackConfig.MeleeAttackMontages)
+    {
+        Montage.LoadSynchronous();
+    }
+    //==============================================
+
     if (!CommitAbility(Handle, ActorInfo, ActivationInfo))
     {
         EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
@@ -42,10 +60,13 @@ void UHeroAbility_BaseMeleeAttack::ActivateAbility(const FGameplayAbilitySpecHan
 
     if (CachedWeaponStaticMesh == nullptr)
     {
-        CachedWeaponStaticMesh = GetHeroCombatComponentFromActorInfo()->CachedWeaponMeshComponent.Get();
+        CachedWeaponStaticMesh = GetHeroCharacterFromActorInfo()->GetWeaponStaticMesh();
     }
 
-    checkf(MeleeAttackMontage, TEXT("MeleeAttackMontage가 비어있습니다!"));
+    checkf(MeleeAttackConfig.MeleeAttackMontages.Num() > 0, TEXT("MeleeAttackMontages 배열이 비어있습니다!"));
+
+    // 램덤하게 하나의 몽타주 선택
+    UAnimMontage* MeleeAttackMontage = MeleeAttackConfig.MeleeAttackMontages[FMath::RandRange(0, MeleeAttackConfig.MeleeAttackMontages.Num() - 1)].Get();
 
     // 애니메이션 몽타주 재생
     UAbilityTask_PlayMontageAndWait* MeleeMontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, NAME_None, MeleeAttackMontage);
@@ -115,12 +136,12 @@ void UHeroAbility_BaseMeleeAttack::PerformWeaponTrace()
     ETraceTypeQuery TraceChannel = UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel1); //DefaultEngine.ini에서 선언된 AttackTrace 채널
     TArray<FHitResult> OutHits;
 
-    UKismetSystemLibrary::SphereTraceMulti(
+    UKismetSystemLibrary::SphereTraceMultiForObjects(
         this,
         StartLocation,
         EndLocation,
-        WeaponTraceSphereRadius,
-        TraceChannel,
+        MeleeAttackConfig.WeaponTraceRadius,
+        TArray<TEnumAsByte<EObjectTypeQuery>>{ EObjectTypeQuery::ObjectTypeQuery3 /* Pawn */ },
         false,
         TArray<AActor*>(),
         bEnableTraceDebug ? EDrawDebugTrace::ForDuration : EDrawDebugTrace::None,
@@ -128,7 +149,6 @@ void UHeroAbility_BaseMeleeAttack::PerformWeaponTrace()
         true,
         FLinearColor::Red, FLinearColor::Green, TraceDebugDuration
     );
-
 
     if (OutHits.Num() <= 0)
         return;
@@ -152,12 +172,9 @@ void UHeroAbility_BaseMeleeAttack::PerformWeaponTrace()
 void UHeroAbility_BaseMeleeAttack::HandleApplyDamage(AActor* InTargetActor)
 {   
     //// 이미 히트된 액터는 무시
-    if (HitActors.Contains(InTargetActor))
-    {
-        return;
-    }
-    
-    if(CurrentHitTargets >= MaxHitTargets)
+    if (HitActors.Contains(InTargetActor)) return;
+
+    if(CurrentHitTargets >= MeleeAttackConfig.MaxHitTargets)
     {
         // 최대 타겟 수에 도달했으므로 트레이스 타이머 종료
         GetWorld()->GetTimerManager().ClearTimer(WeaponTraceTimerHandle);
@@ -171,8 +188,8 @@ void UHeroAbility_BaseMeleeAttack::HandleApplyDamage(AActor* InTargetActor)
     //UGameplayCueFunctionLibrary::ExecuteGameplayCueOnActor(GetAvatarActorFromActorInfo(), MeleeAttackCueTag, FGameplayCueParameters());
 
     //// TODO : 스킬의 데미지 Multiflier를 변수화
-    float SkillMultiplierValue = MeleeAttackSkillMultiplier.GetValueAtLevel(GetAbilityLevel());
-    FGameplayEffectSpecHandle EffectSpecHandle = MakeHeroDamageEffectSpecHandle(MeleeAttackDamageEffectClass, SkillMultiplierValue);
+    float SkillMultiplierValue = MeleeAttackConfig.SkillMultiplier.GetValueAtLevel(GetAbilityLevel());
+    FGameplayEffectSpecHandle EffectSpecHandle = MakeHeroDamageEffectSpecHandle(MeleeAttackConfig.DamageEffectClass.Get(), SkillMultiplierValue);
     
     NativeApplyEffectSpecHandleToTarget(InTargetActor, EffectSpecHandle);
     CurrentHitTargets++;

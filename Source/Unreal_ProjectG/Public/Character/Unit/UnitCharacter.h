@@ -5,11 +5,14 @@
 #include "CoreMinimal.h"
 #include "Character/PGCharacterBase.h"
 #include "NativeGameplayTags.h"
+#include "Interfaces/VisualEffectTargetInterface.h"
 #include "UnitCharacter.generated.h"
 
 class UBehaviorTree;
 class UUnitData;
 class UUnitCombatComponent;
+class UAnimMontage;
+class UCharacterVisualEffectComponent;
 
 /*데이터 동기화가 끝났을때 호출하는 델리게이트,
 * 데이터 적용이 너무 빨라가지고 onpoesses랑 beginplay 시점에 데이터가 안들어가서 델리게이트로 해결함
@@ -20,7 +23,7 @@ DECLARE_MULTICAST_DELEGATE(FOnUnitStartUpDataLoaded);
  * 
  */
 UCLASS()
-class UNREAL_PROJECTG_API AUnitCharacter : public APGCharacterBase
+class UNREAL_PROJECTG_API AUnitCharacter : public APGCharacterBase, public IVisualEffectTargetInterface
 {
 	GENERATED_BODY()
 	
@@ -30,8 +33,11 @@ public:
     virtual void BeginPlay() override;
     virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
     virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-    // 컴뱂 인터페이스 구현
-    virtual UPawnCombatComponent* GetPawnCombatComponent() const override;
+
+    // IVisualEffectTargetInterface 구현
+    virtual void SetAOEHighlightEnabled_Implementation(bool bEnabled) override;
+    virtual void SetHitReactEnabled_Implementation(bool bEnabled) override;
+    virtual void ResetVisualEffectState_Implementation() override;
 
     FOnUnitStartUpDataLoaded OnUnitStartUpDataLoadedDelegate;
 
@@ -43,7 +49,12 @@ public:
     float GetAttackMarginKey() { return AttackMarginKey; }
     UBehaviorTree* GetSubBTAssetKey() { return SubBTAssetKey; }
 
+<<<<<<< Updated upstream
     FORCEINLINE UUnitCombatComponent* GetUnitCombatComponent() const { return UnitCombatComponent; }
+=======
+    UFUNCTION(BlueprintCallable)
+    FORCEINLINE TSoftObjectPtr<UDataAsset_StartupDataBase> GetUnitStartupData() const { return CharacterStartupData; }
+>>>>>>> Stashed changes
 public:
     //공격 대상 정하는 함수
     UFUNCTION(BlueprintCallable, Category = "RVO")
@@ -62,6 +73,7 @@ public:
         CharacterStartupData = InData.ToSoftObjectPath();
     }
 
+    FORCEINLINE UCharacterVisualEffectComponent* GetUnitVisualEffectComponent() const { return UnitVisualEffectComponent; }
 protected:
     //
     virtual void PossessedBy(AController* NewController) override;
@@ -76,16 +88,23 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI Movement")
     TObjectPtr<AActor> TargetActor = nullptr;
             
+<<<<<<< Updated upstream
+=======
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat")
+    TObjectPtr<class UStaticMeshComponent> WeaponMesh;
+>>>>>>> Stashed changes
 
 protected:
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
-    TObjectPtr<UUnitCombatComponent> UnitCombatComponent;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+    TObjectPtr<UCharacterVisualEffectComponent> UnitVisualEffectComponent;
 
 private:
     // AI 컨트롤러 캐싱
     class AAIController* AIController = nullptr;
 
-    class UAnimMontage* UnitAttackMontage = nullptr;
+    UAnimMontage* UnitAttackMontage = nullptr;
+
+    UAnimMontage* UnitDeadMontage = nullptr;
 
     float DetectRangeKey = 0.0f;
 

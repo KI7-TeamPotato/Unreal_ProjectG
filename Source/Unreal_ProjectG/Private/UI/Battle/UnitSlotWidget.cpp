@@ -31,6 +31,7 @@ void UUnitSlotWidget::InitializeSlot(UUnitUIDataAsset* InDataAsset)
     // 버튼 이미지 설정
     FButtonStyle NewStyle = UnitButton->GetStyle();
 
+<<<<<<< Updated upstream
     if (UnitData->UnitButtonNormalImage)
     {
         NewStyle.Normal.SetResourceObject(UnitData->UnitButtonNormalImage);
@@ -44,6 +45,14 @@ void UUnitSlotWidget::InitializeSlot(UUnitUIDataAsset* InDataAsset)
         NewStyle.Disabled.SetResourceObject(UnitData->UnitButtonUnableImage);
 
     UnitButton->SetStyle(NewStyle);
+=======
+void UUnitSlotWidget::UpdateSlot(float InCost)
+{
+    if (UnitData)
+    {
+        UnitButton->SetIsEnabled(InCost >= UnitData->UnitCost);
+    }
+>>>>>>> Stashed changes
 }
 
 void UUnitSlotWidget::NativeConstruct()

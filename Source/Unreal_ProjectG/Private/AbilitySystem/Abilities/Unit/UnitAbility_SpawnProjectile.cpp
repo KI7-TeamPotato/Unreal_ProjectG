@@ -6,9 +6,45 @@
 #include "PGGameplayTags.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
+<<<<<<< Updated upstream
 
 void UUnitAbility_SpawnProjectile::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
+=======
+#include "DataAssets/Ability/DataAsset_SkillData.h"
+
+void UUnitAbility_SpawnProjectile::OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec)
+{
+    Super::OnGiveAbility(ActorInfo, Spec);
+
+    UDataAsset_SkillData* DataAsset = Cast<UDataAsset_SkillData>(GetCurrentAbilitySpec()->SourceObject.Get());
+    if (DataAsset)
+    {
+        const FUnitSpawnProjectileAbilityConfig* Config = DataAsset->AbilityEntry.AbilityConfig.GetPtr<FUnitSpawnProjectileAbilityConfig>();
+        if (Config)
+        {
+            UnitSpawnProjectileConfig = *Config;
+        }
+    }
+}
+
+void UUnitAbility_SpawnProjectile::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
+{
+    //==============================================
+// FUnitSpawnProjectileAbilityConfig의 SoftPtr 로드
+    UnitSpawnProjectileConfig.SpawnedProjectileClass.LoadSynchronous();
+    for (TSoftObjectPtr<UAnimMontage>& Montage : UnitSpawnProjectileConfig.SpawnProjectileMontages)
+    {
+        Montage.LoadSynchronous();
+    }
+    //==============================================
+
+    checkf(UnitSpawnProjectileConfig.SpawnProjectileMontages.Num() > 0, TEXT("ProjectileAttackMontage가 비어있습니다!"));
+
+    // 램덤하게 하나의 몽타주 선택
+    UAnimMontage* ProjectileAttackMontage = UnitSpawnProjectileConfig.SpawnProjectileMontages[FMath::RandRange(0, UnitSpawnProjectileConfig.SpawnProjectileMontages.Num() - 1)].Get();
+
+>>>>>>> Stashed changes
     // 애니메이션 몽타주 재생
     UAnimMontage* SelectedMontage = ProjectileAttackMontages[FMath::RandRange(0, ProjectileAttackMontages.Num() - 1)];
     UAbilityTask_PlayMontageAndWait* ProjectileMontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, NAME_None, SelectedMontage);
@@ -42,13 +78,13 @@ void UUnitAbility_SpawnProjectile::SpawnProjectile(FGameplayEventData InEventDat
     FVector SpawnLocation = GetAvatarActorFromActorInfo()->GetActorLocation();
     FRotator SpawnRotation = GetAvatarActorFromActorInfo()->GetActorForwardVector().Rotation();
 
-    APGProjectileBase* SpawnedProjectile = GetWorld()->SpawnActorDeferred<APGProjectileBase>(SpawnedProjectileClass, FTransform(SpawnRotation, SpawnLocation),
+    APGProjectileBase* SpawnedProjectile = GetWorld()->SpawnActorDeferred<APGProjectileBase>(UnitSpawnProjectileConfig.SpawnedProjectileClass.Get(), FTransform(SpawnRotation, SpawnLocation),
         GetAvatarActorFromActorInfo(), Cast<APawn>(GetAvatarActorFromActorInfo()), ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 
     if (SpawnedProjectile)
     {
-        float ProjectileMultiplierValue = ProjectileAttackSkillMultiplier.GetValueAtLevel(GetAbilityLevel());
-        FGameplayEffectSpecHandle ProjectileDamageEffectSpecHandle = MakeOutgoingGameplayEffectSpec(ProjectileAttackDamageEffectClass, ProjectileMultiplierValue);
+        float ProjectileMultiplierValue = UnitSpawnProjectileConfig.SkillMultiplier.GetValueAtLevel(GetAbilityLevel());
+        FGameplayEffectSpecHandle ProjectileDamageEffectSpecHandle = MakeOutgoingGameplayEffectSpec(UnitSpawnProjectileConfig.DamageEffectClass.Get(), ProjectileMultiplierValue);
         SpawnedProjectile->SetProjectileDamageEffectSpecHandle(ProjectileDamageEffectSpecHandle);
 
         SpawnedProjectile->FinishSpawning(FTransform(SpawnRotation, SpawnLocation));

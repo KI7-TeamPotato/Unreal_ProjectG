@@ -47,7 +47,10 @@ enum class EUnitState : uint8
     Dead        UMETA(DisplayName = "Dead")
 };
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+>>>>>>> Stashed changes
 
 // UI에서 장비 구분용 열거형
 UENUM()
@@ -66,9 +69,12 @@ enum class EHeroCombatMode : uint8
     Manual UMETA(DisplayName = "Manual"),
     Auto UMETA(DisplayName = "Auto"),
 };
+<<<<<<< Updated upstream
 <<<<<<< HEAD
 >>>>>>> Stashed changes
 =======
+=======
+>>>>>>> Stashed changes
 
 // AOE 공격의 실행 방식에 대한 열거형, 즉 즉시 효과인지 장판 형태로 남는 효과인지
 UENUM(BlueprintType)
@@ -85,5 +91,9 @@ enum class EAOETargetPolicy : uint8
     HostileOnly,
     FriendlyOnly,
     AllExceptSelf,
+<<<<<<< Updated upstream
 };
 >>>>>>> e72f839c (UnitData,PGSaveGame,PGGameInstance 도감 관련 코드 수정 및 추가/PGUnitCollectionSubsystem  구성)
+=======
+};
+>>>>>>> Stashed changes

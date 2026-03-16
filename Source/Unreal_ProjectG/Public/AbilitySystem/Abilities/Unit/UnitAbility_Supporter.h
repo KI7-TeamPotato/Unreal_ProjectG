@@ -6,6 +6,7 @@
 #include "AbilitySystem/Abilities/PGUnitGameplayAbility.h"
 #include "UnitAbility_Supporter.generated.h"
 
+<<<<<<< Updated upstream
 <<<<<<< HEAD
 UCLASS()
 class UNREAL_PROJECTG_API UUnitAbility_Supporter : public UPGUnitGameplayAbility
@@ -13,6 +14,8 @@ class UNREAL_PROJECTG_API UUnitAbility_Supporter : public UPGUnitGameplayAbility
     GENERATED_BODY()
 
 =======
+=======
+>>>>>>> Stashed changes
 /**
  * 
  */
@@ -20,7 +23,10 @@ UCLASS()
 class UNREAL_PROJECTG_API UUnitAbility_Supporter : public UPGUnitGameplayAbility
 {
 	GENERATED_BODY()
+<<<<<<< Updated upstream
 >>>>>>> e72f839c (UnitData,PGSaveGame,PGGameInstance 도감 관련 코드 수정 및 추가/PGUnitCollectionSubsystem  구성)
+=======
+>>>>>>> Stashed changes
 public:
     UUnitAbility_Supporter();
 
@@ -38,6 +44,7 @@ protected:
     void OnMontageFinished();
 
 protected:
+<<<<<<< Updated upstream
 <<<<<<< HEAD
     // 장판 반경 내 아군에게 부여할 힐/버프 이펙트 (GE)
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability|Support")
@@ -64,8 +71,13 @@ protected:
     bool bAttachToUnit = false;
 };
 =======
+=======
+>>>>>>> Stashed changes
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ability|Support")
 
     FUnitBuffAuraAbilityConfig UnitBuffConfig;
 };
+<<<<<<< Updated upstream
 >>>>>>> e72f839c (UnitData,PGSaveGame,PGGameInstance 도감 관련 코드 수정 및 추가/PGUnitCollectionSubsystem  구성)
+=======
+>>>>>>> Stashed changes
