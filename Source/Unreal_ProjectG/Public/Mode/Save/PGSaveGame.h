@@ -7,30 +7,31 @@
 #include "PGSaveGame.generated.h"
 
 /**
- * 
+ * 게임의 로컬 세이브 데이터를 담당하는 클래스
  */
 UCLASS()
 class UNREAL_PROJECTG_API UPGSaveGame : public USaveGame
 {
-	GENERATED_BODY()
-	
+    GENERATED_BODY()
+
 public:
     UPGSaveGame();
 
     UPROPERTY(VisibleAnywhere, Category = "Basic")
     FString PlayerName;
 
-    //재화 관련
+    // --- [재화 관련] ---
     UPROPERTY(VisibleAnywhere, Category = "Basic")
     int32 PlayerGold;
 
     UPROPERTY(VisibleAnywhere, Category = "Basic")
     int32 PlayerGem;
 
+    // [추가됨] 가챠 중복 획득 시 얻는 조각 재화
     UPROPERTY(VisibleAnywhere, Category = "Basic")
     int32 PlayerUnlock;
 
-    // 장착 중인 무기 데이터 에셋의 경로 (SoftObjectPath)
+    // --- [장착 데이터] ---
     UPROPERTY(VisibleAnywhere, Category = "Equipment")
     FSoftObjectPath EquippedWeaponPath;
 
@@ -43,24 +44,9 @@ public:
     // 장착 중인 유닛(최대 5개) 데이터 에셋의 경로들
     UPROPERTY(VisibleAnywhere, Category = "Equipment")
     TArray<FSoftObjectPath> EquippedUnitPaths;
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
-
-<<<<<<< HEAD
-    UPROPERTY()
-    TMap<int32, FUnitSaveData> UnitLevelMap;
->>>>>>> Stashed changes
-=======
-    //[추가: 도감 데이터] 
-    UPROPERTY(VisibleAnywhere, Category = "Collection")
-    TArray<FSoftObjectPath> OwnedUnitPaths; // 획득하여 보유 중인 모든 유닛 목록
->>>>>>> e72f839c (UnitData,PGSaveGame,PGGameInstance 도감 관련 코드 수정 및 추가/PGUnitCollectionSubsystem  구성)
-=======
 
     // --- [도감 데이터] ---
     // [추가] 해금(보유)한 모든 유닛 목록
     UPROPERTY(VisibleAnywhere, Category = "Collection")
     TArray<FSoftObjectPath> OwnedUnitPaths;
->>>>>>> Stashed changes
 };

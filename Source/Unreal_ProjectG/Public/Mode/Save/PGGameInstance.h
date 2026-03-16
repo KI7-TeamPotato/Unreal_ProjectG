@@ -15,8 +15,8 @@ class AHeroCharacter;
 UCLASS()
 class UNREAL_PROJECTG_API UPGGameInstance : public UGameInstance
 {
-	GENERATED_BODY()
-	
+    GENERATED_BODY()
+
 public:
     virtual void Init() override;
 
@@ -41,8 +41,6 @@ public:
     UPROPERTY(BlueprintReadWrite, Category = "Equipment")
     TArray<TSoftObjectPtr<UUnitUIDataAsset>> CurrentUnits;
 
-<<<<<<< Updated upstream
-=======
     UPROPERTY(BlueprintReadWrite, Category = "Equipment")
     FGameplayTag CurrentSetTag = FGameplayTag::EmptyTag;
 
@@ -50,7 +48,6 @@ public:
     UPROPERTY(BlueprintReadWrite, Category = "Stage")
     int32 SelectedStageNum = 1;
 
->>>>>>> Stashed changes
     //소지 재화
     UPROPERTY(BlueprintReadWrite, Category = "Player Info")
     int32 CurrentPlayerGold;
@@ -61,23 +58,9 @@ public:
     UPROPERTY(BlueprintReadWrite, Category = "Player Info")
     int32 CurrentPlayerUnlock;
 
-<<<<<<< Updated upstream
-=======
     //스테이지
     UPROPERTY(BlueprintReadWrite, Category = "Player Info")
     int32 CurrentStageIndex = 0;
-<<<<<<< HEAD
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SaveData")
-    TMap<int32, FUnitSaveData> UnitLevelMap;
-
-protected:
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data")
-    TObjectPtr<UDataTable> UnitDataTable;
-
->>>>>>> Stashed changes
-=======
->>>>>>> e72f839c (UnitData,PGSaveGame,PGGameInstance 도감 관련 코드 수정 및 추가/PGUnitCollectionSubsystem  구성)
 private:
     UPROPERTY()
     TObjectPtr<UPGSaveGame> CachedSaveData;

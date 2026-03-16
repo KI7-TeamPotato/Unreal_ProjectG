@@ -8,39 +8,33 @@
 #include "UnitUIDataAsset.generated.h"
 
 /**
- * 
+ *
  */
-<<<<<<< Updated upstream
-UCLASS()
-class UNREAL_PROJECTG_API UUnitUIDataAsset : public UDataAsset
-=======
-UCLASS(BlueprintType)
-class UNREAL_PROJECTG_API UUnitUIDataAsset : public UPrimaryDataAsset
->>>>>>> Stashed changes
+    UCLASS(BlueprintType)
+    class UNREAL_PROJECTG_API UUnitUIDataAsset : public UPrimaryDataAsset
 {
-	GENERATED_BODY()
-	
+    GENERATED_BODY()
+
 public:
     // 유닛 캐릭터 블루프린트
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Unit")
     TSubclassOf<AUnitCharacter> UnitClass;
 
-    // 유닛 버튼 일반 이미지
+    // 유닛 버튼 이미지
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Unit")
-    TObjectPtr<UTexture2D> UnitButtonNormalImage;
+    TObjectPtr<UTexture2D> UnitImage;
 
-    // 유닛 버튼 눌림 이미지
+    // 유닛 이름
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Unit")
-    TObjectPtr<UTexture2D> UnitButtonPressedImage;
+    FName UnitName;
 
-    // 유닛 버튼 비활성화 이미지
+    // 유닛 스테이터스 식별용 이름
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Unit")
-    TObjectPtr<UTexture2D> UnitButtonUnableImage;
+    FString UnitStatus;
 
     // 유닛 코스트
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Unit")
     int32 UnitCost;
-
   // ==========================================================
   // --- [가챠/도감 시스템을 위해 추가된 정보들] ---
   // ==========================================================
