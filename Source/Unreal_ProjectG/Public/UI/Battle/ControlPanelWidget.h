@@ -10,6 +10,7 @@
 class UImage;
 class UBarWidget;
 class UBaseHpWidget;
+class UUnitPanelWidget;
 class UActiveSkillWidget;
 class AHeroCharacter;
 class UStorageEquipmentsComponent;
@@ -44,13 +45,6 @@ public:
     UFUNCTION()
     void UpdateBaseMaxHP(FGameplayTag TeamTag, float InValue);
 
-<<<<<<< Updated upstream
-    // 스킬 테스트용 함수
-    UFUNCTION(BlueprintCallable)
-    void SetAbilitySpecHandle();
-
-=======
->>>>>>> Stashed changes
 protected:
     // 블루프린트 이벤트를 C++에서 오버라이드
     virtual void NativeConstruct() override;
@@ -61,6 +55,12 @@ protected:
     // 마우스 버튼 클릭 해제 시
     virtual FReply NativeOnMouseButtonUp(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 
+private:
+    // 영웅 바인딩 함수
+    void BindHero();
+
+    // 기지 바인딩 함수
+    void BindBase();
 
 protected:
     TObjectPtr<AHeroCharacter> HeroCharacter = nullptr;
@@ -79,6 +79,12 @@ protected:
     UPROPERTY(meta = (BindWidget))
     TObjectPtr<UBarWidget> CostBar;
 
+    UPROPERTY(EditAnywhere, Category = "UI")
+    TObjectPtr<UTexture2D> HPIcon;
+
+    UPROPERTY(EditAnywhere, Category = "UI")
+    TObjectPtr<UTexture2D> CostIcon;
+
     // 기지 체력 바
     UPROPERTY(meta = (BindWidget))
     TObjectPtr<UBaseHpWidget> PlayerHP;
@@ -88,9 +94,6 @@ protected:
 
     // 액티브 스킬
     UPROPERTY(meta = (BindWidget))
-<<<<<<< Updated upstream
-    TObjectPtr<UActiveSkillWidget> WeaponSkill;
-=======
     TObjectPtr<UActiveSkillWidget> WeaponSkill1;
 
     UPROPERTY(meta = (BindWidget))
@@ -98,7 +101,6 @@ protected:
 
     UPROPERTY(meta = (BindWidget))
     TObjectPtr<UUnitPanelWidget> UnitPanel;
->>>>>>> Stashed changes
     
 private:
     // 내부 변수

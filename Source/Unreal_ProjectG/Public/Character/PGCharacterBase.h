@@ -28,29 +28,20 @@ public:
     // 어빌리티 시스템 인터페이스 구현
     virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
-<<<<<<< Updated upstream
-    // 컴뱂 인터페이스 구현
-    virtual UPawnCombatComponent* GetPawnCombatComponent() const override;
-
-=======
->>>>>>> Stashed changes
     // 게임 태그 에셋 인터페이스 구현
     virtual void GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const override;
-    
+
     virtual void OnDie() {};
 
+    FORCEINLINE FGameplayTag GetTeamTag() { return TeamTag; }
     FORCEINLINE UPGAbilitySystemComponent* GetPGAbilitySystemComponent() const { return PGAbilitySystemComponent; }
     FORCEINLINE UPGCharacterAttributeSet* GetPGCharacterAttributeSet() const { return CharacterAttributeSet; }
-<<<<<<< Updated upstream
-    FORCEINLINE FGameplayTag GetTeamTag() { return TeamTag; }
-=======
 
     UFUNCTION(BlueprintCallable)
     FORCEINLINE FGameplayTag GetBranchTag(){ return BranchTag; }
 
     UFUNCTION(BlueprintCallable)
     FORCEINLINE FGameplayTag GetElementTag() { return ElementTag; }
->>>>>>> Stashed changes
 protected:
     virtual void PossessedBy(AController* NewController) override;
 
@@ -61,6 +52,7 @@ protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AbilitySystem")
     TObjectPtr<UPGCharacterAttributeSet> CharacterAttributeSet;
 
+    // 캐릭터 초기화 데이터 에셋
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CharacterData", meta = (AllowPrivateAccess = "true"))
     TSoftObjectPtr<UDataAsset_StartupDataBase> CharacterStartupData;
 
@@ -69,13 +61,16 @@ protected:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
     FGameplayTag TeamTag;
-<<<<<<< Updated upstream
-=======
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
     FGameplayTag BranchTag;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
     FGameplayTag ElementTag;
->>>>>>> Stashed changes
 };
+
+
+
+
+
+

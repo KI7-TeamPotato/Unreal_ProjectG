@@ -28,11 +28,7 @@ protected:
 
 protected:
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ability|Melee Attack")
-<<<<<<< Updated upstream
-    FGameplayTag MeleeAttackCueTag;
-=======
     FUnitBaseMeleeAttackAbilityConfig MeleeAttackConfig;
->>>>>>> Stashed changes
 
 
     // 디버그용 트레이스 시각화 토글 및 지속 시간

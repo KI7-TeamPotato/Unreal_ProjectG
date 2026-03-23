@@ -2,19 +2,6 @@
 
 
 #include "Components/Combat/HeroCombatComponent.h"
-<<<<<<< Updated upstream
-#include "Character/Hero/HeroCharacter.h"
-
-void UHeroCombatComponent::BeginPlay()
-{
-    Super::BeginPlay();
-
-    AHeroCharacter* HeroOwner = Cast<AHeroCharacter>(GetOwner());
-    if (HeroOwner)
-    {
-        CachedWeaponMeshComponent = HeroOwner->GetWeaponStaticMesh();
-    }
-=======
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "TimerManager.h"
@@ -291,5 +278,4 @@ bool UHeroCombatComponent::IsTargetInBasicAttackRange() const
 bool UHeroCombatComponent::CanUseCombatInterface() const
 {
     return OwningCharacter && OwningCharacter->GetClass()->ImplementsInterface(UHeroCombatInterface::StaticClass());
->>>>>>> Stashed changes
 }

@@ -4,13 +4,10 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Abilities/GameplayAbilityTypes.h"
 #include "PGFunctionLibrary.h"
-<<<<<<< Updated upstream
-=======
 #include "PGGameplayTags.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "NiagaraFunctionLibrary.h"
 #include "Kismet/GameplayStatics.h"
->>>>>>> Stashed changes
 
 APGProjectileBase::APGProjectileBase()
 {
@@ -34,7 +31,7 @@ APGProjectileBase::APGProjectileBase()
     ProjectileMovementComponent->Velocity = FVector(1.f, 0.f, 0.f);
     ProjectileMovementComponent->ProjectileGravityScale = 0.f;
 
-    InitialLifeSpan = 4.0f;
+    InitialLifeSpan = ProjectileSpan;
 }
 
 void APGProjectileBase::Tick(float DeltaTime)
@@ -88,11 +85,11 @@ void APGProjectileBase::OnProjectileHit(UPrimitiveComponent* HitComponent, AActo
 void APGProjectileBase::OnProjectileBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
     // 오버랩한 액터가 같은 팀이면 무시
-    if(!UPGFunctionLibrary::IsTargetCharacterIsHostile(GetInstigator(), OtherActor))
+    if(!UPGFunctionLibrary::IsTargetCharacterHostile(GetInstigator(), OtherActor))
     {
         return;
     }
-     //UE_LOG(LogTemp, Log, TEXT("Overlap With %s"), *OtherActor->GetName());
+     UE_LOG(LogTemp, Log, TEXT("Overlap With %s"), *OtherActor->GetName());
 
     APawn* OverlappedPawn = Cast<APawn>(OtherActor);
     if (OverlappedPawn)
@@ -102,6 +99,9 @@ void APGProjectileBase::OnProjectileBeginOverlap(UPrimitiveComponent* Overlapped
         Data.Target = OverlappedPawn;
 
         HandleApplyProjectileDamage(OverlappedPawn, Data);
+
+        // 히트된 액터에게 히트 반응 이벤트 전송
+        UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(OverlappedPawn, PGGameplayTags::Shared_Event_HitReact, FGameplayEventData());
     }
 
     // 이펙트와 사운드가 유효하다면 재생

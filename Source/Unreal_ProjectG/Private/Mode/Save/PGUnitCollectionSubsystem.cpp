@@ -1,14 +1,76 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
 #include "Mode/Save/PGUnitCollectionSubsystem.h"
 #include "DataAssets/UI/UnitUIDataAsset.h"
 #include "Mode/Save/PGGameInstance.h"
-#include "Mode/Save/PGSaveGame.h"
 
-void UPGUnitCollectionSubsystem::Deinitialize()
+
+// -------------------------------------------------------------------
+// [1. 뽑기 (가챠) 굴리기 로직]
+// -------------------------------------------------------------------
+UUnitUIDataAsset* UPGUnitCollectionSubsystem::RollSingleGacha(const TArray<UUnitUIDataAsset*>& GachaPool, float NormalRate, float RareRate, float SuperRareRate)
 {
-    OwnedUnits.Empty();
-    Super::Deinitialize();
+    if (GachaPool.Num() == 0) return nullptr;
+
+    // 1. 0.0 ~ 100.0 사이의 난수 생성
+    float RandomValue = FMath::RandRange(0.0f, 100.0f);
+    EUnitRank SelectedRank = EUnitRank::Normal;
+
+    // 2. 등급 판정 (확률 누적 검사)
+    if (RandomValue <= SuperRareRate)
+    {
+        SelectedRank = EUnitRank::SuperRare;
+    }
+    else if (RandomValue <= (SuperRareRate + RareRate))
+    {
+        SelectedRank = EUnitRank::Rare;
+    }
+    else
+    {
+        SelectedRank = EUnitRank::Normal;
+    }
+
+    // 3. 당첨된 등급에 해당하는 유닛만 'FilteredPool'에 모으기
+    TArray<UUnitUIDataAsset*> FilteredPool;
+    for (UUnitUIDataAsset* Unit : GachaPool)
+    {
+        if (Unit && Unit->UnitRank == SelectedRank) // UnitUIDataAsset에 추가한 UnitRank 기준 필터링
+        {
+            FilteredPool.Add(Unit);
+        }
+    }
+
+    // 4. 필터링된 풀 안에서 무작위 1개 뽑기
+    if (FilteredPool.Num() > 0)
+    {
+        int32 RandomIndex = FMath::RandRange(0, FilteredPool.Num() - 1);
+        return FilteredPool[RandomIndex];
+    }
+    else
+    {
+        // [방어로직] 해당 등급 유닛이 풀에 없을 경우, 전체 풀에서 임의 지급
+        UE_LOG(LogTemp, Warning, TEXT("가챠 풀에 선택된 등급의 유닛이 없습니다! 전체 풀에서 임의 지급합니다."));
+        int32 RandomIndex = FMath::RandRange(0, GachaPool.Num() - 1);
+        return GachaPool[RandomIndex];
+    }
 }
 
+TArray<UUnitUIDataAsset*> UPGUnitCollectionSubsystem::RollMultiGacha(const TArray<UUnitUIDataAsset*>& GachaPool, int32 PullCount, float NormalRate, float RareRate, float SuperRareRate)
+{
+    TArray<UUnitUIDataAsset*> Results;
+    for (int32 i = 0; i < PullCount; ++i)
+    {
+        if (UUnitUIDataAsset* PickedUnit = RollSingleGacha(GachaPool, NormalRate, RareRate, SuperRareRate))
+        {
+            Results.Add(PickedUnit);
+        }
+    }
+    return Results;
+}
+
+// -------------------------------------------------------------------
+// [2. 뽑기 결과 처리 및 GameInstance 데이터 갱신]
+// -------------------------------------------------------------------
 void UPGUnitCollectionSubsystem::ProcessGachaResult(UUnitUIDataAsset* PickedUnitData)
 {
     if (!PickedUnitData) return;
@@ -16,65 +78,69 @@ void UPGUnitCollectionSubsystem::ProcessGachaResult(UUnitUIDataAsset* PickedUnit
     UPGGameInstance* GI = Cast<UPGGameInstance>(GetGameInstance());
     if (!GI) return;
 
-    // 1. 중복 검사
-    if (IsUnitOwned(PickedUnitData))
-    {
-        // [중복 획득] 기획자가 데이터 에셋에 설정한 조각 재화량
-        int32 RewardToGive = PickedUnitData->DuplicateRewardAmount;
+    int32 PickedID = PickedUnitData->UnitID;
 
-        GI->CurrentPlayerUnlock += RewardToGive;
+    // GameInstance의 유닛 맵을 확인하여 이미 보유 중인지 검사
+    if (IsUnitOwned(PickedID))
+    {
+        // [중복 획득] 보상량 가져오기 (UnitUIDataAsset의 변수 활용)
+        int32 RewardToGive = PickedUnitData->DuplicateReward;
+
+        /// AddGoods 델리게이트 시스템 호출 
+        // 이렇게 하면 CurrentPlayerUnlock이 오르면서 UI(상단바 등)도 자동 갱신
+        GI->AddGoods(EGoodsCategory::Unlock, RewardToGive);
 
         UE_LOG(LogTemp, Log, TEXT("[%s] 중복 획득! 조각 %d개 지급. (현재 총 조각: %d)"),
-            *PickedUnitData->UnitName.ToString(), RewardToGive, GI->CurrentPlayerUnlock);
+            *PickedUnitData->GetName(), RewardToGive, GI->CurrentPlayerUnlock);
     }
     else
     {
-        // [신규 획득] 도감 배열에 추가
-        OwnedUnits.Add(PickedUnitData);
-        OnUnitUnlocked.Broadcast(PickedUnitData);
+        // [신규 획득] GameInstance의 UnitLevelMap 데이터 수정
+        if (FUnitSaveData* FoundData = GI->UnitLevelMap.Find(PickedID))
+        {
+            FoundData->bIsUnlocked = true; // 잠금 해제
+        }
+        else
+        {
+            // 맵에 아예 등록 안 된 유닛이라면 새로 등록
+            FUnitSaveData NewData;
+            NewData.Level = 1;
+            NewData.bIsUnlocked = true;
+            GI->UnitLevelMap.Add(PickedID, NewData);
+        }
 
-        UE_LOG(LogTemp, Log, TEXT("[%s] 신규 획득! 도감 등록 완료"), *PickedUnitData->UnitName.ToString());
+        // 도감 UI 등에서 자물쇠를 풀 수 있도록 이벤트 방송        
+        //OnGachaUnitUnlocked.Broadcast(PickedUnitData);
+       
+
+        UE_LOG(LogTemp, Log, TEXT("[%s] 신규 획득! 도감 등록 완료"), *PickedUnitData->GetName());
     }
 
-    // 2. 결과 즉시 저장
+    // 결과 처리 후 즉시 세이브 파일에 기록
     GI->SaveGameData();
 }
 
-bool UPGUnitCollectionSubsystem::IsUnitOwned(UUnitUIDataAsset* UnitData) const
+// -------------------------------------------------------------------
+// [3. 보유/레벨 조회 로직 (GameInstance 직접 참조) ]
+// -------------------------------------------------------------------
+bool UPGUnitCollectionSubsystem::IsUnitOwned(int32 UnitID) const
 {
-    return OwnedUnits.Contains(UnitData);
-}
-
-TArray<UUnitUIDataAsset*> UPGUnitCollectionSubsystem::GetOwnedUnits() const
-{
-    return OwnedUnits;
-}
-
-void UPGUnitCollectionSubsystem::LoadFromSaveGame(const UPGSaveGame* SaveGame)
-{
-    if (!SaveGame) return;
-
-    OwnedUnits.Empty();
-
-    for (const FSoftObjectPath& Path : SaveGame->OwnedUnitPaths)
+    UPGGameInstance* GI = Cast<UPGGameInstance>(GetGameInstance());
+    if (GI)
     {
-        if (Path.IsValid())
-        {
-            if (UUnitUIDataAsset* LoadedUnit = Cast<UUnitUIDataAsset>(Path.TryLoad()))
-            {
-                OwnedUnits.Add(LoadedUnit);
-            }
-        }
+        FUnitSaveData Data = GI->GetUnitSaveData(UnitID);
+        return Data.bIsUnlocked;
     }
+    return false;
 }
 
-void UPGUnitCollectionSubsystem::SaveToSaveGame(UPGSaveGame* SaveGame) const
+int32 UPGUnitCollectionSubsystem::GetUnitLevel(int32 UnitID) const
 {
-    if (!SaveGame) return;
-
-    SaveGame->OwnedUnitPaths.Empty();
-    for (UUnitUIDataAsset* Unit : OwnedUnits)
+    UPGGameInstance* GI = Cast<UPGGameInstance>(GetGameInstance());
+    if (GI)
     {
-        if (Unit) SaveGame->OwnedUnitPaths.Add(FSoftObjectPath(Unit));
+        FUnitSaveData Data = GI->GetUnitSaveData(UnitID);
+        return Data.Level;
     }
+    return 1;
 }

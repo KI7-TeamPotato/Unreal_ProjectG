@@ -13,17 +13,6 @@
 #include "AbilitySystem/PGCharacterAttributeSet.h"
 #include "AbilitySystem/PGAbilitySystemComponent.h"
 #include "PGGameplayTags.h"
-<<<<<<< Updated upstream
-#include "AbilitySystemBlueprintLibrary.h"
-#include "DataAssets/Items/DataAsset_WeaponData.h"
-#include "DataAssets/Items/DataAsset_ArmorData.h"
-#include "DataAssets/Items/DataAsset_AccessoryData.h"
-#include "AbilitySystem/Abilities/PGHeroGameplayAbility.h"
-
-UE_DEFINE_GAMEPLAY_TAG(TAG_Player_Ability_Skill_1, "Player.Ability.Skill.1");
-UE_DEFINE_GAMEPLAY_TAG(TAG_Player_Ability_Skill_2, "Player.Ability.Skill.2");
-UE_DEFINE_GAMEPLAY_TAG(TAG_Player_Ability_BasicAttack, "Player.Ability.BasicAttack");
-=======
 #include "EnhancedInputComponent.h"
 #include "Mode/PGBaseGameMode.h"
 
@@ -35,7 +24,6 @@ UE_DEFINE_GAMEPLAY_TAG(TAG_Player_Ability_BasicAttack, "Player.Ability.BasicAtta
 //#include "Kismet/KismetMathLibrary.h"
 //#include "Components/SphereComponent.h"
 //#include "AbilitySystemBlueprintLibrary.h"
->>>>>>> Stashed changes
 
 // Sets default values
 AHeroCharacter::AHeroCharacter()
@@ -58,7 +46,6 @@ AHeroCharacter::AHeroCharacter()
     WeaponStaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponStaticMesh"));
     WeaponStaticMesh->SetupAttachment(GetMesh());
     WeaponStaticMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-    ResourceAttribute = CreateDefaultSubobject<UPGCharacterAttributeSet>(TEXT("ResourceAttribute"));
     
     EquipmentsStorageComponent = CreateDefaultSubobject<UEquipmentsStorageComponent>(TEXT("EquipmentsStorageComponent"));
     HeroCombatComponent = CreateDefaultSubobject<UHeroCombatComponent>(TEXT("HeroCombatComponent"));
@@ -202,278 +189,6 @@ void AHeroCharacter::BroadCastAttributeSet()
     }
 }
 
-<<<<<<< Updated upstream
-void AHeroCharacter::EquipWeapon(UDataAsset_WeaponData* WeaponData)
-{
-    Weapon = WeaponData;
-
-    if(Weapon)
-    {
-        const FPGHeroWeaponData& Data = Weapon->GetHeroWeaponData();
-        if (PGAbilitySystemComponent)
-        {
-            if(Data.BaseAttackAbility)
-            {
-                GA_Attack = Data.BaseAttackAbility;
-                if (GA_Attack)
-                {
-                    PGAbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(GA_Attack, 1));
-                }
-            }
-            if (!(Data.WeaponSkillAbilities.IsEmpty()))
-            {
-                for (const TSubclassOf<UGameplayAbility>& ability : Data.WeaponSkillAbilities)
-                {
-                    PGAbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(ability, 1));
-                }
-            }
-        }
-    }
-    
-}
-
-void AHeroCharacter::EquipArmor(UDataAsset_ArmorData* ArmorData)
-{
-    Armor = ArmorData;
-}
-
-void AHeroCharacter::EquipAccessory(UDataAsset_AccessoryData* AccessoryData)
-{
-    Accessory = AccessoryData;
-}
-
-void AHeroCharacter::ActivateSkill()
-{
-    if (PGAbilitySystemComponent)
-    {
-        FGameplayTagContainer Skill1(TAG_Player_Ability_Skill_1);
-        PGAbilitySystemComponent->TryActivateAbilitiesByTag(Skill1);
-        FGameplayTagContainer Skill2(TAG_Player_Ability_Skill_2);
-        PGAbilitySystemComponent->TryActivateAbilitiesByTag(Skill2);
-    }
-}
-
-void AHeroCharacter::BroadCastAttributeSet()
-{
-    if (ResourceAttribute)
-    {
-        PGAbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
-            ResourceAttribute->GetHealthAttribute()).AddUObject(this, &AHeroCharacter::CurrentHealthChange);
-        PGAbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
-            ResourceAttribute->GetMaxHealthAttribute()).AddUObject(this, &AHeroCharacter::MaxHealthChange);
-        PGAbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
-            ResourceAttribute->GetCostAttribute()).AddUObject(this, &AHeroCharacter::CurrentCostChange);
-        PGAbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
-            ResourceAttribute->GetMaxCostAttribute()).AddUObject(this, &AHeroCharacter::MaxCostChange);
-    }
-}
-
-void AHeroCharacter::OnDie()
-{
-    if (PGAbilitySystemComponent && GA_Die)
-    {
-        PGAbilitySystemComponent->TryActivateAbilityByClass(GA_Die);
-    }
-    else
-        UE_LOG(LogTemp, Warning, TEXT("AbilitySystem Unavailable"));
-}
-
-// Called when the game starts or when spawned
-void AHeroCharacter::BeginPlay()
-{
-    Super::BeginPlay();
-
-    //ABP 가져오기
-    AnimInstance = GetMesh()->GetAnimInstance();
-
-    if (!CharacterStartupData.IsNull())
-    {
-        if (UDataAsset_StartupDataBase* LoadData = CharacterStartupData.LoadSynchronous())
-        {
-            LoadData->GiveToAbilitySystemComponent(PGAbilitySystemComponent);
-        }
-    }
-
-    if (PGAbilitySystemComponent)
-    {
-        if (GA_Die)
-        {
-            PGAbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(GA_Die, 1, 0, this));
-        }
-        //if (Weapon)
-        //{
-        //    //PGAbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(Weapon->GetHeroWeaponData()->BaseAttackAbility, 1, 1, this));
-        //}
-        if (GA_Initialize)
-        {
-            PGAbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(GA_Initialize, 1, 2, this));
-        }
-    }
-
-    if (AggroCollision)
-    {
-        AggroCollision->OnComponentBeginOverlap.AddDynamic(this, &AHeroCharacter::OnOverlapBegin);
-        AggroCollision->OnComponentEndOverlap.AddDynamic(this, &AHeroCharacter::OnOverlapEnd);
-        UE_LOG(LogTemp, Log, TEXT("Overlap bind"));
-    }
-
-    BroadCastAttributeSet();
-}
-
-// Called every frame
-void AHeroCharacter::Tick(float DeltaTime)
-{
-    Super::Tick(DeltaTime);
-
-    if (!(PotentialTargets.IsEmpty()))
-    {
-        ActivateAttack();
-    }
-
-    if (bIsAuto)
-    {
-        AutoBattle();
-    }
-}
-
-// Called to bind functionality to input
-void AHeroCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-    Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-    UEnhancedInputComponent* enhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent);
-    if (enhancedInputComponent)
-    {
-        enhancedInputComponent->BindAction(IA_Move, ETriggerEvent::Triggered, this, &AHeroCharacter::OnMovementInput);
-        enhancedInputComponent->BindAction(IA_Attack, ETriggerEvent::Triggered, this, &AHeroCharacter::OnAttackInput);
-    }
-}
-
-void AHeroCharacter::CurrentHealthChange(const FOnAttributeChangeData& Data) const
-{
-    OnHeroHpChanged.Broadcast(Data.NewValue);
-}
-
-void AHeroCharacter::MaxHealthChange(const FOnAttributeChangeData& Data) const
-{
-    OnHeroMaxHpChanged.Broadcast(Data.NewValue);
-}
-
-void AHeroCharacter::CurrentCostChange(const FOnAttributeChangeData& Data) const
-{
-    OnHeroCostChanged.Broadcast(Data.NewValue);
-}
-
-void AHeroCharacter::MaxCostChange(const FOnAttributeChangeData& Data) const
-{
-    OnHeroMaxCostChanged.Broadcast(Data.NewValue);
-}
-
-void AHeroCharacter::OnMovementInput(const FInputActionValue& InValue)
-{
-    //if (Controller)
-    //{
-    //    FVector2D InputDirection = InValue.Get<FVector2D>();
-    //    FVector MoveDirection = FVector(InputDirection.X, InputDirection.Y, 0.0f);
-    //    //UE_LOG(LogTemp, Log, TEXT("%.1f, %.1f, %.1f"), MoveDirection.X, MoveDirection.Y, MoveDirection.Z);
-    //    AddMovementInput(MoveDirection);
-    //}
-    //else
-    //    UE_LOG(LogTemp, Log, TEXT("Controller Unavailable"));
-}
-
-void AHeroCharacter::OnAttackInput()
-{
-    if (PGAbilitySystemComponent)
-    {
-        PGAbilitySystemComponent->TryActivateAbilityByClass(GA_Attack);
-    }
-}
-
-void AHeroCharacter::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-    //UE_LOG(LogTemp, Log, TEXT("Overlap With %s"), *OtherActor->GetName());
-
-    AUnitCharacter* Unit = Cast<AUnitCharacter>(OtherActor);
-
-    if (Unit)
-    {
-        if (Unit->GetTeamTag() == PGGameplayTags::Unit_Side_Foe)
-        {
-            PotentialTargets.AddUnique(Unit);
-        }
-    }
-}
-
-void AHeroCharacter::OnOverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
-{
-    AUnitCharacter* Unit = Cast<AUnitCharacter>(OtherActor);
-
-    if (Unit)
-    {
-        if (Unit->GetTeamTag() == PGGameplayTags::Unit_Side_Foe)
-        {
-            PotentialTargets.RemoveSwap(Unit);
-        }
-    }
-}
-
-void AHeroCharacter::ActivateAttack()
-{
-    AActor* AttackTarget = GetClosestTarget(PotentialTargets);
-
-    FGameplayEventData EventData;
-    EventData.Instigator = this;
-    EventData.Target = AttackTarget;
-
-    /*UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(this, FGameplayTag::RequestGameplayTag(FName("Player_Ability_BasicAttack_Melee")), EventData);*/
-    if(PGAbilitySystemComponent)
-    {
-        FGameplayTagContainer attack(TAG_Player_Ability_BasicAttack);
-        PGAbilitySystemComponent->TryActivateAbilitiesByTag(attack);
-    }
-}
-
-void AHeroCharacter::AutoBattle()
-{
-    if (PotentialTargets.IsEmpty())
-    {
-        AddMovementInput(FVector::ForwardVector);
-    }
-    else
-    {
-        ActivateSkill();
-    }
-}
-
-AActor* AHeroCharacter::GetClosestTarget(const TArray<AActor*>& TargetArray)
-{
-    if (TargetArray.IsEmpty())
-    {
-        return nullptr;
-    }
-
-    AActor* ClosestActor = nullptr;
-
-    float MinDistanceSq = MAX_flt;
-
-    for (AActor* Target : TargetArray)
-    {
-        if (IsValid(Target))
-        {
-            const float CurrentDistanceSq = this->GetSquaredDistanceTo(Target);
-
-            if (CurrentDistanceSq < MinDistanceSq)
-            {
-                MinDistanceSq = CurrentDistanceSq;
-                ClosestActor = Target;
-            }
-        }
-    }
-
-    return ClosestActor;
-}
-=======
 void AHeroCharacter::OnDie()
 {
     PGAbilitySystemComponent->TryActivateAbilityByTag(PGGameplayTags::Player_Ability_Die);
@@ -813,4 +528,3 @@ void AHeroCharacter::MaxCostChange(const FOnAttributeChangeData& Data) const
 //    }
 //}
 #pragma endregion
->>>>>>> Stashed changes

@@ -11,19 +11,9 @@
 #include "TimerManager.h"
 #include "Abilities/Tasks/AbilityTask_WaitDelay.h"
 #include "PGFunctionLibrary.h"
-<<<<<<< Updated upstream
-#include "DataAssets/Ability/AbilityConfig.h"
-
-UHeroAbility_BaseMeleeAttack::UHeroAbility_BaseMeleeAttack()
-{
-    // 기본 설정
-    InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
-}
-=======
 #include "AbilitySystemBlueprintLibrary.h"
 #include "DataAssets/Ability/DataAsset_SkillData.h"
 #include "Character/Hero/HeroCharacter.h"
->>>>>>> Stashed changes
 
 void UHeroAbility_BaseMeleeAttack::OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec)
 {
@@ -89,7 +79,7 @@ void UHeroAbility_BaseMeleeAttack::ActivateAbility(const FGameplayAbilitySpecHan
     MeleeHitEventTask->EventReceived.AddUniqueDynamic(this, &UHeroAbility_BaseMeleeAttack::ToggleWeaponTrace);
     MeleeHitEventTask->ReadyForActivation();
 
-    UE_LOG(LogTemp, Log, TEXT("Hero Attack"));
+    UE_LOG(LogTemp, Log, TEXT("Hero Melee Attack"));
 }
 
 void UHeroAbility_BaseMeleeAttack::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
@@ -158,7 +148,7 @@ void UHeroAbility_BaseMeleeAttack::PerformWeaponTrace()
     {
         AActor* HitActor = OutHit.GetActor();
         
-        if (UPGFunctionLibrary::IsTargetCharacterIsHostile(GetAvatarActorFromActorInfo(), HitActor))
+        if (UPGFunctionLibrary::IsTargetCharacterHostile(GetAvatarActorFromActorInfo(), HitActor))
         {
             if (HitActor && HitActor != GetAvatarActorFromActorInfo())
             {
@@ -189,11 +179,14 @@ void UHeroAbility_BaseMeleeAttack::HandleApplyDamage(AActor* InTargetActor)
 
     //// TODO : 스킬의 데미지 Multiflier를 변수화
     float SkillMultiplierValue = MeleeAttackConfig.SkillMultiplier.GetValueAtLevel(GetAbilityLevel());
-    FGameplayEffectSpecHandle EffectSpecHandle = MakeHeroDamageEffectSpecHandle(MeleeAttackConfig.DamageEffectClass.Get(), SkillMultiplierValue);
+    FGameplayEffectSpecHandle EffectSpecHandle = MakeOutgoingEffectSpecWithMultiplier(MeleeAttackConfig.DamageEffectClass.Get(), SkillMultiplierValue);
     
     NativeApplyEffectSpecHandleToTarget(InTargetActor, EffectSpecHandle);
     CurrentHitTargets++;
     HitActors.Add(InTargetActor);
+
+    // 히트된 액터에게 히트 반응 이벤트 전송
+    UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(InTargetActor, PGGameplayTags::Shared_Event_HitReact, FGameplayEventData());
 }
 
 void UHeroAbility_BaseMeleeAttack::OnMontageFinished()

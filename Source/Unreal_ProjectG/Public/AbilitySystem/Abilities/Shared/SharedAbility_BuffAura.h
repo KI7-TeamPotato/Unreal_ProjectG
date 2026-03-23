@@ -4,10 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystem/Abilities/PGGameplayAbility.h"
-<<<<<<< Updated upstream
-=======
 #include "Types/AbilityConfig.h"
->>>>>>> Stashed changes
 #include "SharedAbility_BuffAura.generated.h"
 
 
@@ -25,7 +22,6 @@ public:
     virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
     virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 
-
 protected:
     UFUNCTION(BlueprintCallable, Category = "Ability|Buff Aura")
     void ApplyBuffAuraEffectToTarget(AActor* TargetActor);
@@ -40,25 +36,14 @@ private:
     void BuildCachedBuffEffectSpecs();
 
 protected:
-<<<<<<< Updated upstream
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability|Buff Aura")
-    TSubclassOf<UGameplayEffect> BuffAuraEffectClass;
-
-    UPROPERTY(EditDefaulTSoNLY, BlueprintReadOnly, Category = "Ability|Buff Aura")
-    float BuffAuraRadius;
-=======
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ability|Buff Aura")
     FSharedBuffAuraAbilityConfig BuffAuraConfig;
->>>>>>> Stashed changes
 
 private:
     UPROPERTY()
     TObjectPtr<class USphereComponent> BuffAuraSphere;
 
     UPROPERTY()
-<<<<<<< Updated upstream
-    TMap<AActor*, FActiveGameplayEffectHandle> ActiveBuffsOnTargets;
-=======
     TObjectPtr<class UDecalComponent> BuffAuraDecal;
 
     TMap<TWeakObjectPtr<AActor>, TArray<FActiveGameplayEffectHandle>> ActiveBuffsOnTargets;
@@ -66,5 +51,4 @@ private:
     // 적용할 이펙트 스펙핸들 캐싱
     TArray<FGameplayEffectSpecHandle> CachedNumericBuffSpecs;
     TArray<FGameplayEffectSpecHandle> CachedStatusBuffSpecs;
->>>>>>> Stashed changes
 };

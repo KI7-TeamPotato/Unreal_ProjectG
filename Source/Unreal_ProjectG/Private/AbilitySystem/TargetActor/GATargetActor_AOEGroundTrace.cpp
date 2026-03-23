@@ -62,7 +62,6 @@ void AGATargetActor_AOEGroundTrace::Tick(float DeltaSeconds)
         return;
     }
 
-
     FVector2D TouchLocation = FVector2D::ZeroVector;
     bool bIsCurrentlyTouching = false;
 
@@ -91,6 +90,12 @@ void AGATargetActor_AOEGroundTrace::Tick(float DeltaSeconds)
             FHitResult HitResult;
             FVector TraceEnd = WorldLocation + (WorldDirection * 10000.0f);
 
+            FCollisionQueryParams QueryParams;
+            QueryParams.AddIgnoredActor(OwnerActor);
+            if(PrimaryPC->GetPawn())
+            {
+                QueryParams.AddIgnoredActor(PrimaryPC->GetPawn());
+            }
             if (GetWorld()->LineTraceSingleByChannel(HitResult, WorldLocation, TraceEnd, ECC_Visibility))
             {
                 LastTouchLocation = HitResult.Location;
@@ -119,7 +124,7 @@ void AGATargetActor_AOEGroundTrace::OnSphereOverlapBegin(UPrimitiveComponent* Ov
         return;
 
     // 적팀이면 액터 빛나게 하기
-    if (UPGFunctionLibrary::IsTargetCharacterIsHostile(OwnerActor, OtherActor))
+    if (UPGFunctionLibrary::IsTargetCharacterHostile(OwnerActor, OtherActor))
     {
         // 오버랩된 액터 추가
         OverlappedActors.AddUnique(OtherActor);

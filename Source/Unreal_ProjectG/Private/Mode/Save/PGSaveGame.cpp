@@ -9,5 +9,10 @@ UPGSaveGame::UPGSaveGame()
     PlayerName = TEXT("Player");
     PlayerGold = 0;
     PlayerGem = 0;
-    PlayerUnlock = 0; 
+    PlayerUnlock = 0;
+
+    //사운드
+    MasterVolume = 1.0f;
+    BGMVolume = 1.0f;
+    SFXVolume = 1.0f;
 }

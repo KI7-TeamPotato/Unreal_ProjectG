@@ -5,6 +5,8 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystem/PGAbilitySystemComponent.h"
 #include "Character/PGCharacterBase.h"
+#include "AbilitySystem/PGCharacterAttributeSet.h"
+#include "PGGameplayTags.h"
 
 UPGAbilitySystemComponent* UPGFunctionLibrary::NativeGetPGASCFromActor(AActor* InActor)
 {
@@ -30,9 +32,9 @@ bool UPGFunctionLibrary::ApplyGameplayEffectSpecHandleToTargetActor(AActor* InIn
     return ActivateGameplayEffectHandle.WasSuccessfullyApplied();
 }
 
-bool UPGFunctionLibrary::IsTargetCharacterIsHostile(AActor* InInstigator, AActor* InTargetActor)
+bool UPGFunctionLibrary::IsTargetCharacterHostile(AActor* InInstigator, AActor* InTargetActor)
 {
-    // 일단은 두 태그가 다르면 적대 관계로 간주
+    // 두 태그가 다르면 적대 관계로 간주
     APGCharacterBase* InstigatorCharacter = Cast<APGCharacterBase>(InInstigator);
     APGCharacterBase* TargetCharacter = Cast<APGCharacterBase>(InTargetActor);
 
@@ -43,8 +45,6 @@ bool UPGFunctionLibrary::IsTargetCharacterIsHostile(AActor* InInstigator, AActor
 
     return InstigatorCharacter->GetTeamTag() != TargetCharacter->GetTeamTag();
 }
-<<<<<<< Updated upstream
-=======
 
 const TMap<FGameplayAttribute, FGameplayTag>& UPGFunctionLibrary::GetAttributeTagMap()
 {
@@ -65,8 +65,8 @@ const TMap<FGameplayAttribute, FGameplayTag>& UPGFunctionLibrary::GetAttributeTa
         // ==========================================================================
         // 여기에 Attribute와 TagName을 추가
         // ==========================================================================
-        Add(UPGCharacterAttributeSet::GetMaxHealthAttribute(), PGGameplayTags::Shared_SetByCaller_MaxHealthMultiplier);
-        Add(UPGCharacterAttributeSet::GetAttackPowerAttribute(), PGGameplayTags::Shared_SetByCaller_AttackPowerMultiplier);
+        Add(UPGCharacterAttributeSet::GetMaxHealthAttribute(), PGGameplayTags::Attribute_SetByCaller_MaxHealth);
+        Add(UPGCharacterAttributeSet::GetAttackPowerAttribute(), PGGameplayTags::Attribute_SetByCaller_AttackPower);
     
         return M;
     }();
@@ -110,4 +110,3 @@ FGameplayTag UPGFunctionLibrary::GetSetByCallerTagForAttribute(const FGameplayAt
 //    OutValidType = EquipComp ? EPGValidType::Valid : EPGValidType::InValid;
 //    return EquipComp;
 //}
->>>>>>> Stashed changes

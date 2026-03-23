@@ -79,24 +79,9 @@ void URangeCheck::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
         AActor* Enemy = EnemyPtr.Get();
         if (!Enemy) continue;
 
-<<<<<<< Updated upstream
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-        float DistSq = FVector::DistSquared(MyLocation, Enemy->GetActorLocation());
-=======
-        //float DistSq = FVector::DistSquared(MyLocation, Enemy->GetActorLocation());
-
-        float DistSq = FVector::DistSquaredXY(MyLocation, Enemy->GetActorLocation());
->>>>>>> Stashed changes
-=======
         // [수정됨] 1. Z축을 무시한 2D 평면상의 '중심점 간 거리'
         float CenterToCenterDist = FVector::DistXY(MyLocation, Enemy->GetActorLocation());
 
-=======
-        // [수정됨] 1. Z축을 무시한 2D 평면상의 '중심점 간 거리'
-        float CenterToCenterDist = FVector::DistXY(MyLocation, Enemy->GetActorLocation());
-
->>>>>>> Stashed changes
         // [추가됨] 2. 적의 캡슐 반경 구하기
         float EnemyRadius = 0.0f;
         UCapsuleComponent* EnemyCapsule = Enemy->FindComponentByClass<UCapsuleComponent>();
@@ -110,10 +95,6 @@ void URangeCheck::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
 
         // [수정됨] 4. 거리를 제곱값으로 변환하여 비교
         float DistSq = EdgeToEdgeDist * EdgeToEdgeDist;
-<<<<<<< Updated upstream
->>>>>>> e72f839c (UnitData,PGSaveGame,PGGameInstance 도감 관련 코드 수정 및 추가/PGUnitCollectionSubsystem  구성)
-=======
->>>>>>> Stashed changes
 
         if (DistSq <= MinDistSq)
         {

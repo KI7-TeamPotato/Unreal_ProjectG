@@ -8,8 +8,12 @@
 
 class UTextBlock;
 class UButton;
+class UImage;
 class UControlPanelWidget;
+class UResultVictoryWidget;
 class UWidgetAnimation;
+class APGBaseGameMode;
+struct FBattleResultData;
 
 /**
  * 
@@ -45,17 +49,16 @@ protected:
     // 자동 버튼
     UPROPERTY(meta = (BindWidget))
     TObjectPtr<UButton> AutoButton;
-<<<<<<< Updated upstream
-=======
     UPROPERTY(meta = (BindWidget))
     TObjectPtr<UImage> AutoActiveEffect;
->>>>>>> Stashed changes
 
     // 배속 버튼
     UPROPERTY(meta = (BindWidget))
     TObjectPtr<UButton> PlaySpeedButton;
     UPROPERTY(meta = (BindWidget))
     TObjectPtr<UTextBlock> PlaySpeedText;
+    UPROPERTY(meta = (BindWidget))
+    TObjectPtr<UImage> SpeedActiveEffect;
 
     // 일시 정지 버튼
     UPROPERTY(meta = (BindWidget))
@@ -65,8 +68,20 @@ protected:
     UPROPERTY(BlueprintReadOnly,VisibleAnywhere, meta = (BindWidget))
     TObjectPtr<UControlPanelWidget> ControlPanel;
 
-    UPROPERTY(Transient, meta = (BindWidgetAnimation))
-    TObjectPtr<UWidgetAnimation> ControlPanelMoveAnim;
+    // 전투 승리 위젯
+    UPROPERTY(BlueprintReadOnly, VisibleAnywhere, meta = (BindWidget))
+    TObjectPtr<UResultVictoryWidget> ResultVictory;
+
+    // 전투 패배 위젯
+    UPROPERTY(BlueprintReadOnly, VisibleAnywhere, meta = (BindWidget))
+    TObjectPtr<UUserWidget> ResultFail;
+
+    // 게임 모드
+    TWeakObjectPtr<APGBaseGameMode> PGGameMode;
+
+    // 자동 모드 확인 변수
+    UPROPERTY(BlueprintReadWrite)
+    bool bIsAuto = false;
 
     // 위젯 애니메이션
     UPROPERTY(BlueprintReadWrite, Transient, meta = (BindWidgetAnim))
@@ -87,7 +102,4 @@ private:
 
     // 플레이타임
     float ElapsedPlayTime = 0.0f;
-
-    // 자동 모드 확인 변수
-    bool bIsAuto = false;
 };

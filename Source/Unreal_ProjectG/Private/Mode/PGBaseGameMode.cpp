@@ -1,44 +1,26 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
 #include "Mode/PGBaseGameMode.h"
 #include "Kismet/GameplayStatics.h"
 #include "Pawn/BaseStructure.h"
 #include "GameFramework/PlayerController.h"
-<<<<<<< Updated upstream
-=======
 #include "Mode/Save/PGGameInstance.h"
 #include "AbilitySystem/PGCharacterAttributeSet.h"
 #include "UI/Battle/BattleHUD.h"
->>>>>>> Stashed changes
 
 APGBaseGameMode::APGBaseGameMode()
-{   
+{
     PrimaryActorTick.bCanEverTick = true;
-    
 }
-
 
 void APGBaseGameMode::BeginPlay()
 {
-<<<<<<< Updated upstream
-    Super::BeginPlay(); 
-
-    // 1. 게임 시작 시간 기록
-    GameStartTime = GetWorld()->GetTimeSeconds();
-
-    // 2. 맵에 배치된 모든 기지(BaseStructure)를 찾아서 파괴 이벤트 연결
-=======
     Super::BeginPlay();
 
     // --- [2] 게임 시작 시간 기록 ---
     GameStartTime = GetWorld()->GetTimeSeconds();
 
     // --- [3] 맵에 배치된 모든 기지(BaseStructure)를 찾아서 파괴 이벤트 연결 ---
->>>>>>> Stashed changes
     TArray<AActor*> FoundBases;
     UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABaseStructure::StaticClass(), FoundBases);
 
@@ -47,47 +29,70 @@ void APGBaseGameMode::BeginPlay()
         ABaseStructure* Base = Cast<ABaseStructure>(Actor);
         if (Base)
         {
+            if (Base->GetTeamTag().MatchesTag(FGameplayTag::RequestGameplayTag(FName("Unit.Side.Ally"))))
+            {
+                AllyBase = Base;
+            }
             // 기지가 파괴되면 OnGameOver 함수가 실행되도록 연결
             Base->OnBaseDestroyed.AddDynamic(this, &APGBaseGameMode::OnGameOver);
         }
     }
 }
 
-<<<<<<< Updated upstream
-//// --- 인구수 제한 로직 ---
-//bool APGBaseGameMode::CanSpawnUnit(ETeamType Team)
-//{
-//    if (Team == ETeamType::Ally)
-//    {
-//        // 아군 유닛이 MAX 미만일 때만 스폰 가능
-//        return CurrentAllyCount < MAX_ALLY_COUNT;
-//    }
-//    else if (Team == ETeamType::Enemy)
-//    {
-//        // 적군 유닛이 MAX 미만일 때만 스폰 가능
-//        return CurrentEnemyCount < MAX_ENEMY_COUNT;
-//    }
-//    return true;
-//}
-//
-//void APGBaseGameMode::RegisterUnit(ETeamType Team)
-//{
-//    if (Team == ETeamType::Ally) CurrentAllyCount++;
-//    else if (Team == ETeamType::Enemy) CurrentEnemyCount++;
-//}
-//
-//void APGBaseGameMode::UnregisterUnit(ETeamType Team)
-//{
-//    if (Team == ETeamType::Ally) CurrentAllyCount = FMath::Max(0, CurrentAllyCount - 1);
-//    else if (Team == ETeamType::Enemy) CurrentEnemyCount = FMath::Max(0, CurrentEnemyCount - 1);
-//}
-=======
 void APGBaseGameMode::ShowStageResult(const FBattleResultData& ResultData)
 {
     ABattleHUD* HUD = Cast<ABattleHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
     HUD->OnGameOver(ResultData);
 }
->>>>>>> Stashed changes
+
+void APGBaseGameMode::SetStageResult()
+{
+    UPGGameInstance* GI = Cast<UPGGameInstance>(GetGameInstance());
+    if (GI)
+    {
+        int32 FinalStarCount = 1; // 기본 클리어 1성
+        float CurrentValue = 0.0f;
+
+        // 카테고리에 따른 현재 기록 측정
+        switch (GI->CurrentStageData.RewardType)
+        {
+        case ERewardCategory::Time:
+        {
+            CurrentValue = GetCurrentPlayTime(); // 소요 시간
+            break;
+        }
+        case ERewardCategory::Health:
+        {
+            if (AllyBase)
+            {
+                UPGCharacterAttributeSet* BaseAttribute = AllyBase->GetPGCharacterAttributeSet();
+                CurrentValue = (BaseAttribute->GetHealth() / BaseAttribute->GetMaxHealth()) * 100.0f;
+            }
+            break;
+        }
+        case ERewardCategory::Cost:
+        {
+            CurrentValue = SpentCost; // 전투 중 소모한 총 코스트
+            break;
+        }
+        }
+
+        // 별 개수 판별 (시간/코스트는 작을수록 좋고, 체력은 클수록 좋음)
+        bool bSetStarCount = (GI->CurrentStageData.RewardType != ERewardCategory::Health);
+
+        if (bSetStarCount) {
+            if (CurrentValue <= GI->CurrentStageData.Star3) FinalStarCount = 3;
+            else if (CurrentValue <= GI->CurrentStageData.Star2) FinalStarCount = 2;
+        }
+        else {
+            if (CurrentValue >= GI->CurrentStageData.Star3) FinalStarCount = 3;
+            else if (CurrentValue >= GI->CurrentStageData.Star2) FinalStarCount = 2;
+        }
+
+        // 결과 저장 및 보상 지급 호출
+        GI->UpdateStageClearData(GI->CurrentStageData.StageCode, FinalStarCount);
+    }
+}
 
 // --- 시간 및 등급 관리 ---
 float APGBaseGameMode::GetCurrentPlayTime() const
@@ -102,19 +107,10 @@ void APGBaseGameMode::OnGameOver(ETeamType DefeatedTeam)
     if (bIsGameOver) return; // 이미 종료된 게임이면 무시
     bIsGameOver = true;
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-    bool bIsPlayerVictory = false;
-    int32 FinalStarCount = 0;
-=======
-=======
->>>>>>> Stashed changes
     FBattleResultData Result;
 
     Result.bIsVictory = false;
     Result.StarCount = 0;
-<<<<<<< Updated upstream
-<<<<<<< HEAD
     Result.TotalPlayTime = GetCurrentPlayTime();
     Result.TotalSpentCost = SpentCost;
 
@@ -123,20 +119,11 @@ void APGBaseGameMode::OnGameOver(ETeamType DefeatedTeam)
         UPGCharacterAttributeSet* BaseAttribute = AllyBase->GetPGCharacterAttributeSet();
         Result.RemainingHealthPercent = (BaseAttribute->GetHealth() / BaseAttribute->GetMaxHealth()) * 100.0f;
     }
->>>>>>> Stashed changes
-=======
->>>>>>> e72f839c (UnitData,PGSaveGame,PGGameInstance 도감 관련 코드 수정 및 추가/PGUnitCollectionSubsystem  구성)
-=======
->>>>>>> Stashed changes
 
     // 파괴된 팀이 'Enemy'라면 -> 플레이어 승리
     if (DefeatedTeam == ETeamType::Enemy)
     {
-<<<<<<< Updated upstream
-        bIsPlayerVictory = true;
-=======
         Result.bIsVictory = true;
->>>>>>> Stashed changes
 
         // 클리어 시간 체크
         float PlayTime = GetCurrentPlayTime();
@@ -144,35 +131,6 @@ void APGBaseGameMode::OnGameOver(ETeamType DefeatedTeam)
 
         if (PlayTime <= ClearTimeLimit_3Stars)
         {
-<<<<<<< Updated upstream
-            FinalStarCount = 3; // 3성 (빠른 클리어)
-        }
-        else if (PlayTime <= ClearTimeLimit_2Stars)
-        {
-            FinalStarCount = 2; // 2성 (보통)
-        }
-        else
-        {
-            FinalStarCount = 1; // 1성 (턱걸이)
-        }
-    }
-    else // 플레이어 기지 파괴 -> 패배
-    {
-        bIsPlayerVictory = false;
-        FinalStarCount = 0; // 패배 시 별 없음
-        UE_LOG(LogTemp, Warning, TEXT("Game Over: Player Defeat"));
-    }
-
-    // 1. 결과 UI 호출 (BP_GameMode에서 위젯 생성)
-    BP_ShowResultUI(bIsPlayerVictory, FinalStarCount);
-
-    // 2. 플레이어 조작 비활성화 (선택 사항)
-    APlayerController* PC = GetWorld()->GetFirstPlayerController();
-    if (PC)
-    {
-        PC->SetCinematicMode(true, false, false, true, true); // 조작 차단
-        PC->bShowMouseCursor = true; // 마우스 커서 보이기
-=======
             Result.StarCount = 3; // 3성 (빠른 클리어)
         }
         else if (PlayTime <= ClearTimeLimit_2Stars)
@@ -184,6 +142,8 @@ void APGBaseGameMode::OnGameOver(ETeamType DefeatedTeam)
             Result.StarCount = 1; // 1성 (턱걸이)
         }
 
+        SetStageResult();
+
         UE_LOG(LogTemp, Warning, TEXT("클리어 등급: %d 성"), Result.StarCount);
 
         // 여기서 GameInstance를 불러와서 클리어 보상(골드 등)을 저장(Save)하는 로직을 추가 가능
@@ -193,7 +153,6 @@ void APGBaseGameMode::OnGameOver(ETeamType DefeatedTeam)
         Result.bIsVictory = false;
         Result.StarCount = 0; // 패배 시 별 없음
         UE_LOG(LogTemp, Warning, TEXT("Game Over... Player Base Destroyed."));
->>>>>>> Stashed changes
     }
 
     ShowStageResult(Result);

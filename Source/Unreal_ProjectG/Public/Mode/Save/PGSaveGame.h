@@ -4,34 +4,34 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/SaveGame.h"
+#include "Mode/Save/PGGameInstance.h"
 #include "PGSaveGame.generated.h"
 
 /**
- * 게임의 로컬 세이브 데이터를 담당하는 클래스
+ * 
  */
 UCLASS()
 class UNREAL_PROJECTG_API UPGSaveGame : public USaveGame
 {
-    GENERATED_BODY()
-
+	GENERATED_BODY()
+	
 public:
     UPGSaveGame();
 
     UPROPERTY(VisibleAnywhere, Category = "Basic")
     FString PlayerName;
 
-    // --- [재화 관련] ---
+    //재화 관련
     UPROPERTY(VisibleAnywhere, Category = "Basic")
     int32 PlayerGold;
 
     UPROPERTY(VisibleAnywhere, Category = "Basic")
     int32 PlayerGem;
 
-    // [추가됨] 가챠 중복 획득 시 얻는 조각 재화
     UPROPERTY(VisibleAnywhere, Category = "Basic")
     int32 PlayerUnlock;
 
-    // --- [장착 데이터] ---
+    // 장착 중인 무기 데이터 에셋의 경로 (SoftObjectPath)
     UPROPERTY(VisibleAnywhere, Category = "Equipment")
     FSoftObjectPath EquippedWeaponPath;
 
@@ -45,8 +45,21 @@ public:
     UPROPERTY(VisibleAnywhere, Category = "Equipment")
     TArray<FSoftObjectPath> EquippedUnitPaths;
 
-    // --- [도감 데이터] ---
-    // [추가] 해금(보유)한 모든 유닛 목록
-    UPROPERTY(VisibleAnywhere, Category = "Collection")
-    TArray<FSoftObjectPath> OwnedUnitPaths;
+    // 유닛 정보 맵
+    UPROPERTY()
+    TMap<int32, FUnitSaveData> UnitLevelMap;
+
+    // 스테이지 정보 맵
+    UPROPERTY()
+    TMap<int32, int32> StageDataMap;
+
+    // --- [환경설정: 사운드] ---
+    UPROPERTY(VisibleAnywhere, Category = "Settings|Sound")
+    float MasterVolume = 1.0f; // 0.0 ~ 1.0
+
+    UPROPERTY(VisibleAnywhere, Category = "Settings|Sound")
+    float BGMVolume = 1.0f;
+
+    UPROPERTY(VisibleAnywhere, Category = "Settings|Sound")
+    float SFXVolume = 1.0f;
 };

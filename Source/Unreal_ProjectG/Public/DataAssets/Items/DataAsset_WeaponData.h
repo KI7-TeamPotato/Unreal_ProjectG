@@ -24,16 +24,12 @@ public:
     UFUNCTION(BlueprintCallable, Category = "Abilities", meta = (ApplyLevel = "1"))
     void GrantWeaponAbilityToAbilityComponent(UPGAbilitySystemComponent* InASCToGive, int32 ApplyLevel, TArray<FGameplayAbilitySpecHandle>& OutWeaponAbilitySpecHandles);
 
-<<<<<<< Updated upstream
-protected:
-=======
 public:
     // 세트 구분을 위한 태그
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (Categories = "Set"))
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (Categories = "Equipment.Set"))
     FGameplayTag SetTag;
 
     // 무기 스태틱 메시
->>>>>>> Stashed changes
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     TSoftObjectPtr<UStaticMesh> SoftWeaponMesh;
 

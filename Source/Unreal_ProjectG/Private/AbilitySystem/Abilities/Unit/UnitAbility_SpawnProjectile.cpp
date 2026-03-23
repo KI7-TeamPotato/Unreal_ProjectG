@@ -6,11 +6,6 @@
 #include "PGGameplayTags.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
-<<<<<<< Updated upstream
-
-void UUnitAbility_SpawnProjectile::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
-{
-=======
 #include "DataAssets/Ability/DataAsset_SkillData.h"
 
 void UUnitAbility_SpawnProjectile::OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec)
@@ -44,10 +39,8 @@ void UUnitAbility_SpawnProjectile::ActivateAbility(const FGameplayAbilitySpecHan
     // 램덤하게 하나의 몽타주 선택
     UAnimMontage* ProjectileAttackMontage = UnitSpawnProjectileConfig.SpawnProjectileMontages[FMath::RandRange(0, UnitSpawnProjectileConfig.SpawnProjectileMontages.Num() - 1)].Get();
 
->>>>>>> Stashed changes
     // 애니메이션 몽타주 재생
-    UAnimMontage* SelectedMontage = ProjectileAttackMontages[FMath::RandRange(0, ProjectileAttackMontages.Num() - 1)];
-    UAbilityTask_PlayMontageAndWait* ProjectileMontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, NAME_None, SelectedMontage);
+    UAbilityTask_PlayMontageAndWait* ProjectileMontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, NAME_None, ProjectileAttackMontage);
 
     // 몽타주 완료 이벤트 바인딩
     if (ProjectileMontageTask)
@@ -84,7 +77,7 @@ void UUnitAbility_SpawnProjectile::SpawnProjectile(FGameplayEventData InEventDat
     if (SpawnedProjectile)
     {
         float ProjectileMultiplierValue = UnitSpawnProjectileConfig.SkillMultiplier.GetValueAtLevel(GetAbilityLevel());
-        FGameplayEffectSpecHandle ProjectileDamageEffectSpecHandle = MakeOutgoingGameplayEffectSpec(UnitSpawnProjectileConfig.DamageEffectClass.Get(), ProjectileMultiplierValue);
+        FGameplayEffectSpecHandle ProjectileDamageEffectSpecHandle = MakeOutgoingEffectSpecWithMultiplier(UnitSpawnProjectileConfig.DamageEffectClass.Get(), ProjectileMultiplierValue);
         SpawnedProjectile->SetProjectileDamageEffectSpecHandle(ProjectileDamageEffectSpecHandle);
 
         SpawnedProjectile->FinishSpawning(FTransform(SpawnRotation, SpawnLocation));

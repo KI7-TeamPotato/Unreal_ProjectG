@@ -2,24 +2,18 @@
 
 
 #include "UI/Battle/BattleUIWidget.h"
+#include "UI/Battle/ResultVictoryWidget.h"
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
+#include "Components/Image.h"
 #include "Kismet/GameplayStatics.h"
-<<<<<<< Updated upstream
-=======
 #include "Mode/PGBaseGameMode.h"
 #include "Character/Hero/HeroCharacter.h"
->>>>>>> Stashed changes
 
 void UBattleUIWidget::NativeConstruct()
 {
     Super::NativeConstruct();
 
-<<<<<<< Updated upstream
-    if (PlaySpeedButton && AutoButton)
-    {
-        PlaySpeedButton->OnClicked.AddDynamic(this, &UBattleUIWidget::OnSpeedButtonClicked);
-=======
     PGGameMode = Cast<APGBaseGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 
     if (PlaySpeedButton)
@@ -28,7 +22,6 @@ void UBattleUIWidget::NativeConstruct()
     }
     if (AutoButton)
     {
->>>>>>> Stashed changes
         AutoButton->OnClicked.AddDynamic(this, &UBattleUIWidget::OnAutoButtonClicked);
     }
 
@@ -40,20 +33,19 @@ void UBattleUIWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
     Super::NativeTick(MyGeometry, InDeltaTime);
 
-    // 배속 수치를 가져옴
-    float CurrentDilatedTime = UGameplayStatics::GetGlobalTimeDilation(GetWorld());
-
-    // 플레이 타임 누적
-    ElapsedPlayTime += InDeltaTime * CurrentDilatedTime;
-
-    int32 TotalSeconds = FMath::FloorToInt(ElapsedPlayTime);
-    int32 Minutes = TotalSeconds / 60;
-    int32 Seconds = TotalSeconds % 60;
-
-    if (PlayTimeText)
+    if (PGGameMode.IsValid())
     {
-        FString TimeString = FString::Printf(TEXT("%02d:%02d"), Minutes, Seconds);
-        PlayTimeText->SetText(FText::FromString(TimeString));
+        float CurrentPlayTime = PGGameMode->GetCurrentPlayTime();
+
+        int32 TotalSeconds = FMath::FloorToInt(CurrentPlayTime);
+        int32 Minutes = TotalSeconds / 60;
+        int32 Seconds = TotalSeconds % 60;
+
+        if (PlayTimeText)
+        {
+            FString TimeString = FString::Printf(TEXT("%02d:%02d"), Minutes, Seconds);
+            PlayTimeText->SetText(FText::FromString(TimeString));
+        }
     }
 }
 
@@ -65,6 +57,15 @@ void UBattleUIWidget::OnSpeedButtonClicked()
     // 게임 배속 변경
     UGameplayStatics::SetGlobalTimeDilation(GetWorld(), SpeedValues[CurrentSpeedIndex]);
 
+    if (CurrentSpeedIndex != 0)
+    {
+        SpeedActiveEffect->SetVisibility(ESlateVisibility::HitTestInvisible);
+    }
+    else
+    {
+        SpeedActiveEffect->SetVisibility(ESlateVisibility::Hidden);
+    }
+
     // UI 업데이트
     if (PlaySpeedText)
     {
@@ -75,20 +76,8 @@ void UBattleUIWidget::OnSpeedButtonClicked()
     UE_LOG(LogTemp, Log, TEXT("Current Game Speed: %.1fx"), SpeedValues[CurrentSpeedIndex]);
 }
 
-void UBattleUIWidget::OnAutoButtonClicked()
+void UBattleUIWidget::ShowGameResult(const FBattleResultData& ResultData)
 {
-<<<<<<< Updated upstream
-    bIsAuto = !bIsAuto;
-    if (bIsAuto)
-    {
-        PlayAnimation(ControlPanelMoveAnim, 0.0f, 1, EUMGSequencePlayMode::Forward);
-    }
-    else
-    {
-        PlayAnimation(ControlPanelMoveAnim, 0.0f, 1, EUMGSequencePlayMode::Reverse);
-    }
-}
-=======
     PlayAnimation(ControlPanelSlide, 0.0f, 1);
     if (ResultData.bIsVictory)
     {
@@ -120,4 +109,3 @@ void UBattleUIWidget::OnAutoButtonClicked()
         AutoActiveEffect->SetVisibility(ESlateVisibility::Hidden);
     }
 }
->>>>>>> Stashed changes

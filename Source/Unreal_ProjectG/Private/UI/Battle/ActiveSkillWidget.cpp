@@ -7,6 +7,7 @@
 #include "Components/Overlay.h"
 #include "Components/Image.h"
 #include "AbilitySystemComponent.h"
+#include "AbilitySystem/Abilities/PGGameplayAbility.h"
 #include "Character/Hero/HeroCharacter.h"
 #include "TimerManager.h"
 #include "UI/DataTable/SkillUIDataTable.h"
@@ -20,19 +21,35 @@ void UActiveSkillWidget::SetAbilitySpecHandle(FGameplayAbilitySpecHandle InHandl
         FGameplayAbilitySpec* Spec = AbilitySystemComponent->FindAbilitySpecFromHandle(AbilitySpec);
         if (Spec)
         {
+            // 인스턴스가 있으면 가져오고, 없으면 기본 CDO(Class Default Object)를 사용
             AbilityObject = Spec->GetPrimaryInstance();
             if (!AbilityObject)
             {
-                AbilityObject = Spec->Ability;
+                AbilityObject = Cast<UPGGameplayAbility>(Spec->Ability);
             }
-            CooldownTag = AbilityObject->GetCooldownTags()->GetByIndex(0);
-            UE_LOG(LogTemp, Log, TEXT("어빌리티 : %s, 쿨다운 태그 : %s"), *Spec->Ability->GetName(), *CooldownTag.ToString());
 
-            if (AbilitySystemComponent && CooldownTag.IsValid())
+            if (AbilityObject)
             {
-                // 태그 변경 이벤트 등록
-                TagChangedDelegateHandle = AbilitySystemComponent->RegisterGameplayTagEvent(CooldownTag, EGameplayTagEventType::NewOrRemoved)
-                    .AddUObject(this, &UActiveSkillWidget::OnCoolDownTagChanged);
+                const FGameplayTagContainer* CooldownTags = AbilityObject->GetCooldownTags();
+                if (CooldownTags && CooldownTags->IsValid())
+                {
+                    CooldownTag = CooldownTags->GetByIndex(0);
+                }
+
+                UE_LOG(LogTemp, Log, TEXT("어빌리티 : %s, 쿨다운 태그 : %s"), *Spec->Ability->GetName(), *CooldownTag.ToString());
+
+                if (CooldownTag.IsValid())
+                {
+                    // 기존 핸들이 있다면 해제 후 재등록 (안정성 확보)
+                    AbilitySystemComponent->RegisterGameplayTagEvent(CooldownTag, EGameplayTagEventType::NewOrRemoved).RemoveAll(this);
+
+                    TagChangedDelegateHandle = AbilitySystemComponent->RegisterGameplayTagEvent(CooldownTag, EGameplayTagEventType::NewOrRemoved)
+                        .AddUObject(this, &UActiveSkillWidget::OnCoolDownTagChanged);
+                }
+            }
+            else
+            {
+                UE_LOG(LogTemp, Error, TEXT("AbilityObject를 찾을 수 없습니다!"));
             }
         }
     }
@@ -48,11 +65,10 @@ void UActiveSkillWidget::SetSkillIcon(UTexture2D* InIcon)
 
 void UActiveSkillWidget::OnCoolDownTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
 {
-    float CoolTimeRemaining = AbilityObject->GetCooldownTimeRemaining();
     bool bIsTimerActive = GetWorld()->GetTimerManager().IsTimerActive(CoolTimeTimerHandle);
 
     // 쿨타임이 0보다 크고 타이머가 가동중이지 않을 때
-    if (CoolTimeRemaining > 0 && !bIsTimerActive)
+    if (NewCount > 0 && !bIsTimerActive)
     {
         // 쿨타임 오버레이 표시 및 타이머 시작
         if (CoolTimeOverlay) CoolTimeOverlay->SetVisibility(ESlateVisibility::Visible);
@@ -60,7 +76,7 @@ void UActiveSkillWidget::OnCoolDownTagChanged(const FGameplayTag CallbackTag, in
 
         GetWorld()->GetTimerManager().SetTimer(CoolTimeTimerHandle, this, &UActiveSkillWidget::UpdateCoolTimeProgress, 0.1f, true);
     }
-    else
+    else if(NewCount == 0)
     {
         // 쿨타임 종료 시 오버레이 숨김 및 타이머 정지
         if (CoolTimeOverlay) CoolTimeOverlay->SetVisibility(ESlateVisibility::Collapsed);
@@ -111,6 +127,10 @@ void UActiveSkillWidget::OnActiveButtonClicked()
 {
     FGameplayAbilitySpec* Spec = AbilitySystemComponent->FindAbilitySpecFromHandle(AbilitySpec);
     if (!Spec) return;
+
+    //AbilitySystemComponent->TryActivateAbility(AbilitySpec);
+    //UE_LOG(LogTemp, Log, TEXT("어빌리티 발동 : %s"), *Spec->Ability->GetName());
+    //UpdateSlot(true);
 
     if (Spec->IsActive())
     {

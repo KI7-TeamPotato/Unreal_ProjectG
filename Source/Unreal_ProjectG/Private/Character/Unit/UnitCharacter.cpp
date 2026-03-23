@@ -4,11 +4,7 @@
 #include "Character/Unit/UnitCharacter.h"
 #include "Character/Unit/SubSystem/UnitSubsystem.h"
 #include "Character/Unit/SubSystem/UnitSpawnSubsystem.h"
-<<<<<<< Updated upstream
-#include "Components/Combat/UnitCombatComponent.h"
-=======
 #include "Components/CapsuleComponent.h"
->>>>>>> Stashed changes
 #include "Engine/AssetManager.h"
 #include "DataAssets/StartUp/DataAsset_UnitStartupData.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -32,11 +28,8 @@ AUnitCharacter::AUnitCharacter()
     UCharacterMovementComponent* MovementComponent = GetCharacterMovement();
     if (MovementComponent)
     {
-        //크라우드 우회를 사용하기 때문에 RVO는 꺼야함, 기본적으로 꺼져있지만 혹시 몰라서 생성자에서 다시 끄기
         MovementComponent->bUseRVOAvoidance = false;
     }
-<<<<<<< Updated upstream
-=======
 
     if (UCapsuleComponent* Capsule = GetCapsuleComponent())
     {
@@ -61,7 +54,6 @@ AUnitCharacter::AUnitCharacter()
     }
 
     UnitVisualEffectComponent = CreateDefaultSubobject<UCharacterVisualEffectComponent>(TEXT("UnitVisualEffectComponent"));
->>>>>>> Stashed changes
 }
 
 void AUnitCharacter::BeginPlay()
@@ -153,27 +145,9 @@ void AUnitCharacter::InitUnitStartUpData()
                 {
                     if (PGAbilitySystemComponent)
                     {
-                        LoadedData->GiveToAbilitySystemComponent(PGAbilitySystemComponent);
+                        LoadedData->GiveToAbilitySystemComponent(PGAbilitySystemComponent, UnitLevel);
                     }
                     UDataAsset_UnitStartupData* StartUpData = Cast<UDataAsset_UnitStartupData>(LoadedData);
-
-                    //if (CharacterAttributeSet)
-                    //{
-                    //    CharacterAttributeSet->InitHealth(StartUpData->Health);
-                    //    CharacterAttributeSet->InitMaxHealth(StartUpData->Health);
-                    //    CharacterAttributeSet->InitAttackPower(StartUpData->AttackDamage);
-                    //    CharacterAttributeSet->InitAttackSpeed(StartUpData->AttackSpeed);
-                    //}
-
-                    if (StartUpData->SkeletalMesh)
-                    {
-                        GetMesh()->SetSkeletalMesh(StartUpData->SkeletalMesh);
-                    }
-
-                    if (StartUpData->AnimBlueprint)
-                    {
-                        GetMesh()->SetAnimInstanceClass(StartUpData->AnimBlueprint);
-                    }
 
                     if (StartUpData->BranchData)
                     {
@@ -183,45 +157,28 @@ void AUnitCharacter::InitUnitStartUpData()
 
                         SubBTAssetKey = StartUpData->BranchData->SubBTAsset;
 
-<<<<<<< Updated upstream
-<<<<<<< HEAD
-                        AttackMarginKey = AttackRangeKey * 0.7f;
-<<<<<<< Updated upstream
-=======
-=======
                         AttackMarginKey = AttackRangeKey * 0.85f;
->>>>>>> e72f839c (UnitData,PGSaveGame,PGGameInstance 도감 관련 코드 수정 및 추가/PGUnitCollectionSubsystem  구성)
-=======
-                        AttackMarginKey = AttackRangeKey * 0.85f;
->>>>>>> Stashed changes
 
                         if (StartUpData->BranchData->BranchTag.IsValid())
                         {
                             BranchTag = StartUpData->BranchData->BranchTag;
                         }
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
                     }
                     UE_LOG(LogTemp, Log, TEXT("InitUnitStartUpData"));
                     if (CharacterAttributeSet)
                     {
+                        CharacterAttributeSet->SetHealth(CharacterAttributeSet->GetMaxHealth());
                         UE_LOG(LogTemp, Log, TEXT("HP : %f"), CharacterAttributeSet->GetHealth());
                     }
                     else
                     {
                         UE_LOG(LogTemp, Error, TEXT("[%s] AttributeSet이 없습니다! 블루프린트를 확인하세요."), *GetName());
                     }
-<<<<<<< Updated upstream
-                    TeamTag = StartUpData->TeamTag;
-=======
 
                     if (StartUpData->TeamTag.IsValid())
                     {
                         TeamTag = StartUpData->TeamTag;
                     }
->>>>>>> Stashed changes
 
                     if (StartUpData->ElementTag.IsValid())
                     {
@@ -256,10 +213,18 @@ void AUnitCharacter::SetAttackTarget(AActor* InTargetActor)
 {
     //적 베이스로 돌격하기 위한 함수, 지금은 유닛 블루프린트의 beginplay에서만 호출하는데 + 여기서만 적 베이스를 정할 수 있는데 나중ㅇ 바꿀듯????
     TargetActor = InTargetActor;
+
+    if (!IsValid(TargetActor))
+    {
+        return;
+    }
+
     if (!AIController)
     {
         AIController = Cast<AAIController>(GetController());
     }
+
+
 
     if (AIController)
     {
@@ -269,6 +234,7 @@ void AUnitCharacter::SetAttackTarget(AActor* InTargetActor)
             BBComp->SetValueAsObject(TEXT("AttackTargetBase"), InTargetActor);
         }
     }
+
 }
 
 //void AUnitCharacter::Attack()
@@ -286,6 +252,13 @@ void AUnitCharacter::SetAttackTarget(AActor* InTargetActor)
 
 void AUnitCharacter::OnDie()
 {
+    if (bIsDead)
+    {
+        return;
+    }
+
+    bIsDead = true;
+
     if (UUnitSpawnSubsystem* SpawnSubsystem = GetWorld()->GetSubsystem<UUnitSpawnSubsystem>())
     {
         UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
@@ -314,6 +287,7 @@ void AUnitCharacter::OnDie()
 
 void AUnitCharacter::ActivateUnit()
 {
+    bIsDead = false;
     SetActorHiddenInGame(false); // 보이게 하기
     SetActorEnableCollision(true); // 충돌 켜기
     SetActorTickEnabled(true); // 로직 다시 돌리기
@@ -337,7 +311,7 @@ void AUnitCharacter::ActivateUnit()
 void AUnitCharacter::DeactivateUnit()
 {
 
-    OnUnitStartUpDataLoadedDelegate.Clear();
+    //OnUnitStartUpDataLoadedDelegate.Clear();
 
     if (AController* OldController = GetController())
     {

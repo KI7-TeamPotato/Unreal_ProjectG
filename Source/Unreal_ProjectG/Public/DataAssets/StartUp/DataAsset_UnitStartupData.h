@@ -33,21 +33,10 @@ public:
     UPROPERTY(EditAnywhere, Category = "Stats")
     UBranchDataAsset* BranchData;
 
-<<<<<<< Updated upstream
-    // --- [2] 외형 ---
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Visual")
-    USkeletalMesh* SkeletalMesh;
-
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Visual")
-    TSubclassOf<UAnimInstance> AnimBlueprint;
-
-private:
-=======
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Animations")
     UAnimMontage* DeadMontage;
 
     // 유닛만이 가지고 있는 어빌리티
->>>>>>> Stashed changes
     UPROPERTY(EditDefaultsOnly, Category = "StartupData")
     TArray<UDataAsset_SkillData*> UnitCombatAbilityEntries;
 

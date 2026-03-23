@@ -5,13 +5,10 @@
 #include "CoreMinimal.h"
 #include "Character/PGCharacterBase.h"
 #include "GameplayEffectTypes.h"
-<<<<<<< Updated upstream
-=======
 #include "GameplayAbilitySpecHandle.h"
 #include "Interfaces/EquipmentsStorageInterface.h"
 #include "Interfaces/HeroCombatInterface.h"
 #include "Types/PGEnumTypes.h"
->>>>>>> Stashed changes
 #include "HeroCharacter.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPlayerDied);
@@ -59,33 +56,9 @@ public:
     UFUNCTION(BlueprintCallable, Category = "HeroCharacter")
     void InitializeHero();
 
-<<<<<<< Updated upstream
-    //무기 장착
-    UFUNCTION(BlueprintCallable, Category = "Equipment")
-    void EquipWeapon(UDataAsset_WeaponData* WeaponData);
-    //방어구 장착
-    UFUNCTION(BlueprintCallable, Category = "Equipment")
-    void EquipArmor(UDataAsset_ArmorData* ArmorData);
-    //악세 장착
-    UFUNCTION(BlueprintCallable, Category = "Equipment")
-    void EquipAccessory(UDataAsset_AccessoryData* AccessoryData);
-
-    //스킬 사용
-    UFUNCTION(BlueprintCallable, Category = "Battle")
-    void ActivateSkill();
-
-    //자동전투 상태로 만듦
-    UFUNCTION(BlueprintCallable, Category = "Battle")
-    void OnAutoBattle() { bIsAuto = true; };
-
-    //자동전투 종료
-    UFUNCTION(BlueprintCallable, Category = "Battle")
-    void OffAutoBattle() { bIsAuto = false; };
-=======
     // 유닛 소환용 코스트 차감 함수
     UFUNCTION(BlueprintCallable, Category = "Battle")
     bool ConsumeCost(float InCost);
->>>>>>> Stashed changes
 
     // UI 업데이트용 함수
     void BroadCastAttributeSet();
@@ -140,54 +113,6 @@ protected:
     TObjectPtr<class UInputAction> IA_Move = nullptr;
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "InputAction")
     TObjectPtr<UInputAction> IA_Attack = nullptr;
-<<<<<<< Updated upstream
-
-    //리소스를 관리하는 어트리뷰트
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
-    TObjectPtr<class UPGCharacterAttributeSet> ResourceAttribute = nullptr;
-
-    //게임 시작시 실행할 어빌리티
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ability")
-    TSubclassOf<class UGameplayAbility> GA_Initialize = nullptr;
-
-    //사망 어빌리티
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ability")
-    TSubclassOf<UGameplayAbility> GA_Die = nullptr;
-
-    //공격
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ability")
-    TSubclassOf<UGameplayAbility> GA_Attack = nullptr;
-
-    //스킬
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ability")
-    TArray<TSubclassOf<UGameplayAbility>> GA_Skill;
-
-    //무기
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Equipment")
-    TObjectPtr<UDataAsset_WeaponData> Weapon = nullptr;
-    //방어구
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Equipment")
-    TObjectPtr<UDataAsset_ArmorData> Armor = nullptr;
-    //악세
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Equipment")
-    TObjectPtr<UDataAsset_AccessoryData> Accessory = nullptr;
-
-private:
-    //ABP
-    UPROPERTY()
-    TObjectPtr<class UAnimInstance> AnimInstance = nullptr;
-
-    //리소스 컴포넌트
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
-    TObjectPtr<class UHeroResourceComponent> ResourceManager = nullptr;
-
-    //자동전투 실행 여부
-    bool bIsAuto = false;
-
-    //공격 범위 내 적들
-    TArray<AActor*> PotentialTargets;
-=======
->>>>>>> Stashed changes
 };
 
 

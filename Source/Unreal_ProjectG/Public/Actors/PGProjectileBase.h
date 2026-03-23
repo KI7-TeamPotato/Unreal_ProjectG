@@ -61,8 +61,6 @@ protected:
 
     UPROPERTY(BlueprintReadOnly, Category = "Projectile", meta = (ExposeOnSpawn = "true"))
     FGameplayEffectSpecHandle ProjectileDamageEffectSpecHandle;
-<<<<<<< Updated upstream
-=======
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Projectile|SVFX")
     TWeakObjectPtr<UNiagaraSystem> ProjectileImpactVFX;
@@ -72,5 +70,4 @@ protected:
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Projectile")
     float ProjectileSpan = 2.0f;
->>>>>>> Stashed changes
 };

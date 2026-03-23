@@ -1,11 +1,13 @@
 #include "Mode/Save/PGGameInstance.h"
-#include "Mode/Save/PGUnitCollectionSubsystem.h"
 #include "Mode/Save/PGSaveGame.h"
 #include "Kismet/GameplayStatics.h"
 #include "DataAssets/UI/UnitUIDataAsset.h"
-#include "UI/DataTable/UnitUIDataTable.h"
 #include "UI/Battle/BattleHUD.h"
-
+#include "UI/DataTable/UnitUIDataTable.h"
+#include "PGGameInstance.h"
+#include "GameFramework/GameUserSettings.h"
+#include "Sound/SoundClass.h"
+#include "Sound/SoundMix.h"
 
 
 //------- 구현 방식 ----------
@@ -30,6 +32,7 @@
 void UPGGameInstance::Init()
 {
     Super::Init();
+
     LoadGameData();
 }
 
@@ -39,66 +42,257 @@ void UPGGameInstance::LoadGameData()
     if (UGameplayStatics::DoesSaveGameExist(SaveSlotName, 0))
     {
         CachedSaveData = Cast<UPGSaveGame>(UGameplayStatics::LoadGameFromSlot(SaveSlotName, 0));
+        this->UnitLevelMap = CachedSaveData->UnitLevelMap;
+        if (CachedSaveData->UnitLevelMap.IsEmpty())
+            InitializeUnitMap();
     }
     else
     {
         CachedSaveData = Cast<UPGSaveGame>(UGameplayStatics::CreateSaveGameObject(UPGSaveGame::StaticClass()));
+        InitializeUnitMap();
     }
 
-    if (CachedSaveData)
+    // 디스크 데이터(Path) -> 런타임 데이터(SoftPtr) 로드
+    // 재화 로드
+    CurrentPlayerGold = CachedSaveData->PlayerGold;
+    CurrentPlayerGem = CachedSaveData->PlayerGem;
+    CurrentPlayerUnlock = CachedSaveData->PlayerUnlock;
+
+    // [환경설정] 사운드 설정 로드 (SaveGame에 이 변수들이 있어야 함)
+    CurrentMasterVolume = CachedSaveData->MasterVolume;
+    CurrentBGMVolume = CachedSaveData->BGMVolume;
+    CurrentSFXVolume = CachedSaveData->SFXVolume;
+
+    // 유닛 데이터 로드
+    CurrentUnits.Empty();
+    for (const FSoftObjectPath& Path : CachedSaveData->EquippedUnitPaths)
     {
-        //장비 로드
-        CurrentWeapon = TSoftObjectPtr<UEquipUIDataAsset>(CachedSaveData->EquippedWeaponPath);
-        CurrentArmor = TSoftObjectPtr<UEquipUIDataAsset>(CachedSaveData->EquippedArmorPath);
-        CurrentAccessory = TSoftObjectPtr<UEquipUIDataAsset>(CachedSaveData->EquippedAccessoryPath);
+        CurrentUnits.Add(TSoftObjectPtr<UUnitUIDataAsset>(Path));
+    }
 
-        //재화 로드
-        CurrentPlayerGold = CachedSaveData->PlayerGold;
-        CurrentPlayerGem = CachedSaveData->PlayerGem;
-        CurrentPlayerUnlock = CachedSaveData->PlayerUnlock;
+    // 장비 로드
+    CurrentWeapon = TSoftObjectPtr<UEquipUIDataAsset>(CachedSaveData->EquippedWeaponPath);
+    CurrentArmor = TSoftObjectPtr<UEquipUIDataAsset>(CachedSaveData->EquippedArmorPath);
+    CurrentAccessory = TSoftObjectPtr<UEquipUIDataAsset>(CachedSaveData->EquippedAccessoryPath);
 
-        // 파티 편성 로드
-        CurrentUnits.Empty();
-        for (const FSoftObjectPath& Path : CachedSaveData->EquippedUnitPaths)
+    // 클리어 스테이지 데이터 로드
+    StageClearData = CachedSaveData->StageDataMap;
+}
+
+void UPGGameInstance::AddGoods(EGoodsCategory InCategory, int32 InValue)
+{
+    int32 OutValue = 0;
+    switch (InCategory)
+    {
+    case EGoodsCategory::Gem:
+        CurrentPlayerGem += InValue;
+        OutValue = CurrentPlayerGem;
+        break;
+    case EGoodsCategory::Unlock:
+        CurrentPlayerUnlock += InValue;
+        OutValue = CurrentPlayerUnlock;
+        break;
+    case EGoodsCategory::Gold:
+        CurrentPlayerGold += InValue;
+        OutValue = CurrentPlayerGold;
+        break;
+    }
+
+    if (OutValue <= 0) OutValue = 0;
+
+    if (OnGoodsChanged.IsBound())
+    {
+        OnGoodsChanged.Broadcast(InCategory, OutValue);
+    }
+}
+
+void UPGGameInstance::ConsumeGoods(EGoodsCategory InCategory, int32 InValue)
+{
+    int32 OutValue = 0;
+    switch (InCategory)
+    {
+    case EGoodsCategory::Gem:
+    {
+        CurrentPlayerGem -= InValue;
+        if (CurrentPlayerGem < 0) CurrentPlayerGem = 0;
+        OutValue = CurrentPlayerGem;
+        break;
+    }
+    case EGoodsCategory::Unlock:
+    {
+        CurrentPlayerUnlock -= InValue;
+        if (CurrentPlayerUnlock < 0) CurrentPlayerUnlock = 0;
+        OutValue = CurrentPlayerUnlock;
+        break;
+    }
+    case EGoodsCategory::Gold:
+    {
+        CurrentPlayerGold -= InValue;
+        if (CurrentPlayerGold < 0) CurrentPlayerGold = 0;
+        OutValue = CurrentPlayerGold;
+        break;
+    }
+    }
+    if (OnGoodsChanged.IsBound())
+    {
+        OnGoodsChanged.Broadcast(InCategory, OutValue);
+    }
+}
+
+void UPGGameInstance::SetSoundVolumes(float InMaster, float InBGM, float InSFX)
+{
+    // 볼륨 값을 0.0 ~ 1.0 사이 설정
+    CurrentMasterVolume = FMath::Clamp(InMaster, 0.0f, 1.0f);
+    CurrentBGMVolume = FMath::Clamp(InBGM, 0.0f, 1.0f);
+    CurrentSFXVolume = FMath::Clamp(InSFX, 0.0f, 1.0f);
+
+    // 언리얼 엔진 사운드 믹스에 오버라이드 (적용)
+    if (MainSoundMix)
+    {
+        if (MasterSoundClass) UGameplayStatics::SetSoundMixClassOverride(this, MainSoundMix, MasterSoundClass, CurrentMasterVolume, 1.0f, 0.0f, true);
+        if (BGMSoundClass) UGameplayStatics::SetSoundMixClassOverride(this, MainSoundMix, BGMSoundClass, CurrentBGMVolume, 1.0f, 0.0f, true);
+        if (SFXSoundClass) UGameplayStatics::SetSoundMixClassOverride(this, MainSoundMix, SFXSoundClass, CurrentSFXVolume, 1.0f, 0.0f, true);
+    }
+
+    // 볼륨이 바뀔 때마다 세이브 파일에 덮어쓰기
+    SaveGameData();
+}
+
+void UPGGameInstance::SetScreenMode(int32 ModeIndex)
+{
+    if (UGameUserSettings* UserSettings = GEngine->GetGameUserSettings())
+    {
+        EWindowMode::Type NewMode = EWindowMode::Windowed;
+
+        if (ModeIndex == 0) NewMode = EWindowMode::Fullscreen;               // 전체화면
+        else if (ModeIndex == 1) NewMode = EWindowMode::WindowedFullscreen;  // 비율화면 (테두리 없는 창모드)
+        else if (ModeIndex == 2) NewMode = EWindowMode::Windowed;            // 창모드
+
+        UserSettings->SetFullscreenMode(NewMode);
+        UserSettings->ApplySettings(false); // 해상도 및 모드 즉시 적용
+
+        //.ini 파일에 즉시 기록하여 영구 저장
+        UserSettings->SaveSettings();
+    }
+}
+
+void UPGGameInstance::SetGraphicQuality(int32 QualityIndex)
+{
+    if (UGameUserSettings* UserSettings = GEngine->GetGameUserSettings())
+    {
+        // QualityIndex (0: 저, 1: 중, 2: 고)
+        int32 SafeQuality = FMath::Clamp(QualityIndex, 0, 3);
+
+        // 안티앨리어싱, 그림자, 텍스처 등 모든 품질을 일괄 변경
+        UserSettings->SetOverallScalabilityLevel(SafeQuality);
+        UserSettings->ApplySettings(false);
+
+        //.ini 파일에 즉시 기록하여 영구 저장
+        UserSettings->SaveSettings();
+    }
+}
+
+void UPGGameInstance::UpdateStageClearData(int32 StageCode, int32 InStarCount)
+{
+    int32* OldStarCountPtr = StageClearData.Find(StageCode);
+    bool bIsFirstClear = (OldStarCountPtr == nullptr);
+
+    // 젬은 최초 클리어시에만 지급
+    if (bIsFirstClear)
+    {
+        AddGoods(EGoodsCategory::Gem, CurrentStageData.RewardGem);
+    }
+    
+    // 달성도에 따라 골드 지급
+    AddGoods(EGoodsCategory::Gold, CurrentStageData.RewardGold * InStarCount);
+
+    if (bIsFirstClear || InStarCount > *OldStarCountPtr)
+    {
+        StageClearData.Add(StageCode, InStarCount);
+
+        // 다음 스테이지 해금 로직 [추가 예정]
+        // UnlockNextStage(StageCode); 
+    }
+    SaveGameData();
+}
+
+void UPGGameInstance::InitializeUnitMap()
+{
+    if (!UnitDataTable) return;
+
+    // 이미 데이터가 있다면 중복 초기화를 방지
+    //if (UnitLevelMap.Num() > 0) return;
+
+    // 데이터 테이블의 모든 행을 가져옴 (RowStruct는 본인의 데이터 테이블 구조체 타입)
+    static const FString ContextString(TEXT("UnitMapRef"));
+    TArray<FUnitUIDataTable*> AllRows;
+    UnitDataTable->GetAllRows<FUnitUIDataTable>(ContextString, AllRows);
+
+    for (FUnitUIDataTable* Row : AllRows)
+    {
+        if (Row)
         {
-            CurrentUnits.Add(TSoftObjectPtr<UUnitUIDataAsset>(Path));
-        }
+            FUnitSaveData NewData;
+            NewData.Level = 1;
 
-        // [추가] 서브시스템에 세이브 데이터 전달하여 도감(보유 유닛) 복구
-        if (UPGUnitCollectionSubsystem* CollectionSubsystem = GetSubsystem<UPGUnitCollectionSubsystem>())
-        {
-            CollectionSubsystem->LoadFromSaveGame(CachedSaveData);
+            // 특정 ID만 시작 시 해금 상태로 설정
+            NewData.bIsUnlocked = (
+                Row->UnitID == 101 ||
+                Row->UnitID == 102 ||
+                Row->UnitID == 201 ||
+                Row->UnitID == 202 ||
+                Row->UnitID == 301
+                );
+
+            // 맵에 추가
+            UnitLevelMap.Add(Row->UnitID, NewData);
         }
     }
+
+    UE_LOG(LogTemp, Log, TEXT("UnitLevelMap 초기화 완료: %d개의 유닛 로드됨"), UnitLevelMap.Num());
+}
+
+FUnitSaveData UPGGameInstance::GetUnitSaveData(int32 UnitID)
+{
+    if (FUnitSaveData* FoundData = UnitLevelMap.Find(UnitID))
+    {
+        // 데이터 존재 시 역참조
+        return *FoundData;
+    }
+    return FUnitSaveData();
 }
 
 void UPGGameInstance::SaveGameData()
 {
-    if (!CachedSaveData) return;
+    if (!CachedSaveData) return;  
 
-    // 장비 저장
+    // 현재 보유 유닛 리스트 저장
+    CachedSaveData->UnitLevelMap = this->UnitLevelMap;
+
+    // 현재 스테이지 데이터 저장
+    CachedSaveData->StageDataMap = this->StageClearData;
+
+    // 런타임 데이터(SoftPtr) -> 디스크 데이터(Path) 저장
+    // 게임 중 변동된 장비를 세이브 파일에 덮어쓰기
     CachedSaveData->EquippedWeaponPath = CurrentWeapon.ToSoftObjectPath();
     CachedSaveData->EquippedArmorPath = CurrentArmor.ToSoftObjectPath();
     CachedSaveData->EquippedAccessoryPath = CurrentAccessory.ToSoftObjectPath();
 
-    // 재화 저장
+    // 게임 중 변동된 재화를 세이브 파일에 덮어쓰기
     CachedSaveData->PlayerGold = CurrentPlayerGold;
     CachedSaveData->PlayerGem = CurrentPlayerGem;
     CachedSaveData->PlayerUnlock = CurrentPlayerUnlock;
 
-    //현재 장착 중인 유닛(파티) 저장
+    // [환경설정] 사운드 설정 디스크에 저장
+    CachedSaveData->MasterVolume = CurrentMasterVolume;
+    CachedSaveData->BGMVolume = CurrentBGMVolume;
+    CachedSaveData->SFXVolume = CurrentSFXVolume;
+
     CachedSaveData->EquippedUnitPaths.Empty();
     for (const auto& UnitPtr : CurrentUnits)
     {
         CachedSaveData->EquippedUnitPaths.Add(UnitPtr.ToSoftObjectPath());
     }
 
-    //[추가] 도감 저장 서브시스템의 최신 도감(보유 유닛) 상태를 저장
-    if (UPGUnitCollectionSubsystem* CollectionSubsystem = GetSubsystem<UPGUnitCollectionSubsystem>())
-    {
-        CollectionSubsystem->SaveToSaveGame(CachedSaveData);
-    }
-
-    //디스크에 최종 기록
     UGameplayStatics::SaveGameToSlot(CachedSaveData, SaveSlotName, 0);
 }

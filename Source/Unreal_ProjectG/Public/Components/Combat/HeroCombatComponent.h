@@ -7,11 +7,6 @@
 #include "Types/PGEnumTypes.h"
 #include "HeroCombatComponent.generated.h"
 
-<<<<<<< Updated upstream
-
-class APGHeroWeapon;
-=======
->>>>>>> Stashed changes
 /**
  * 
  */
@@ -19,12 +14,6 @@ UCLASS()
 class UNREAL_PROJECTG_API UHeroCombatComponent : public UPawnExtensionComponentBase
 {
 	GENERATED_BODY()
-<<<<<<< Updated upstream
-	
-protected:
-    virtual void BeginPlay() override;
-=======
->>>>>>> Stashed changes
 
 public:
     UHeroCombatComponent();

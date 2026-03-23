@@ -6,19 +6,8 @@
 #include "GameplayCueFunctionLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "PGFunctionLibrary.h"
-<<<<<<< Updated upstream
-
-#include "DataAssets/Ability/AbilityConfig.h"
-
-UUnitAbility_BaseMeleeAttack::UUnitAbility_BaseMeleeAttack()
-{
-    // 기본 설정
-    InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
-}
-=======
 #include "AbilitySystemBlueprintLibrary.h"
 #include "DataAssets/Ability/DataAsset_SkillData.h"
->>>>>>> Stashed changes
 
 void UUnitAbility_BaseMeleeAttack::OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec)
 {
@@ -27,17 +16,11 @@ void UUnitAbility_BaseMeleeAttack::OnGiveAbility(const FGameplayAbilityActorInfo
     UDataAsset_SkillData* DataAsset = Cast<UDataAsset_SkillData>(GetCurrentAbilitySpec()->SourceObject.Get());
     if (DataAsset)
     {
-<<<<<<< Updated upstream
-        MeleeAttackMontage = Data->AbilityMontage;
-        MeleeAttackSkillMultiplier = Data->DamageMultiplier;
-        MaxHitTargets = Data->MaxHitTargets;
-=======
         const FUnitBaseMeleeAttackAbilityConfig* Config = DataAsset->AbilityEntry.AbilityConfig.GetPtr<FUnitBaseMeleeAttackAbilityConfig>();
         if (Config)
         {
             MeleeAttackConfig = *Config;
         }
->>>>>>> Stashed changes
     }
 }
 
@@ -70,7 +53,7 @@ void UUnitAbility_BaseMeleeAttack::ActivateAbility(const FGameplayAbilitySpecHan
         {
             break;
         }
-        if(UPGFunctionLibrary::IsTargetCharacterIsHostile(GetAvatarActorFromActorInfo(), HitResult.GetActor()))
+        if(UPGFunctionLibrary::IsTargetCharacterHostile(GetAvatarActorFromActorInfo(), HitResult.GetActor()))
         {
             CachedTargetActors.AddUnique(HitResult.GetActor());
             CurrentHitTargets++;
@@ -118,24 +101,18 @@ void UUnitAbility_BaseMeleeAttack::EndAbility(const FGameplayAbilitySpecHandle H
 
 void UUnitAbility_BaseMeleeAttack::HandleApplyDamage(FGameplayEventData InEventData)
 {
-    //// 게임플레이 큐 실행
-    //UGameplayCueFunctionLibrary::ExecuteGameplayCueOnActor(GetAvatarActorFromActorInfo(), MeleeAttackCueTag, FGameplayCueParameters());
-
-
     // 데미지 적용
     // TODO : 스킬의 데미지 Multiflier를 변수화
     float SkillMultiplierValue = MeleeAttackConfig.SkillMultiplier.GetValueAtLevel(GetAbilityLevel());
     FGameplayEffectSpecHandle EffectSpecHandle;
     if (MeleeAttackConfig.DamageEffectClass.Get())
     {
-        EffectSpecHandle = MakeOutgoingEffectSpecToTarget(MeleeAttackConfig.DamageEffectClass.Get(), SkillMultiplierValue);
+        EffectSpecHandle = MakeOutgoingEffectSpecWithMultiplier(MeleeAttackConfig.DamageEffectClass.Get(), SkillMultiplierValue);
     }
     for( TWeakObjectPtr<AActor> TargetActor : CachedTargetActors)
     {
         if (TargetActor.IsValid())
         {
-<<<<<<< Updated upstream
-=======
             // TargetActor에게 게임플레이 큐 실행
             if (MeleeAttackConfig.HitImpactCueTag.IsValid())
             {
@@ -143,8 +120,8 @@ void UUnitAbility_BaseMeleeAttack::HandleApplyDamage(FGameplayEventData InEventD
                 UGameplayCueFunctionLibrary::ExecuteGameplayCueOnActor(TargetActor.Get(), MeleeAttackConfig.HitImpactCueTag, FGameplayCueParameters());
             }
 
->>>>>>> Stashed changes
             NativeApplyEffectSpecHandleToTarget(TargetActor.Get(), EffectSpecHandle);
+            UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(TargetActor.Get(), PGGameplayTags::Shared_Event_HitReact, FGameplayEventData());
         }
     }
 }

@@ -49,12 +49,8 @@ public:
     float GetAttackMarginKey() { return AttackMarginKey; }
     UBehaviorTree* GetSubBTAssetKey() { return SubBTAssetKey; }
 
-<<<<<<< Updated upstream
-    FORCEINLINE UUnitCombatComponent* GetUnitCombatComponent() const { return UnitCombatComponent; }
-=======
     UFUNCTION(BlueprintCallable)
     FORCEINLINE TSoftObjectPtr<UDataAsset_StartupDataBase> GetUnitStartupData() const { return CharacterStartupData; }
->>>>>>> Stashed changes
 public:
     //공격 대상 정하는 함수
     UFUNCTION(BlueprintCallable, Category = "RVO")
@@ -88,16 +84,18 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI Movement")
     TObjectPtr<AActor> TargetActor = nullptr;
             
-<<<<<<< Updated upstream
-=======
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Combat")
     TObjectPtr<class UStaticMeshComponent> WeaponMesh;
->>>>>>> Stashed changes
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+    int32 UnitLevel = 1;
 
 protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
     TObjectPtr<UCharacterVisualEffectComponent> UnitVisualEffectComponent;
 
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State")
+    bool bIsDead = false;
 private:
     // AI 컨트롤러 캐싱
     class AAIController* AIController = nullptr;

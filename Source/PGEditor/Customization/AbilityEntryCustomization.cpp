@@ -8,39 +8,18 @@
 // 어빌리티 클래스 헤더
 #include "AbilitySystem/Abilities/Player/HeroAbility_BaseMeleeAttack.h"
 #include "AbilitySystem/Abilities/Player/HeroAbility_BaseProjectileAttack.h"
-<<<<<<< Updated upstream
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-=======
-#include "AbilitySystem/Abilities/Player/HeroAbility_AOEAttack.h"
-=======
-#include "AbilitySystem/Abilities/Player/HeroAbility_AOEBase.h"
->>>>>>> e72f839c (UnitData,PGSaveGame,PGGameInstance 도감 관련 코드 수정 및 추가/PGUnitCollectionSubsystem  구성)
-#include "AbilitySystem/Abilities/Player/HeroAbility_SpawnPet.h"
->>>>>>> Stashed changes
-=======
 #include "AbilitySystem/Abilities/Player/HeroAbility_AOEBase.h"
 #include "AbilitySystem/Abilities/Player/HeroAbility_SpawnPet.h"
->>>>>>> Stashed changes
 #include "AbilitySystem/Abilities/Unit/UnitAbility_BaseMeleeAttack.h"
 #include "AbilitySystem/Abilities/Unit/UnitAbility_SpawnProjectile.h"
 #include "AbilitySystem/Abilities/Unit/UnitAbility_SpawnActor.h"
 #include "AbilitySystem/Abilities/Shared/SharedAbility_BuffAura.h"
 
+
 // 어빌리티 클래스 -> Config 클래스 매핑 테이블
 // 새 어빌리티 혹은 Config 추가 시 이곳에 추가
 static TMap<UClass*, UScriptStruct*> GetAbilityToConfigMap()
 {
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-    TMap<UClass*, UClass*> Map;
-    Map.Add(UHeroAbility_BaseMeleeAttack::StaticClass(), UMeleeAttackAbilityConfig::StaticClass());
-    Map.Add(UHeroAbility_BaseProjectileAttack::StaticClass(), USpawnProjectileAbilityConfig::StaticClass());
-    Map.Add(UUnitAbility_BaseMeleeAttack::StaticClass(), UUnitMeleeAttackAbilityConfig::StaticClass());
-    Map.Add(UUnitAbility_SpawnProjectile::StaticClass(), USpawnProjectileAbilityConfig::StaticClass());
-=======
-=======
->>>>>>> Stashed changes
     TMap<UClass*, UScriptStruct*> Map;
 
     // UClass*는 StaticClass()로, UScriptStruct*는 StaticStruct()로 매핑
@@ -53,10 +32,6 @@ static TMap<UClass*, UScriptStruct*> GetAbilityToConfigMap()
     Map.Add(UUnitAbility_SpawnProjectile::StaticClass(), FUnitSpawnProjectileAbilityConfig::StaticStruct());
     Map.Add(UUnitAbility_SpawnActor::StaticClass(), FUnitSpawnActorAbilityConfig::StaticStruct());
     Map.Add(USharedAbility_BuffAura::StaticClass(), FSharedBuffAuraAbilityConfig::StaticStruct());
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 
     return Map;
 }
@@ -92,22 +67,8 @@ void FAbilityEntryCustomization::CustomizeChildren(TSharedRef<IPropertyHandle> P
     // 현재 AbilityClass를 캐싱
     CachedAbilityClass = GetCurrentAbilityClass();
 
-<<<<<<< Updated upstream
-    UObject* AbilityClassObj = nullptr;
-    AbilityClassHandle->GetValue(AbilityClassObj);
-    if (AbilityClassObj && PropertyUtilities.IsValid() && !bIsRefreshing)
-    {
-        bIsRefreshing = true; // 무한 루프 방지 플래그
-        PropertyUtilities->RequestRefresh();
-    }
-    else
-    {
-        bIsRefreshing = false;
-    }
-=======
     // 진입점에서 현재 AbilityClass에 맞는 Config 클래스 필터링
     UpdateConfigStructFilter();
->>>>>>> Stashed changes
 
     // AbilityClass 변경 감지 -> Config 초기화
      AbilityClassHandle->SetOnPropertyValueChanged(

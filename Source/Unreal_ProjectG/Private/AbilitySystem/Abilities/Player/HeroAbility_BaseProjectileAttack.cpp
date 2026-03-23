@@ -5,32 +5,10 @@
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "PGGameplayTags.h"
-<<<<<<< Updated upstream
-<<<<<<< HEAD
-#include "Items/PGProjectileBase.h"
-<<<<<<< Updated upstream
-
-#include "DataAssets/Ability/AbilityConfig.h"
-
-UHeroAbility_BaseProjectileAttack::UHeroAbility_BaseProjectileAttack()
-{
-    // 기본 설정
-    InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
-}
-=======
-=======
-#include "Actors/PGProjectileBase.h"
->>>>>>> e72f839c (UnitData,PGSaveGame,PGGameInstance 도감 관련 코드 수정 및 추가/PGUnitCollectionSubsystem  구성)
-#include "DataAssets/Ability/DataAsset_SkillData.h"
-#include "Character/Hero/HeroCharacter.h"
-#include "Components/Combat/HeroCombatComponent.h"
->>>>>>> Stashed changes
-=======
 #include "Actors/PGProjectileBase.h"
 #include "DataAssets/Ability/DataAsset_SkillData.h"
 #include "Character/Hero/HeroCharacter.h"
 #include "Components/Combat/HeroCombatComponent.h"
->>>>>>> Stashed changes
 
 void UHeroAbility_BaseProjectileAttack::OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec)
 {

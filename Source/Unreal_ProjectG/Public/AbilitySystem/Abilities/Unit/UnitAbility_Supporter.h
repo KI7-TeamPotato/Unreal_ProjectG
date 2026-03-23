@@ -6,16 +6,6 @@
 #include "AbilitySystem/Abilities/PGUnitGameplayAbility.h"
 #include "UnitAbility_Supporter.generated.h"
 
-<<<<<<< Updated upstream
-<<<<<<< HEAD
-UCLASS()
-class UNREAL_PROJECTG_API UUnitAbility_Supporter : public UPGUnitGameplayAbility
-{
-    GENERATED_BODY()
-
-=======
-=======
->>>>>>> Stashed changes
 /**
  * 
  */
@@ -23,10 +13,6 @@ UCLASS()
 class UNREAL_PROJECTG_API UUnitAbility_Supporter : public UPGUnitGameplayAbility
 {
 	GENERATED_BODY()
-<<<<<<< Updated upstream
->>>>>>> e72f839c (UnitData,PGSaveGame,PGGameInstance 도감 관련 코드 수정 및 추가/PGUnitCollectionSubsystem  구성)
-=======
->>>>>>> Stashed changes
 public:
     UUnitAbility_Supporter();
 
@@ -44,40 +30,7 @@ protected:
     void OnMontageFinished();
 
 protected:
-<<<<<<< Updated upstream
-<<<<<<< HEAD
-    // 장판 반경 내 아군에게 부여할 힐/버프 이펙트 (GE)
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability|Support")
-    TSubclassOf<UGameplayEffect> SupportEffectClass;
-
-    // 시전 애니메이션
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ability|Support")
-    TObjectPtr<UAnimMontage> SupportMontage;
-
-    // 힐/버프 계수
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability|Support")
-    FScalableFloat SupportSkillMultiplier;
-
-    // 지원 유닛 주위에 깔릴 장판의 탐색 반경
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability|Support")
-    float SupportRadius = 500.f;
-
-    // 시각적으로 바닥에 깔아둘 장판 액터 클래스 (데칼이나 파티클을 가진 액터)
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability|Support")
-    TSubclassOf<AActor> JangpanActorClass;
-
-    // 장판이 유닛을 따라다닐지(오라 형태), 시전 위치에 남을지 결정
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Ability|Support")
-    bool bAttachToUnit = false;
-};
-=======
-=======
->>>>>>> Stashed changes
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Ability|Support")
 
     FUnitBuffAuraAbilityConfig UnitBuffConfig;
 };
-<<<<<<< Updated upstream
->>>>>>> e72f839c (UnitData,PGSaveGame,PGGameInstance 도감 관련 코드 수정 및 추가/PGUnitCollectionSubsystem  구성)
-=======
->>>>>>> Stashed changes
