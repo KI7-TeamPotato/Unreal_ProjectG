@@ -41,6 +41,7 @@ private:
     void RefreshBasicAttackTimer();                   // 기본 공격 타이머 갱신 함수(공격 속도가 변경 되었을 때)
 
     void UpdateDetection();
+    void DebugCurrentTarget() const;
     void HandleBasicAttack();                         // 기본 공격 처리 함수
     void HandleAutoCombat();                          // 자동 공격 처리 함수
 
@@ -69,6 +70,12 @@ private:
 
     UPROPERTY(EditAnywhere)
     EHeroCombatMode CombatMode = EHeroCombatMode::None; // 현재 전투 모드
+
+    UPROPERTY(EditAnywhere, Category = "Debug")
+    bool bEnableCurrentTargetDebug = false;
+
+    UPROPERTY(EditAnywhere, Category = "Debug", meta = (ClampMin = "0.01"))
+    float CurrentTargetDebugDuration = 0.3f;
 
     FTimerHandle DetectTimerHandle; // 탐색 타이머를 관리하는 핸들
     FTimerHandle BasicAttackTimerHandle; // 기본 공격 타이머 핸들

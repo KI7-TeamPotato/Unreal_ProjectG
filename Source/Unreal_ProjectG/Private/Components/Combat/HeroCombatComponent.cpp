@@ -5,6 +5,7 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "TimerManager.h"
+#include "DrawDebugHelpers.h"
 #include "PGGameplayTags.h"
 #include "Character/PGCharacterBase.h"
 #include "Interfaces/HeroCombatInterface.h"
@@ -166,6 +167,7 @@ void UHeroCombatComponent::UpdateDetection()
 
     // 현재 타깃은 가장 가까운 적으로 변경
     CurrentTarget = FindNearestEnemy();
+    DebugCurrentTarget();
 
     // 유효한 타깃이 없으면 틱을 종료하면서 캐릭터 회전을 Movement 방향으로 돌려놓음
     // Auto 모드라면 항상 틱이 활성화 되어 있어야 하지만, Manual 모드에서는 타깃이 없을 때 틱을 비활성화하여 불필요한 연산을 줄임
@@ -185,6 +187,50 @@ void UHeroCombatComponent::UpdateDetection()
         OwningCharacter->GetCharacterMovement()->bOrientRotationToMovement = false; // 회전을 캐릭터 방향으로 고정
         OwningCharacter->GetCharacterMovement()->MaxWalkSpeed = 300.f;  // TODO: 전투 이동 속도는 캐릭터 데이터에서 가져오도록 변경 필요
     }
+}
+
+void UHeroCombatComponent::DebugCurrentTarget() const
+{
+#if UE_BUILD_SHIPPING || UE_BUILD_TEST
+    return;
+#else
+    if (!bEnableCurrentTargetDebug || !OwningCharacter)
+    {
+        return;
+    }
+
+    UWorld* World = GetWorld();
+    if (!World)
+    {
+        return;
+    }
+
+    const FVector OwnerLocation = OwningCharacter->GetActorLocation();
+    const FVector OwnerDrawLocation = OwnerLocation + FVector(0.f, 0.f, 50.f);
+    const float DebugDuration = FMath::Max(CurrentTargetDebugDuration, 0.01f);
+
+    if (!CurrentTarget.IsValid())
+    {
+        const FVector ForwardEnd = OwnerDrawLocation + (OwningCharacter->GetActorForwardVector() * 100.f);
+        DrawDebugLine(World, OwnerDrawLocation, ForwardEnd, FColor::Red, false, DebugDuration, 0, 1.5f);
+        DrawDebugSphere(World, OwnerDrawLocation, 20.f, 12, FColor::Red, false, DebugDuration, 0, 1.5f);
+        DrawDebugString(World, OwnerDrawLocation + FVector(0.f, 0.f, 35.f), TEXT("CurrentTarget: None"), nullptr, FColor::Red, DebugDuration, false);
+        return;
+    }
+
+    const FVector TargetLocation = CurrentTarget->GetActorLocation();
+    const FVector TargetDrawLocation = TargetLocation + FVector(0.f, 0.f, 50.f);
+    const float Distance = FVector::Dist(OwnerLocation, TargetLocation);
+    const FString DebugText = FString::Printf(
+        TEXT("CurrentTarget: %s\nDistance: %.1f"),
+        *CurrentTarget->GetName(),
+        Distance
+    );
+
+    DrawDebugLine(World, OwnerDrawLocation, TargetDrawLocation, FColor::Yellow, false, DebugDuration, 0, 1.8f);
+    DrawDebugSphere(World, TargetDrawLocation, 35.f, 12, FColor::Green, false, DebugDuration, 0, 1.8f);
+    DrawDebugString(World, TargetDrawLocation + FVector(0.f, 0.f, 45.f), DebugText, nullptr, FColor::White, DebugDuration, false);
+#endif
 }
 
 void UHeroCombatComponent::HandleBasicAttack()

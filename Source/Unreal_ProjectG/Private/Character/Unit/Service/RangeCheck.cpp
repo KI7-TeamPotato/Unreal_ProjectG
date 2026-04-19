@@ -116,34 +116,34 @@ void URangeCheck::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
     Blackboard->SetValueAsBool(IsInDetectRangeKey.SelectedKeyName, bInDetectRange);
     Blackboard->SetValueAsBool(IsInAttackRangeKey.SelectedKeyName, bInAttackRange);
 
-    DrawDebugCircle(
-        GetWorld(),
-        ControllPawn->GetActorLocation(),
-        AttackRange,
-        48,
-        FColor::Red,
-        false,
-        Interval + 0.1f,
-        0,
-        2.0f,
-        FVector(1, 0, 0),
-        FVector(0, 1, 0),
-        false
-    );
-    DrawDebugCircle(
-        GetWorld(),
-        ControllPawn->GetActorLocation(),
-        Range,
-        48,
-        FColor::Green,
-        false,
-        Interval + 0.1f,
-        0,
-        2.0f,
-        FVector(1, 0, 0),
-        FVector(0, 1, 0),
-        false
-    );
+    //DrawDebugCircle(
+    //    GetWorld(),
+    //    ControllPawn->GetActorLocation(),
+    //    AttackRange,
+    //    48,
+    //    FColor::Red,
+    //    false,
+    //    Interval + 0.1f,
+    //    0,
+    //    2.0f,
+    //    FVector(1, 0, 0),
+    //    FVector(0, 1, 0),
+    //    false
+    //);
+    //DrawDebugCircle(
+    //    GetWorld(),
+    //    ControllPawn->GetActorLocation(),
+    //    Range,
+    //    48,
+    //    FColor::Green,
+    //    false,
+    //    Interval + 0.1f,
+    //    0,
+    //    2.0f,
+    //    FVector(1, 0, 0),
+    //    FVector(0, 1, 0),
+    //    false
+    //);
 
     if (TargetEnemy)
     {
@@ -154,16 +154,16 @@ void URangeCheck::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
         // [수정됨] 디버그 라인이 수평으로 그려지도록, 끝점의 Z(높이) 값을 시작점과 동일하게 맞춤
         EndLoc.Z = StartLoc.Z;
 
-        DrawDebugLine(
-            GetWorld(),
-            StartLoc,
-            EndLoc,
-            FColor::Yellow, // 타겟 연결선은 노란색
-            false,
-            Interval + 0.1f,
-            0,
-            1.5f
-        );
+        //DrawDebugLine(
+        //    GetWorld(),
+        //    StartLoc,
+        //    EndLoc,
+        //    FColor::Yellow, // 타겟 연결선은 노란색
+        //    false,
+        //    Interval + 0.1f,
+        //    0,
+        //    1.5f
+        //);
     }
 
     if (AIC)
