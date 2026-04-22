@@ -40,6 +40,13 @@ void UActiveSkillWidget::SetAbilitySpec(FGameplayAbilitySpec InSpec)
         AbilitySystemComponent->RegisterGameplayTagEvent(CooldownTag, EGameplayTagEventType::NewOrRemoved)
             .AddUObject(this, &UActiveSkillWidget::OnCoolDownTagChanged);
     }
+    
+    DieTag = PGGameplayTags::State_Hero_Die;
+    if (DieTag.IsValid())
+    {
+        AbilitySystemComponent->RegisterGameplayTagEvent(DieTag, EGameplayTagEventType::NewOrRemoved)
+            .AddUObject(this, &UActiveSkillWidget::SkillCancel);
+    }
 }
 
 void UActiveSkillWidget::SetSkillIcon(UTexture2D* InIcon)
@@ -98,6 +105,11 @@ void UActiveSkillWidget::UpdateCoolTimeProgress()
     }
 }
 
+void UActiveSkillWidget::SkillCancel(const FGameplayTag CallbackTag, int32 NewCount)
+{
+    UpdateSlot(true);
+}
+
 void UActiveSkillWidget::NativeConstruct()
 {
     Super::NativeConstruct();
@@ -126,9 +138,12 @@ void UActiveSkillWidget::OnActiveButtonClicked()
     // 이미 사용중인 상태라면
     if (Spec->IsActive())
     {
-        // 토글형 스킬인 경우 취소 로직
-        AbilitySystemComponent->CancelAbilityHandle(AbilitySpecHandle);
-        UpdateSlot(true);
+        if (bIsToggle)
+        {
+            // 토글형 스킬인 경우 취소 로직
+            AbilitySystemComponent->CancelAbilityHandle(AbilitySpecHandle);
+            UpdateSlot(true);
+        }
     }
     else
     {

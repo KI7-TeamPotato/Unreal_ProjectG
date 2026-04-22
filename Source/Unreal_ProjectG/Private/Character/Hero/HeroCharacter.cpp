@@ -125,6 +125,11 @@ void AHeroCharacter::SpawnHero()
     MeshComp->SetRelativeRotation(FRotator(0.f, -90.f, 0.f));
 
     SetActorLocation(RespawnPosition);
+    if (UUnitSubsystem* Subsystem = GetWorld()->GetSubsystem<UUnitSubsystem>())
+    {
+        Subsystem->RegisterUnit(this, PGGameplayTags::Unit_Side_Ally);
+    }
+    PGAbilitySystemComponent->RemoveLooseGameplayTag(PGGameplayTags::State_Hero_Die);
 
     GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
     MovementComponent->SetComponentTickEnabled(true);
@@ -146,6 +151,11 @@ void AHeroCharacter::MakeHeroDead()
     MeshComp->SetSimulatePhysics(true);
 
     //MeshComp->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+    if (UUnitSubsystem* Subsystem = GetWorld()->GetSubsystem<UUnitSubsystem>())
+    {
+        Subsystem->UnregisterUnit(this, PGGameplayTags::Unit_Side_Ally);
+    }
+    PGAbilitySystemComponent->AddLooseGameplayTag(PGGameplayTags::State_Hero_Die);
 
     if (OnPlayerDied.IsBound())
     {

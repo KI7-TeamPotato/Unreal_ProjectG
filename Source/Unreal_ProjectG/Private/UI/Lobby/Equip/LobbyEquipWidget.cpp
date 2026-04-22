@@ -13,7 +13,10 @@
 #include "UI/Lobby/Equip/SetEffectWidget.h"
 #include "UI/DataTable/SetEffectDataTable.h"
 #include "DataAssets/UI/EquipUIDataAsset.h"
+#include "DataAssets/Items/DataAsset_WeaponData.h"
 #include "Mode/Save/PGGameInstance.h"
+#include "Mode/PGLobbyMode.h"
+#include "Kismet/GameplayStatics.h"
 
 void ULobbyEquipWidget::SetEquipList(EEquipCategory InType)
 {
@@ -118,6 +121,7 @@ void ULobbyEquipWidget::UpdateSetEffects()
                 SetEffectWidget->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 
                 bAnySetFound = true;
+                GI->CurrentSetTag = Row->SetTag;
                 break;
             }
         }
@@ -126,6 +130,7 @@ void ULobbyEquipWidget::UpdateSetEffects()
     if (!bAnySetFound)
     {
         SetEffectWidget->SetVisibility(ESlateVisibility::Collapsed);
+        GI->CurrentSetTag = FGameplayTag::EmptyTag;
     }
 }
 
@@ -150,9 +155,18 @@ void ULobbyEquipWidget::OnEquipButtonClicked()
         switch (CurrentActiveCategory)
         {
         case EEquipCategory::Weapon:
+        {
             if (WeaponEquip) WeaponEquip->UpdateEquipSlot(SelectedEquip);
             GI->CurrentWeapon = SelectedEquip;
+
+            // 렌더 타깃에 무기를 적용
+            APGLobbyMode* GM = Cast<APGLobbyMode>(GetWorld()->GetAuthGameMode());
+            if (GM)
+            {
+                GM->HeroWeaponChange(Cast<UDataAsset_WeaponData>(SelectedEquip->EquipDataAsset.LoadSynchronous()));
+            }
             break;
+        }
         case EEquipCategory::Armor:
             if (ArmorEquip) ArmorEquip->UpdateEquipSlot(SelectedEquip);
             GI->CurrentArmor = SelectedEquip;
@@ -161,6 +175,10 @@ void ULobbyEquipWidget::OnEquipButtonClicked()
             if (AccesoryEquip) AccesoryEquip->UpdateEquipSlot(SelectedEquip);
             GI->CurrentAccessory = SelectedEquip;
             break;
+        }
+        if (EquipSound)
+        {
+            UGameplayStatics::PlaySound2D(this, EquipSound);
         }
     }
     else
@@ -171,6 +189,10 @@ void ULobbyEquipWidget::OnEquipButtonClicked()
 
             // EquipMap 업데이트 및 저장
             GI->EquipMap.Add(TargetID, true);
+            if (UnlockSound)
+            {
+                UGameplayStatics::PlaySound2D(this, UnlockSound);
+            }
             GI->SaveGameData();
 
             if (EquipButtonText) EquipButtonText->SetText(FText::FromString(TEXT("장착")));
@@ -224,7 +246,7 @@ void ULobbyEquipWidget::HandleEquipSelected(UEquipUIDataAsset* InData)
             EquipButtonText->SetText(FText::FromString(TEXT("해금")));
             UnlockCostWidget->UpdateGoodsText(InData->UnlockCost);
             UnlockCostWidget->SetVisibility(ESlateVisibility::Visible);
-            if (InData->UnlockCost >= GI->CurrentPlayerUnlock)
+            if (GI->CurrentPlayerUnlock < InData->UnlockCost)
                 EquipButton->SetIsEnabled(false);
             else
                 EquipButton->SetIsEnabled(true);

@@ -15,12 +15,13 @@ namespace PGGameplayTags
     UNREAL_PROJECTG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Input_ActiveSkill);
     UNREAL_PROJECTG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Input_ActiveSkill_SubSkill);
     UNREAL_PROJECTG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Input_ActiveSkill_MainSkill);
-    UNREAL_PROJECTG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(State_InputBlock_Move);
-    UNREAL_PROJECTG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(State_InputBlock_ScreenTouch);
 
     // 플레이어 상태 태그
     UNREAL_PROJECTG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(State_InputBlock_ScreenTouch);
     UNREAL_PROJECTG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(State_InputBlock_Move);
+    UNREAL_PROJECTG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(State_Hero_Die);
+
+
 
     // 플레이어 어빌리티 태그
     UNREAL_PROJECTG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_Combat_BasicAttack);
@@ -92,6 +93,8 @@ namespace PGGameplayTags
     UE_DECLARE_GAMEPLAY_TAG_EXTERN(Unit_State_Dead);
     UE_DECLARE_GAMEPLAY_TAG_EXTERN(Unit_State_Guard);
     UE_DECLARE_GAMEPLAY_TAG_EXTERN(Unit_State_Invincible);
+    UE_DECLARE_GAMEPLAY_TAG_EXTERN(Unit_State_Demise);
+    UE_DECLARE_GAMEPLAY_TAG_EXTERN(Unit_State_Binding); //유닛 슬롯 잠김
 
     //유닛 등급 태그
     UE_DECLARE_GAMEPLAY_TAG_EXTERN(Unit_Tier_Normal);
@@ -114,11 +117,14 @@ namespace PGGameplayTags
     UE_DECLARE_GAMEPLAY_TAG_EXTERN(Unit_Side_Foe);
 
     //유닛 버프 디버프 태그
+    UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_VFX_Unit_Dbuff_Demise);
+    UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_VFX_Unit_Dbuff_PowerDown);
     UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_VFX_Unit_Dbuff_Poison); //지속적인 체력 감소
     UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_VFX_Unit_Dbuff_Slow); //이속감소
     UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_VFX_Unit_Dbuff_Weekness); //공격력감소
     UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_VFX_Unit_Dbuff_Frozen); //공속감소
 
+    UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_VFX_Unit_Buff_Invincible);
     UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_VFX_Unit_Buff_Boost); // 이속증가
     UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_VFX_Unit_Buff_berserk); // 공격속도증가
     UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_VFX_Unit_Buff_Warth); // 공격력증가
